@@ -22,7 +22,7 @@ ORTHOGRAPHY_WORDLIST = None
 
 KEYMAPS = {
         'Gemini PR': {
-        'Y-' : ('S1','S2'),
+        'Y-' : ('S1-','S2-'),
         'T-' : 'K-',
         'K-' : 'T-',
         'N-' : 'W-',
@@ -83,3 +83,4 @@ KEYMAPS = {
 
 DICTIONARIES_ROOT = 'asset:Mejiro:dictionaries'
 DEFAULT_DICTIONARIES = ('Mejiro_Commands.json','Mejiro_Users.json','Mejiro_Kana.py','Mejiro_Romaji.py')
+
