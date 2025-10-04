@@ -163,7 +163,14 @@ The default key layout may be different from your keyboard. If so, in Plover's `
 ※`*`は、略語か音節ストロークかの区別に使います
   Mejiro_users.jsonで登録する略語には最後に*をつけることを推奨しています
 
+####（例）
+`KAU-SKYU` → 「コミュ」
+
+`KAU-SKYU*` → 「コミュニケーション」
+
 また、最後の文字が「ん」かつ最後から二文字目の母音が「い」の時は、最後に「ぐ」を追加して出力する機能もあります
+
+####（例）
 
 `TKNY-KIn` → 「バイキン」
 
