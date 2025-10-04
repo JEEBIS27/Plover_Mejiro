@@ -4,30 +4,6 @@ Plover用の日本語の速記システム
 
 A Japanese stenography system for Plover.
 
-![image](https://github.com/user-attachments/assets/6763813f-cf4d-448d-9acd-da6e0faac4e6)
-
----
-## メジロ式をインストールする(Installing Mejiro)
-
-このプラグインをPyPIでないプラグインとしてインストールします.
-
-(手動でこれをインストールする場合は``Plover wiki``の[Plugins not on PyPI](https://plover.wiki/index.php/Plugins#Plugins_not_on_PyPI)に従ってください.)
-
-Install this plugin as a non-PyPI plugin.
-
-(To install this manually, follow the section under [Plugins not on PyPI](https://plover.wiki/index.php/Plugins#Plugins_not_on_PyPI) on the Plover wiki.)
-
----
-## メジロ式を起動する(Activating Mejiro)
-
-このプラグインをインストールしたあと,次のようにしてPloverで起動します.
-
-Ploveメニューの歯車マーク``configuration``から``Systems``タブを開き,``Mejiro``システムを選択して起動します.
-
-After installing this plugin, you need to turn it on in Plover:
-
-In Plover's ``configuration``, go to the ``Systems`` tab, and change the active system to ``Mejiro``.
-
 ---
 ## レイアウト(Layout)
 このシステムは普通のQwertyキーボードでも使うことができます.
@@ -62,7 +38,7 @@ The default key layout may be different from your keyboard. If so, in Plover's `
 ### 母音(Vowels)
 
 | 出力  | 入力    |
-| --- | 前回の母音 |
+| ----- | ----- |
 | あ段   | `A`   |
 | い段   | `I`   |
 | う段   | `U`   |
@@ -74,10 +50,12 @@ The default key layout may be different from your keyboard. If so, in Plover's `
 
 ※母音キーを入力しなかった場合、直前に入力した文字の母音を引き継ぎます
 
-####（例）
-`AUn-KAU``TI-SIn` → 「温故知新」
+#### (例)
+`AUn-KAU` `TI-SIn` → 「温故知新」
 
-`AUn-K``TI-Sn` → 「温故知新」
+`AUn-K` `TI-Sn` → 「温故知新」
+
+`A-ST` `K-T` → 「あらかた」
 
 ---
 ### 子音(Consonants)
@@ -163,14 +141,15 @@ The default key layout may be different from your keyboard. If so, in Plover's `
 ※`*`は、略語か音節ストロークかの区別に使います
   Mejiro_users.jsonで登録する略語には最後に*をつけることを推奨しています
 
-####（例）
+#### (例)
+
 `KAU-SKYU` → 「コミュ」
 
 `KAU-SKYU*` → 「コミュニケーション」
 
-また、最後の文字が「ん」かつ最後から二文字目の母音が「い」の時は、最後に「ぐ」を追加して出力する機能もあります
+また、略語として登録してなくても、最後の文字が「ん」かつ最後から二文字目の母音が「い」の時は、最後に「ぐ」を追加して出力する機能もあります
 
-####（例）
+#### (例)
 
 `TKNY-KIn` → 「バイキン」
 
@@ -181,3 +160,25 @@ The default key layout may be different from your keyboard. If so, in Plover's `
 
 [note](https://note.com/jeebis_keyboard/n/ndb99792d80e9)
   (It's written in only Japanease)
+
+---
+## メジロ式をインストールする(Installing Mejiro)
+
+このプラグインをPyPIでないプラグインとしてインストールします.
+
+(手動でこれをインストールする場合は``Plover wiki``の[Plugins not on PyPI](https://plover.wiki/index.php/Plugins#Plugins_not_on_PyPI)に従ってください.)
+
+Install this plugin as a non-PyPI plugin.
+
+(To install this manually, follow the section under [Plugins not on PyPI](https://plover.wiki/index.php/Plugins#Plugins_not_on_PyPI) on the Plover wiki.)
+
+---
+## メジロ式を起動する(Activating Mejiro)
+
+このプラグインをインストールしたあと,次のようにしてPloverで起動します.
+
+Ploveメニューの歯車マーク``configuration``から``Systems``タブを開き,``Mejiro``システムを選択して起動します.
+
+After installing this plugin, you need to turn it on in Plover:
+
+In Plover's ``configuration``, go to the ``Systems`` tab, and change the active system to ``Mejiro``.
