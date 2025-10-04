@@ -1,4 +1,15 @@
-#*YTKNSAIOUtkn#*YTKNSAIOUtkn
+#                             [STKNYIAUntk#STKNYIAUntk*]
+# ┌─────┬─────┬─────┬─────┬─────┬─────┐        ┌─────┬─────┬─────┬─────┬─────┬─────┐
+# │     │     │  T  │  Y  │  I  │     │        │     │  I  │  Y  │  T  │     │     │
+# │  #  │  S  ├─────┼─────┼─────┤  U  │        │  U  ├─────┼─────┼─────┤  S  │  *  │
+# │     │     │  K  │  N  │  A  │     │        │     │  A  │  N  │  K  │     │     │
+# └─────┴─────┴─────┴─────┴─────┴─────┘        └─────┴─────┴─────┴─────┴─────┴─────┘
+#                         ┌───────────┐        ┌───────────┐
+#                         │     n     │        │     n     │
+#                         ├─────┬─────┤        ├─────┬─────┤
+#                         │  t  │  k  │        │  k  │  t  │
+#                         └─────┴─────┘        └─────┴─────┘
+#Mejiro Kana
 import re
 
 LONGEST_KEY = 1
@@ -10,169 +21,202 @@ def lookup(key):
     if stroke == "#":
         print("key error*")
         raise KeyError
-    
-    regex = re.compile(r"(Y?)(T?K?N?S?)(A?I?O?U?)(t?k?n?)(\-?#?)(\*?)(Y?)(T?K?N?S?)(A?I?O?U?)(t?k?n?)")
+
+    regex = re.compile(r"(S?T?K?N?)(Y?I?A?U?)(n?t?k?)(\-?#?)(S?T?K?N?)(Y?I?A?U?)(n?t?k?)(\*?)")
     regex_groups = re.search(regex, stroke)
 
-    LeftY = regex_groups.group(1)
-    LeftConsonant = regex_groups.group(2)
-    LeftVowel = regex_groups.group(3)
-    LeftParticle = regex_groups.group(4)
-    Hyphen = regex_groups.group(5)
-    Asterisk = regex_groups.group(6)
-    RightY = regex_groups.group(7)
-    RightConsonant = regex_groups.group(8)
-    RightVowel = regex_groups.group(9)
-    RightParticle = regex_groups.group(10)
+    LeftConsonant = regex_groups.group(1)
+    LeftVowel = regex_groups.group(2)
+    LeftParticle = regex_groups.group(3)
+    Hyphen = regex_groups.group(4)
+    RightConsonant = regex_groups.group(5)
+    RightVowel = regex_groups.group(6)
+    RightParticle = regex_groups.group(7)
+    Asterisk = regex_groups.group(8)
 
-    print("LeftAsterisk\tLeftConsonant\tLeftVowel\tLeftParticle")
-    print(LeftY + "\t\t" + LeftConsonant + "\t\t" + LeftVowel + "\t\t" + LeftParticle)
+    Fingers = LeftConsonant + LeftVowel + RightConsonant + RightVowel + Asterisk
 
-    print("RightAsterisk\tRightConsonant\tRightVowel\tRightParticle")
-    print(RightY + "\t\t" + RightConsonant + "\t\t" + RightVowel + "\t\t" + RightParticle)
+    print("LeftConsonant\tLeftVowel\tLeftParticle\tHyphen")
+    print(LeftConsonant + "\t\t" + LeftVowel + "\t\t" + LeftParticle + "\t\t" + Hyphen)
+
+    print("RightConsonant\tRightVowel\tRightParticle\tAsterisk")
+    print(RightConsonant + "\t\t" + RightVowel + "\t\t" + RightParticle + "\t\t" + Asterisk)
 
     print(stroke)
-    #頻出順→『n,t,k,s,r,m,h,d,g,w,z,b,j,p』
 
-    Consonants =    ["","t","k","n","s","h","m","z","g","r","d","w","p","x","b","f"]
-    listconsonant = ["","T","K","N","S","TK","TN","TS","NS","KS","KN","TKN","TNS","TKNS","TKS","KNS"]
+    LAST_VOWEL_STROKE = "A"  # 初期値として'A'を設定
 
-    #Vowels =    ["u","a","i","o","ii","e","ou","yuu","oo","ui"]
-    #Vowels2 =   ["you","ai","ya","yo","yu","ei","oi","aa","ae","uu"]
-    Vowels =    ["u","a","i","o","ya","e","ou","yuu","yu","au"]
-    Vowels2 =   ["you","ai","yo","oi","ui","ei","oo","ii","ae","uu"]
-    listvowel = ["","A","I","O","U","AI","AO","IU","OU","AIO"]
-    firstvowel = [["A","YA","YOU","AIO"],["I","YIU"],["","YU","YAIO"],["AI","YAI"],["O","AO","YO","YAO"],["U"],["OU","IU"],["Y","YI"]]# a,i,u,e,o,ya,yu,yo
-    secondvowel = [["X"],["YU","YA","YIU","YO","YAI"],["AO","Y","IU","AIO","YAIO"],["YOU"],["YAO"]]# a,i,u,e,o
-    ConsonantOrder = ["","k","s","t","n","h","m","r","w","g","d","z","b","p","f","x"]
+    # Key: ストローク, Value: (基本母音ローマ字, 長音文字)
+    # YIAU
+    DIPHTHONG_MAPPING = {
+        "Y": ("a", "い"),
+        "YI": ("yo", "う"),
+        "YIA": ("e", "い"),
+        "YIU": ("yu", "う"),
+        "YIAU": ("u", "う"),
+        "IU": ("u", "い"),
+        "IAU": ("o", "う"),
+    }
 
-    excepts_in = ["ni","nu","nyuu","nyou",
-                  "mi","mu",
-                  "wya","wyu","wyo","wyuu","wyou","wii","wui","wuu","wei",
-                  "di","du","de","dya","dyo","dyuu","dyou","dii","dei",
-                  "fu","fyuu","fyou"]
-    excepts_out = ["ぬ","に","にょう","にゅう",
-                   "む","み",
-                   "やあ","いう","よね","ええ","うえ","ゐ","あお","うぅ","ゑ",
-                   "てぃ","で","づ","ちぇ","しぇ","でぃ","でい","じぇ","ぢ",
-                   "ヴ","くぁ","くぉ"]
+    # ストローク（子音・母音）からローマ字の行段アルファベットへの対応表
+    # STKN
+    conso_stroke_to_roma = [
+        ["", ''], ["S", 's'], ["T", 't'], ["K", 'k'], ["N", 'n'], 
+        ["ST", 'r'], ["SK", 'm'], ["TK", 'h'],
+        ["SN", 'z'], ["TN", 'd'], ["KN", 'g'], ["TKN", 'b'],
+        ["STK", 'p'], ["STN", 'f'], ["SKN", 'w'], ["STKN", 'l']
+    ]
 
-    kana = [["あ","い","う","え","お","や","ゆ","よ"],
-            ["か","き","く","け","こ","きゃ","きゅ","きょ"],
-            ["さ","し","す","せ","そ","しゃ","しゅ","しょ"],
-            ["た","ち","つ","て","と","ちゃ","ちゅ","ちょ"],
-            ["な","に","ぬ","ね","の","にゃ","にゅ","にょ"],
-            ["は","ひ","ふ","へ","ほ","ひゃ","ひゅ","ひょ"],
-            ["ま","み","む","め","も","みゃ","みゅ","みょ"],
-            ["ら","り","る","れ","ろ","りゃ","りゅ","りょ"],
-            ["わ","うぃ","う","うぇ","を","うゃ","うゅ","うょ"],
-            ["が","ぎ","ぐ","げ","ご","ぎゃ","ぎゅ","ぎょ"],
-            ["だ","ぢ","づ","で","ど","でゃ","でゅ","でょ"],
-            ["ざ","じ","ず","ぜ","ぞ","じゃ","じゅ","じょ"],
-            ["ば","び","ぶ","べ","ぼ","びゃ","びゅ","びょ"],
-            ["ぱ","ぴ","ぷ","ぺ","ぽ","ぴゃ","ぴゅ","ぴょ"],
-            ["ふぁ","ふぃ","ヴ","ふぇ","ふぉ","ふゃ","ふゅ","ふょ"],
-            ["ぁ","ぃ","ぅ","ぇ","ぉ","ゃ","ゅ","ょ"]]
+    # 基本母音ストロークの定義 (二重母音は除外)
+    # ストローク -> 基本母音 (a, i, u, e, o, ya, yu, yo)
+    vowel_stroke_to_roma = [
+        ['A', 'a'], ['I', 'i'], ['U', 'u'], ['IA', 'e'], ['AU', 'o'],
+        ["YA", 'ya'], ["YU", 'yu'], ["YAU", 'yo']
+    ]
 
-    if LeftVowel not in listvowel:
-         LeftVowel = listvowel[9]
-    if RightVowel not in listvowel:
-         RightVowel = listvowel[9]
-    def searchVowel(Vowel):
-        for i in range(len(firstvowel)):
-            if Vowel in firstvowel[i]:
-                answer = i
-        return answer
-    def searchVowel2(Vowel):
-        answer = 99
-        for i in range(len(secondvowel)):
-            if Vowel in secondvowel[i]:
-                answer = i
-        if answer == 99:
-            return 99
+    # 行段のアルファベットからひらがなへのマッピング (変更なし)
+    ROMA_TO_KANA_MAP = {
+        '':  ['あ', 'い', 'う', 'え', 'お', 'や', 'ゆ', 'よ'],
+        'k': ['か', 'き', 'く', 'け', 'こ', 'きゃ', 'きゅ', 'きょ'],
+        's': ['さ', 'し', 'す', 'せ', 'そ', 'しゃ', 'しゅ', 'しょ'],
+        't': ['た', 'ち', 'つ', 'て', 'と', 'ちゃ', 'ちゅ', 'ちょ'],
+        'n': ['な', 'に', 'ぬ', 'ね', 'の', 'にゃ', 'にゅ', 'にょ'],
+        'h': ['は', 'ひ', 'ふ', 'へ', 'ほ', 'ひゃ', 'ひゅ', 'ひょ'],
+        'm': ['ま', 'み', 'む', 'め', 'も', 'みゃ', 'みゅ', 'みょ'],
+        'r': ['ら', 'り', 'る', 'れ', 'ろ', 'りゃ', 'りゅ', 'りょ'],
+        'w': ['わ', 'うぃ', 'ゔ', 'うぇ', 'を', 'やあ', 'いう', 'いぇ'],
+        'g': ['が', 'ぎ', 'ぐ', 'げ', 'ご', 'ぎゃ', 'ぎゅ', 'ぎょ'],
+        'z': ['ざ', 'じ', 'ず', 'ぜ', 'ぞ', 'じゃ', 'じゅ', 'じょ'],
+        'd': ['だ', 'ぢ', 'づ', 'で', 'ど', 'でぃ', 'てぃ', 'どぅ'],
+        'b': ['ば', 'び', 'ぶ', 'べ', 'ぼ', 'びゃ', 'びゅ', 'びょ'],
+        'p': ['ぱ', 'ぴ', 'ぷ', 'ぺ', 'ぽ', 'ぴゃ', 'ぴゅ', 'ぴょ'],
+        'f': ['ふぁ', 'ふぃ', 'ふ', 'ふぇ', 'ふぉ', 'じぇ', 'しぇ', 'ちぇ'],
+        'l': ['ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'ゃ', 'ゅ', 'ょ']
+    }
+
+    # 母音のローマ字と対応するインデックス（段）のマッピング (変更なし)
+    VOWEL_INDEX_MAP = {
+        'a': 0, 'i': 1, 'u': 2, 'e': 3, 'o': 4,
+        'ya': 5, 'yu': 6, 'yo': 7
+    }
+
+    # --- 関数内のロジック変更 ---
+
+    def stroke_to_kana(Consonant_stroke: str, Vowel_stroke: str) -> str:
+        
+        global LAST_VOWEL_STROKE 
+
+        # 1. 母音ストロークの決定と更新
+        if not Vowel_stroke:
+            if not LAST_VOWEL_STROKE:
+                print("key error no last vowel")
+                raise KeyError
+            current_vowel_stroke = LAST_VOWEL_STROKE
         else:
-            return answer
-    def Make(Ys,Conso,Vowel):
+            current_vowel_stroke = Vowel_stroke
+            LAST_VOWEL_STROKE = Vowel_stroke 
+            
+        # 2. 子音ストロークからローマ字の子音（行）を取得
+        conso_roma = next((roma for stroke, roma in conso_stroke_to_roma if Consonant_stroke == stroke), None)
+        if conso_roma is None:
+            print(f"子音ストローク '{Consonant_stroke}' が見つかりません")
+            raise KeyError
 
-        output = ""
-        かな = Consonants[listconsonant.index(Conso)]
-
-        if Ys:
-            #Yが入力されていたら
-            かな += Vowels2[listvowel.index(Vowel)]
+        # 3. 母音ストロークからローマ字の基本母音（段）と長音文字を決定
+        
+        vowel_roma = None
+        suffix = "" # 長音文字
+        
+        # a. 二重母音マッピングをチェック (優先)
+        if current_vowel_stroke in DIPHTHONG_MAPPING:
+            vowel_roma, suffix = DIPHTHONG_MAPPING[current_vowel_stroke]
+        # b. 基本母音マッピングをチェック
         else:
-            #そうでないとき
-            かな += Vowels[listvowel.index(Vowel)]
+            vowel_roma = next((roma for stroke, roma in vowel_stroke_to_roma if current_vowel_stroke == stroke), None)
+            suffix = "" # 基本母音には長音文字なし
+            
+        if vowel_roma is None:
+            print(f"母音ストローク '{current_vowel_stroke}' が見つかりません")
+            raise KeyError
 
-        if not Ys and not Conso and not Vowel:
-            output = ""
+        # 4. ひらがなを特定
+        if conso_roma not in ROMA_TO_KANA_MAP or vowel_roma not in VOWEL_INDEX_MAP:
+            print(f"対応するひらがなの行または段が見つかりません")
+            raise KeyError
+
+        vowel_index = VOWEL_INDEX_MAP[vowel_roma]
+        
+        try:
+            base_kana = ROMA_TO_KANA_MAP[conso_roma][vowel_index]
+        except IndexError:
+            print(f"無効な組み合わせ: 子音'{conso_roma}' + 母音'{vowel_roma}'")
+            raise KeyError
+        
+        if Consonant_stroke + Vowel_stroke == "":
+            return ""  # 両方空の場合は空文字を返す
         else:
-            output = kana[ConsonantOrder.index(Consonants[listconsonant.index(Conso)])][searchVowel(Ys + Vowel)]
-            if searchVowel2(Ys + Vowel) != 99:
-                output += kana[0][searchVowel2(Ys + Vowel)]
-            if かな in excepts_in:
-                output = excepts_out[excepts_in.index(かな)]
+            # 5. 長音文字を付加して返す
+            return base_kana + suffix
 
-        print(output)
-        return output
+    PARTICLE_MAP = {
+        "": "", "n": "ん", "t": "つ", "k": "く", 
+        "tk": "っ", "nt": "ち", "nk": "き", "ntk": "ー"
+    }
 
-    resultL = Make(LeftY,LeftConsonant,LeftVowel)
-    resultR = ""
-    result = ""
+    def second_sound(particle_stroke: str) -> str:
+        # 辞書から直接対応する文字列を取得。キーが存在しない場合は空文字列を返す。
+        return PARTICLE_MAP.get(particle_stroke, "")
+    LIST_PARTICLE_KEYS = ["", "n", "t", "k", "tk", "nt", "nk", "ntk"] 
 
-    if resultL or RightY or RightConsonant or RightVowel:#ひだりに入力がある時だけ右の音を出す
-        resultR = Make(RightY,RightConsonant,RightVowel)
+    # 左側の助詞文字列のリスト
+    L_PARTICLE = ["", "、", "に", "の", "で", "と", "を", "か"]
 
-    listParticle = ["","n","t","k","tk","tn","kn","tkn"]
-    listSecondWord = ["","ん","つ","く","っ","ち","き","ー"]
-    listLParticle = ["","、","に","の","で","と","を","か"]
-    listRParticle = ["","、","は","が","も","は、","が、","も、"]
+    # 右側の助詞文字列のリスト
+    R_PARTICLE = ["", "、", "は", "が", "も", "は、", "が、", "も、"]
 
-    助詞in = ["は、","が、","も、","、は","、が","、も","、は、","、が、","、も、","にが","にが、","でが","でが、","かが","かが、","をが","をが、"]
-    助詞out = [".",",","ー","は、","が、","も、","!","?","ん","のに","のに、","ので","ので、","のか","のか、","のを","のを、"]
+    # 助詞の置換ルール { 助詞in: 助詞out }
+    JOSHI_IN_MAP = {
+        "は、": ".", "が、": ",", "も、": "ー",  
+        "、は": "は、", "、が": "が、", "、も": "も、", 
+        "、は、": "!", "、が、": "?", "、も、": "ん",
+        "にが": "のに", "にが、": "のに、", 
+        "でが": "ので", "でが、": "ので、",
+        "かが": "のか", "かが、": "のか、",
+        "をが": "のを", "をが、": "のを、"
+    }
+
+    def joshi(LeftParticle: str, RightParticle: str) -> str:
+        # 1. 左右の助詞キーからインデックスを取得
+        try:
+            # LIST_PARTICLE_KEYS (外部定数) からインデックスを取得
+            l_index = LIST_PARTICLE_KEYS.index(LeftParticle)
+            r_index = LIST_PARTICLE_KEYS.index(RightParticle)
+        except ValueError:
+            # LeftParticleやRightParticleが定義されたキーに含まれない場合、空文字列を返す
+            return ""
+
+        # 2. 左右の助詞文字列を生成
+        # L_PARTICLE/R_PARTICLE (外部定数) をインデックスで参照
+        left_joshi = L_PARTICLE[l_index]
+        right_joshi = R_PARTICLE[r_index]
+        generated_joshi = left_joshi + right_joshi
+        
+        # 3. 助詞の置換ルールを適用 (JOSHI_IN_MAPを参照)
+        # .get() を使用し、キーが存在しない場合は生成した助詞をそのまま返す
+        # 例: "のが" -> "のが" (置換なし), "は、" -> "." (置換あり)
+        return JOSHI_IN_MAP.get(generated_joshi, generated_joshi)
+
+    # メインの変換処理
+    result = (stroke_to_kana(LeftConsonant, LeftVowel) + second_sound(LeftParticle)
+          + stroke_to_kana(RightConsonant, RightVowel) + second_sound(RightParticle))
+
+    if Asterisk and result[-1] == "ん" and result[-2] in ["い", "き","し","ち","に","ひ","み","り","ぎ","じ","ぢ","び","ぴ","ぃ"]:
+        result += "ぐ"
+
+    if Fingers and Hyphen == "#":
+        result *= 2
     
-    #LeftParticleになにかあって左の指の入力もあるとき
-    if not Asterisk and LeftParticle and (resultL or resultR):
-        resultL += listSecondWord[listParticle.index(LeftParticle)]
-        print(resultL)
-    #RightParticleになにかあって右の指の入力もあるとき
-    if not Asterisk and RightParticle and (resultR or resultL and LeftParticle):
-        resultR += listSecondWord[listParticle.index(RightParticle)]
-        print(resultR)
-    if  (resultL or resultR) and not LeftParticle and RightParticle == "k" and not Hyphen and not Asterisk:#どちらの指にも入力が無いとき
-        result = ""
-        if LeftY:
-            result += "1"
-        if "K" in LeftConsonant:
-            result += "2"
-        if "S" in LeftConsonant:
-            result += "3"
-        if "I" in LeftVowel:
-            result += "4"
-        if "U" in LeftVowel:
-            result += "5"
-        if "U" in RightVowel:
-            result += "6"
-        if "I" in RightVowel:
-            result += "7"
-        if "S" in RightConsonant:
-            result += "8"
-        if "K" in RightConsonant:
-            result += "9"
-        if RightY:
-            result += "0"
-    
-    elif  not resultL and not resultR:#どちらの指にも入力が無いとき
-        result = listLParticle[listParticle.index(LeftParticle)] + listRParticle[listParticle.index(RightParticle)]
-        if result in 助詞in:
-            result = 助詞out[助詞in.index(result)]
-
-    if result == "":
-        result = resultL + resultR
-
-    if (resultL or resultR) and "#" in Hyphen:
-        print("{^" + result * 2 + "^}")
-        return "{^" + result * 2 + "^}"
-    else:
-        print("{^" + result + "^}")
-        return "{^" + result + "^}"
+    if not Fingers:
+        result = joshi(LeftParticle, RightParticle)
+    print("{^" + result + "^}")
+    return "{^" + result + "^}"
