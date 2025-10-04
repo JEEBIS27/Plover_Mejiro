@@ -6,6 +6,7 @@ A Japanese stenography system for Plover.
 
 ![image](https://github.com/user-attachments/assets/7e92dedd-e8f2-466c-87c2-fe8af1c9a603)
 
+![image](https://github.com/user-attachments/assets/6763813f-cf4d-448d-9acd-da6e0faac4e6)
 
 ---
 ## メジロ式をインストールする(Installing Mejiro)
