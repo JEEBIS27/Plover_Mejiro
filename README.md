@@ -1,142 +1,156 @@
-# メジロ式速記(Plover Mejiro)
+# メジロ式速記(Mejiro)v2
 
-Plover用の日本語の速記システム
+メジロ式速記は、Plover用の日本語の速記システムです
 
-A Japanese stenography system for Plover.
+直観的な**子音＋母音＋追加音**の組み合わせで
+片手で1音節、両手で2音節を一気に入力できます
+
+両手の10本指をフル活用した効率的な日本語入力を体験できます
 
 ---
 ## レイアウト(Layout)
-このシステムは普通のQwertyキーボードでも使うことができます.
+このシステムは、メジロ式専用キーボード（Mejiro31）や、速記用キーボード（Uni v4）、スペースバーが2つあるキーボードで使うことができます
 
-より快適に使うためには親指のキーが分かれているものを使うことをおすすめします.
+もちろん一般的なキーボードでも使うことはできますが、より快適に使うためには親指のキーが分かれているものを使うことをおすすめします
 
-You can use this steno with a QWERTY keyboard, though it’s better with one that has more than two thumb keys, such as space and others.
 ![image](https://github.com/user-attachments/assets/1235dff7-703a-4e50-8ba2-946b88834139)
 
 ```
-#  S  T  Y  I  U    U  I  Y  T  S  *
-#  S  K  N  A  U    U  A  N  K  S  *
-               n    n             
-            t  k    k  t
+# S T Y I U    U I Y T S *
+# S K N A U    U A N K S *
+         n      n             
+        t k    k t
 ```
-キーボード上では次のようになっています.
-
-which originally look like
+キーボードを使う場合は次のような配列を想定しています
 ```
-esc q  w  e  r  t  y  u  i  o  p  [
-tab a  s  d  f  g  h  j  k  l  ;  '
-    z  x  c  v  b  n  m  ,  .  
-            space  enter   
+esc q w e r t y u i o p [
+tab a s d f g h j k l ; '
+     z x c v b n m , . 
+        space enter   
 ```
-※あなたのキーボード配置とは異なる可能性があります.異なる場合,Ploveメニューの歯車マーク``configuration``から``machine``タブを開き,キー配置を変更してください.
-
-The default key layout may be different from your keyboard. If so, in Plover's ``configuration``, go to the ``Systems`` tab, and change the layout.
+※ これはあなたのキーボード配置と異なる可能性があります
+異なる場合はPloveメニューの歯車マーク``configuration``から``machine``タブを開き、キー配置を変更してください
 
 ---
 ## 使い方(How to use)
 
 ### 母音(Vowels)
 
-| 出力  | 入力    |
-| ----- | ----- |
-| あ段   | `A`   |
-| い段   | `I`   |
-| う段   | `U`   |
-| え段   | `IA`  |
-| お段   | `AU`   |
-| や段   | `YA`  |
-| ゆ段   | `YU` |
-| よ段   | `YAU`  |
-
-※母音キーを入力しなかった場合、直前に入力した文字の母音を引き継ぎます
-
-#### (例)
-`AUn-KAU` `TI-SIn` → 「温故知新」
-
-`AUn-K` `TI-Sn` → 「温故知新」
-
-`A-ST` `K-T` → 「あらかた」
+| 出力  | 入力  |
+| ---- | ---- |
+| あ段  | `A`  |
+| い段  | `I`  |
+| う段  | `U`  |
+| え段  | `IA` |
+| お段  | `AU` |
+| や段  | `YA` |
+| ゆ段  | `YU` |
+| よ段  | `YAU`|
 
 ---
 ### 子音(Consonants)
 
-| 出力     | 入力    |
-| ------ | ----- |
-| あ行     | (なし)  |
-| か行     | `K`   |
-| さ行     | `S`   |
-| た行     | `T`   |
-| な行     | `N`  |
-| は行     | `TK`   |
-| ま行     | `SK`   |
-| ら行     | `ST`   |
-| わ/を    | `SKN`   |
-| が行     | `KN`  |
-| ざ行     | `NS` |
-| だ行     | `TN`  |
-| ば行     | `TKN` |
-| ぱ行     | `STK` |
-| ふぁ行     | `STN` |
-| ぁぃぅ等    | `STKN` |
+| 出力   | 入力    |
+| ----- | ------ |
+| あ行   | (なし)  |
+| か行   | `K`    |
+| さ行   | `S`    |
+| た行   | `T`    |
+| な行   | `N`    |
+| は行   | `TK`   |
+| ま行   | `SK`   |
+| ら行   | `ST`   |
+| わ行   | `SKN`  |
+| が行   | `KN`   |
+| ざ行   | `NS`   |
+| だ行   | `TN`   |
+| ば行   | `TKN`  |
+| パ行   | `STK`  |
+| ファ行  | `STN`  |
+| ぁ行   | `STKN` |
 
-※「段」と「行」を組み合わせることで五十音を作ることができます.
+「段」と「行」を組み合わせることで五十音を作ることができます
 
-また、規則として、Nと同時押しで濁音化しています.
+※ 法則として、Nと同時押しで濁音化しています
 
 #### (例)
-「か行」`K` +「あ段」`A` = `KA` →「か」
+か行`K`+あ段`A` = `KA` →「か」
 
-「が行」`KN` + 「あ段」`A` = `KNA` → 「が」
+が行`KN`+あ段`A` = `KNA` →「が」
 
 ---
 ### 2音目(Extra)
 
-| 出力      | 入力 |
-| ------- | ---- |
-| ん       | `n`  |
-| つ       | `t`  |
-| く       | `k`  |
-| ち       | `nt` |
-| き       | `nk` |
-| っ (促音)  | `tk` |
-| ー（外来長音)| `ntk` |
+| 出力 |  入力  |
+| --- | ----- |
+| ん   | `n`  |
+| つ   | `t`  |
+| く   | `k`  |
+| ち   | `nt` |
+| き   | `nk` |
+| っ   | `tk` |
+| ー   | `ntk`|
 
-※ このキーを組み合わせると音の最後に二音目の音を追加できます.
+このキーを組み合わせると音の最後に二音目の音を追加できます.
 
-これは、特に音読みの漢字に対して使います
+(1)「ん・つ・く・ち・き」は特に音読みの漢字に対して使います
 
 #### (例)
-`TAk` →「たく」,`SAn` →「さん」
+`TAk` `SAn` →「沢山」
+
+(2) 「ー」は外来語に対して使います
+
+#### (例)
+`TAntk` `SNAn` →「ターザン」
 
 ---
 ### 特別な母音(Special Vowels)
 
 「あ・い・う・え・お・や・ゆ・よ」以外の組み合わせのときは、日本語で高頻度で出現する二重母音を打てるようになっています
 
-#### 特別な母音一覧
-|  出力  |  入力  |
-| --- | --- |
-| あい  | `Y` |
-| えい  | `YIA` |
-| うい  | `IU` |
-| よう  | `YI` |
-| ゆう   | `YIU` |
-| おう  | `IAU` |
-| うう  | `YIAU` |
+| 出力 |  入力  |
+| --- | ----- |
+| あい | `Y`   |
+| えい | `YIA` |
+| うい | `IU`  |
+| よう | `YI`  |
+| ゆう | `YIU` |
+| おう | `IAU` |
+| うう | `YIAU`|
+
+※ 母音キーを入力しなかった場合、直前に入力した文字の母音を引き継ぎます
+
+#### (例)
+普通に入力すると…
+
+`AUn-KAU` `TI-SIn` → 「温故知新」
+
+母音を省略すると…
+
+`AUn-K` `TI-Sn` → 「温故知新」
+
+二重母音も引き継げます
+
+`KY-KN` `SI-I` → 「甲斐甲斐しい」
+
+同じストロークでも直前の母音によって結果が変化します
+
+`TA` `K-SK` → 「たから」
+`TO` `K-SK` → 「ところ」
 
 ---
-### 特殊(Special)
+### 特殊なキー(Special keys)
 
-| 機能 | 入力  |
-| --- | --- |
-| 繰り返す | `#` |
-| 略語符号 | `*` |
+|   機能   | 入力 |
+| ------- | --- |
+| 繰り返し  | `#` |
+| 略語符号  | `*` |
 
 ※`#`を押すと,全体の出力がもう一度繰り返されます.
 
-`TKAn-TAtkn` →「ハンター」
+`TKAn-Tntk` →「ハンター」
 
-`TKAn#TAtkn` →「ハンターハンター」
+`TKAn#Tntk` →「ハンターハンター」
 
 ※`*`は、略語か音節ストロークかの区別に使います
   Mejiro_users.jsonで登録する略語には最後に*をつけることを推奨しています
@@ -158,8 +172,7 @@ The default key layout may be different from your keyboard. If so, in Plover's `
 ---
 ## もっと詳しく知りたい方は(More To Know the Theory)
 
-[note](https://note.com/jeebis_keyboard/n/ndb99792d80e9)
-  (It's written in only Japanease)
+最新情報は[**X**](https://x.com/jeebis_steno?s=21&t=mUKcrYIKFRt4MZLfN8wIjg)や[**note**](https://note.com/jeebis_keyboard)をご確認ください
 
 ---
 ## メジロ式をインストールする(Installing Mejiro)
