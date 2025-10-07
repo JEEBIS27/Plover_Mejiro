@@ -44,7 +44,7 @@ def lookup(key):
 
     print(stroke)
 
-    LAST_VOWEL_STROKE = "A"  # 初期値として'A'を設定
+    global LAST_VOWEL_STROKE
 
     # Key: ストローク, Value: (基本母音ローマ字, 長音文字)
     # YIAU
@@ -109,8 +109,7 @@ def lookup(key):
         # 1. 母音ストロークの決定と更新
         if not Vowel_stroke:
             if not LAST_VOWEL_STROKE:
-                print("key error no last vowel")
-                raise KeyError
+                LAST_VOWEL_STROKE = "A"
             current_vowel_stroke = LAST_VOWEL_STROKE
         else:
             current_vowel_stroke = Vowel_stroke
@@ -166,6 +165,7 @@ def lookup(key):
     def second_sound(particle_stroke: str) -> str:
         # 辞書から直接対応する文字列を取得。キーが存在しない場合は空文字列を返す。
         return PARTICLE_MAP.get(particle_stroke, "")
+    
     LIST_PARTICLE_KEYS = ["", "n", "t", "k", "tk", "nt", "nk", "ntk"] 
 
     # 左側の助詞文字列のリスト
@@ -174,43 +174,43 @@ def lookup(key):
     # 右側の助詞文字列のリスト
     R_PARTICLE = ["", "、", "は", "が", "も", "は、", "が、", "も、"]
 
-    # 助詞の置換ルール { 助詞in: 助詞out }
-    JOSHI_IN_MAP = {
-        "は、": ".", "が、": ",", "も、": "ー",  
-        "、は": "は、", "、が": "が、", "、も": "も、", 
-        "、は、": "!", "、が、": "?", "、も、": "ん",
-        "にが": "のに", "にが、": "のに、", 
-        "でが": "ので", "でが、": "ので、",
-        "かが": "のか", "かが、": "のか、",
-        "をが": "のを", "をが、": "のを、"
+    # 特別な記号ストロークは直接置換する。
+    EXCEPTION_STROKE_MAP = {
+        "-n": "}{#Return}{", "n-": "}{#Space}{", "n-n": "}{#Space}{#Return}{", 
+        "-nt": ".", "-nk": ",", "-ntk": "-",
+        "n-nt": "!", "n-nt": "?", "n-ntk": "ん"
     }
 
     def joshi(LeftParticle: str, RightParticle: str) -> str:
-        # 1. 左右の助詞キーからインデックスを取得
-        try:
+        # ストロークを直接置換するため、'ｰ'をつける。
+        joshi = EXCEPTION_STROKE_MAP.get(LeftParticle + '-' + RightParticle,False)
+        if joshi:
+            return joshi
+        else:
+            # RightParticleをn以外に分割
+            RightParticle_tk = RightParticle.split("n",1)[-1]
             # LIST_PARTICLE_KEYS (外部定数) からインデックスを取得
             l_index = LIST_PARTICLE_KEYS.index(LeftParticle)
-            r_index = LIST_PARTICLE_KEYS.index(RightParticle)
-        except ValueError:
-            # LeftParticleやRightParticleが定義されたキーに含まれない場合、空文字列を返す
-            return ""
-
-        # 2. 左右の助詞文字列を生成
-        # L_PARTICLE/R_PARTICLE (外部定数) をインデックスで参照
-        left_joshi = L_PARTICLE[l_index]
-        right_joshi = R_PARTICLE[r_index]
-        generated_joshi = left_joshi + right_joshi
-        
-        # 3. 助詞の置換ルールを適用 (JOSHI_IN_MAPを参照)
-        # .get() を使用し、キーが存在しない場合は生成した助詞をそのまま返す
-        # 例: "のが" -> "のが" (置換なし), "は、" -> "." (置換あり)
-        return JOSHI_IN_MAP.get(generated_joshi, generated_joshi)
-
+            r_index = LIST_PARTICLE_KEYS.index(RightParticle_tk)
+            # L_PARTICLE/R_PARTICLE (外部定数) をインデックスで参照
+            left_joshi = L_PARTICLE[l_index]
+            right_joshi = R_PARTICLE[r_index]
+            if LeftParticle == "n":
+                joshi = right_joshi + ','
+            elif RightParticle in ["k","nk"] and left_joshi not in ["の","と",""]:
+                joshi = "の" + left_joshi
+                if "n" in RightParticle:
+                    joshi += ','
+            else:
+                joshi = left_joshi + right_joshi
+                if "n" in RightParticle:
+                    joshi += ','
+            return joshi
     # メインの変換処理
     result = (stroke_to_kana(LeftConsonant, LeftVowel) + second_sound(LeftParticle)
           + stroke_to_kana(RightConsonant, RightVowel) + second_sound(RightParticle))
 
-    if Asterisk and result[-1] == "ん" and result[-2] in ["い", "き","し","ち","に","ひ","み","り","ぎ","じ","ぢ","び","ぴ","ぃ"]:
+    if Asterisk and result[-1] == "ん" and result[-2] in ["い","き","し","ち","に","ひ","み","り","ぎ","じ","ぢ","び","ぴ","ぃ"]:
         result += "ぐ"
 
     if Fingers and Hyphen == "#":
