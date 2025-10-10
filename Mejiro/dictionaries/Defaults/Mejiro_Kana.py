@@ -62,9 +62,9 @@ def lookup(key):
     # STKN
     conso_stroke_to_roma = [
         ["", ''], ["S", 's'], ["T", 't'], ["K", 'k'], ["N", 'n'], 
-        ["ST", 'r'], ["SK", 'f'], ["TK", 'h'],
+        ["ST", 'r'], ["SK", 'w'], ["TK", 'h'],
         ["SN", 'z'], ["TN", 'd'], ["KN", 'g'], ["TKN", 'b'],
-        ["STK", 'p'], ["STN", 'w'], ["SKN", 'm'], ["STKN", 'l']
+        ["STK", 'p'], ["STN", 'l'], ["SKN", 'm'], ["STKN", 'f']
     ]
 
     # 基本母音ストロークの定義 (二重母音は除外)
