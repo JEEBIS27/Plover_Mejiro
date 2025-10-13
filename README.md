@@ -101,9 +101,11 @@ tab a s d f g h j k l ; '
 このキーを組み合わせると音の最後に二音目の音を追加できます.
 
 #### (例1)「ん・つ・く・ち・き」は特に音読みの漢字に対して使います
+
 `TAk` `SAn` →「沢山」
 
 #### (例2) 「ー」は外来語に対して使います
+
 `TAntk` `SNAn` →「ターザン」
 
 ---
@@ -139,7 +141,7 @@ tab a s d f g h j k l ; '
 同じストロークでも直前の母音によって結果が変化します
 
 `TNA` `K-SK` → 「だから」
-`TO` `K-SK` → 「ところ」
+`TAU` `K-SK` → 「ところ」
 
 ---
 ### 特殊なキー(Special keys)
@@ -149,22 +151,15 @@ tab a s d f g h j k l ; '
 | 繰り返し  | `#` |
 | 略語符号  | `*` |
 
-※`#`を押すと,全体の出力がもう一度繰り返されます.
+`#`を押すと,全体の出力がもう一度繰り返されます.
 
 `TKAn-Tntk` →「ハンター」
 
 `TKAn#Tntk` →「ハンターハンター」
 
-※`*`は、略語か音節ストロークかの区別に使います
-  Mejiro_Users.jsonで登録する略語には最後に*をつけることを推奨しています
+`*`は一部の特別な入力や略語のために使います
 
-#### (例)
-
-`KAU-SKYU` → 「コミュ」
-
-`KAU-SKYU*` → 「コミュニケーション」
-
-また、略語として登録してなくても、最後の文字が「ん」かつ最後から二文字目の母音が「い」の時は、最後に「ぐ」を追加して出力する機能もあります
+1. 最後の文字が「ん」かつ最後から二文字目の母音が「い」の時は、最後に「ぐ」を追加する機能
 
 #### (例)
 
@@ -172,29 +167,56 @@ tab a s d f g h j k l ; '
 
 `TKNY-KIn*` → 「バイキング」
 
+2. 「〜し」で終わる語の場合、最後に「て」を追加する機能
+
+#### (例)
+
+`SAU-SI*` → 「そして」
+
+`TY-SI*` → 「たいして」
+
+3. ユーザ略語として登録されておらず、かつ上記2つの条件に当てはまらない場合は最後に「する」を追加したり、親指キーで助詞を追加したりする機能
+
+#### (例)
+
+`SIAU-*` → 「そうする」
+
+`TYIA-S*` → 「訂正する」
+
+`KTIk-TAU*` → 「ひとの」
+
+`KAUn-Tntk*` → 「ことです。」
+
+一般略語に登録すれば、最後に助詞を追加する機能を使うことができます
+
+#### (例)
+
+`KAnk-KNn*` → 「考えを、」
+
+`SKNIAtk-SNIk*` → 「メジロ式速記での」
+
+ユーザ辞書に登録する略語は、基本的に固有名詞や極端に長い語です
+
+#### (例)
+
+`KAU-SKYU` → 「コミュ」
+
+`KAU-SKYU*` → 「コミュニケーション」
+
 ---
+
 ## もっと詳しく知りたい方は(More To Know the Theory)
 
-最新情報は[**X**](https://x.com/jeebis_steno?s=21&t=mUKcrYIKFRt4MZLfN8wIjg)や[**note**](https://note.com/jeebis_keyboard)をご確認ください
+最新情報は[**X**](https://x.com/jeebis_steno)や[**note**](https://note.com/jeebis_keyboard)をご確認ください
 
 ---
 ## メジロ式をインストールする(Installing Mejiro)
 
-このプラグインをPyPIでないプラグインとしてインストールします.
+このプラグインをPyPIでないプラグインとしてインストールします
 
-(手動でこれをインストールする場合は``Plover wiki``の[Plugins not on PyPI](https://plover.wiki/index.php/Plugins#Plugins_not_on_PyPI)に従ってください.)
-
-Install this plugin as a non-PyPI plugin.
-
-(To install this manually, follow the section under [Plugins not on PyPI](https://plover.wiki/index.php/Plugins#Plugins_not_on_PyPI) on the Plover wiki.)
+(手動でこれをインストールする場合は``Plover wiki``の[Plugins not on PyPI](https://plover.wiki/index.php/Plugins#Plugins_not_on_PyPI)に従ってください)
 
 ---
 ## メジロ式を起動する(Activating Mejiro)
 
-このプラグインをインストールしたあと,次のようにしてPloverで起動します.
-
-Ploveメニューの歯車マーク``configuration``から``Systems``タブを開き,``Mejiro``システムを選択して起動します.
-
-After installing this plugin, you need to turn it on in Plover:
-
-In Plover's ``configuration``, go to the ``Systems`` tab, and change the active system to ``Mejiro``.
+このプラグインをインストールしたあと、Ploveメニューの歯車マーク``configuration``から``Systems``タブを開き、``Mejiro``システムを選択して起動します
