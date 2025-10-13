@@ -1,0 +1,22 @@
+{
+  "#" : "=repeat_last_translation",
+  "tk#": "{PLOVER:TOGGLE}",
+  "t#": "{PLOVER:TOGGLE_DICT:!mejiro_romaji.py,!mejiro_kana.py}",
+  "k#": "{PLOVER:SWITCH_SYSTEM:English Stenotype}{#F13}{^}",
+
+  "n-": "{^}{#Space}{^}","-n": "{^}{#Return}{^}","n-n": "{^}{#Space}{#Return}{^}",
+
+  "-U":"=undo","-AU":"{#BackSpace}","-IU":"{#Delete}",
+  "-S":"{#Escape}",
+
+                       "-Y":"{^}{#Up}{^}",
+  "-A":"{^}{#Left}{^}","-N":"{^}{#Down}{^}","-K":"{^}{#Right}{^}",
+  "-I":"{^}{#Home}{^}","-T":"{^}{#End}{^}",
+  "-YI":"{^(^}","-SYI":"{^<^}","-TY":"{^)^}","-STY":"{^>^}",
+  "-TYI":"{^()^}{#Left}{^}","-STYI":"{^<>^}{#Left}{^}",
+
+  "-NA":"{^[^}","-SNA":"{^\\{^}","-KN":"{^]^}","-SKN":"{^\\}^}",  
+  "-KNA":"{^[]^}{#Left}{^}","-SKNA":"{^\\{\\}^}{#Left}{^}",
+
+  "-TN":"{^/^}"
+}
