@@ -3,7 +3,7 @@
 メジロ式速記は、Plover用の日本語の速記システムです
 
 直観的な**子音＋母音＋追加音**の組み合わせで
-片手で1音節、両手で2音節を一気に入力できます
+片手で1音節、両手で2音節を一気に入力でき、
 
 両手の10本指をフル活用した効率的な日本語入力を体験できます
 
@@ -13,13 +13,20 @@
 
 もちろん一般的なキーボードでも使うことはできますが、より快適に使うためには親指のキーが分かれているものを使うことをおすすめします
 
-![image](https://github.com/user-attachments/assets/1235dff7-703a-4e50-8ba2-946b88834139)
+<img width="1914" height="621" alt="Mejiro_v2_Layout_NoBlank" src="https://github.com/user-attachments/assets/f4b1274c-da07-4918-b303-aa2949c763c2" />
 
 ```
 # S T Y I U    U I Y T S *
 # S K N A U    U A N K S *
          n      n             
         t k    k t
+```
+GeminiPRでは以下のようなレイアウトを想定しています
+```
+#1 S1 T P H *1    *3 F P L T D
+#2 S2 K W R *2    *4 R B G S Z
+           #3     #4             
+           A O    E U
 ```
 キーボードを使う場合は次のような配列を想定しています
 ```
@@ -60,14 +67,14 @@ tab a s d f g h j k l ; '
 | は行   | `TK`   |
 | ま行   | `SKN`  |
 | ら行   | `ST`   |
-| わ行   | `STN`  |
+| わ行   | `SK`  |
 | が行   | `KN`   |
 | ざ行   | `NS`   |
 | だ行   | `TN`   |
 | ば行   | `TKN`  |
 | パ行   | `STK`  |
-| ファ行 | `SK`   |
-| ぁ行   | `STKN` |
+| ファ行 | `STKN`   |
+| ぁ行   | `STN` |
 
 「段」と「行」を組み合わせることで五十音を作ることができます
 
@@ -93,15 +100,50 @@ tab a s d f g h j k l ; '
 
 このキーを組み合わせると音の最後に二音目の音を追加できます.
 
-(1)「ん・つ・く・ち・き」は特に音読みの漢字に対して使います
+#### (例1)「ん・つ・く・ち・き」は特に音読みの漢字に対して使います
 
-#### (例)
 `TAk` `SAn` →「沢山」
 
-(2) 「ー」は外来語に対して使います
+#### (例2) 「ー」は外来語に対して使います
 
-#### (例)
 `TAntk` `SNAn` →「ターザン」
+
+### 助詞
+
+親指だけで入力した時は追加音ではなく助詞が出力されます
+
+|入力| 左 | 右 |
+|---|----|---|
+| n |変換 |確定|
+| t | に | は |
+| k | の | が |
+|nt | と | 。 |
+|nk | を | 、 |
+|tk | で | も |
+|ntk| か | ー |
+
+基本的に「左+右」の順に出力されます
+
+#### (例1) 基本「左+右」
+
+`nt-t` → 「とは」
+
+`tk-tk` → 「でも」
+
+`n-n` → ［変換して確定］
+
+#### (例2) 対角のnと同時で「〜、」
+
+`nt-nt` → 「とは、」
+
+`n-k` → 「が、」
+
+#### (例3) 「〜が」は「の〜」
+※ 「とが」「のが」は例外的にそのまま
+
+`tk-k` → 「ので」
+
+`t-k` → 「のに」
 
 ---
 ### 特別な母音(Special Vowels)
@@ -136,7 +178,7 @@ tab a s d f g h j k l ; '
 同じストロークでも直前の母音によって結果が変化します
 
 `TNA` `K-SK` → 「だから」
-`TO` `K-SK` → 「ところ」
+`TAU` `K-SK` → 「ところ」
 
 ---
 ### 特殊なキー(Special keys)
@@ -146,14 +188,48 @@ tab a s d f g h j k l ; '
 | 繰り返し  | `#` |
 | 略語符号  | `*` |
 
-※`#`を押すと,全体の出力がもう一度繰り返されます.
+`#`を押すと,全体の出力がもう一度繰り返されます.
 
 `TKAn-Tntk` →「ハンター」
 
 `TKAn#Tntk` →「ハンターハンター」
 
-※`*`は、略語か音節ストロークかの区別に使います
-  Mejiro_users.jsonで登録する略語には最後に*をつけることを推奨しています
+`*`は一部の特別な入力や略語のために使います
+
+#### (1) 最後の文字が「ん」かつ最後から二文字目の母音が「い」の時は、最後に「ぐ」を追加する機能
+
+`TKNY-KIn` → 「バイキン」
+
+`TKNY-KIn*` → 「バイキング」
+
+#### (2) 「〜し」で終わる語の場合、最後に「て」を追加する機能
+
+`SAU-SI*` → 「そして」
+
+`TY-SI*` → 「たいして」
+
+#### (3) ユーザ略語として登録されておらず、かつ上記2つの条件に当てはまらない場合は最後に「する」を追加したり、親指キーで助詞を追加したりする機能
+
+`SIAU-*` → 「そうする」
+
+`TYIA-S*` → 「訂正する」
+
+`KTIk-TAU*` → 「ひとの」
+
+`KAUn-Tntk*` → 「ことです。」
+
+＊ 一般略語に登録すれば、最後に助詞を追加する機能を使うことができます
+(ただし、親指のキーは助詞に使うため略語のキーとして登録することはできません)
+
+#### (例)
+
+`KAnk-KNn*` → 「考えを、」
+
+`SKNIA-SNI*` → 「メジロ式速記」
+
+`SKNIAtk-SNInt*` → 「メジロ式速記では、」
+
+ユーザ辞書に登録する略語は、基本的に固有名詞や極端に長い語です
 
 #### (例)
 
@@ -161,37 +237,20 @@ tab a s d f g h j k l ; '
 
 `KAU-SKYU*` → 「コミュニケーション」
 
-また、略語として登録してなくても、最後の文字が「ん」かつ最後から二文字目の母音が「い」の時は、最後に「ぐ」を追加して出力する機能もあります
-
-#### (例)
-
-`TKNY-KIn` → 「バイキン」
-
-`TKNY-KIn*` → 「バイキング」
-
 ---
+
 ## もっと詳しく知りたい方は(More To Know the Theory)
 
-最新情報は[**X**](https://x.com/jeebis_steno?s=21&t=mUKcrYIKFRt4MZLfN8wIjg)や[**note**](https://note.com/jeebis_keyboard)をご確認ください
+最新情報は[**X**](https://x.com/jeebis_steno)や[**note**](https://note.com/jeebis_keyboard)をご確認ください
 
 ---
 ## メジロ式をインストールする(Installing Mejiro)
 
-このプラグインをPyPIでないプラグインとしてインストールします.
+このプラグインをPyPIでないプラグインとしてインストールします
 
-(手動でこれをインストールする場合は``Plover wiki``の[Plugins not on PyPI](https://plover.wiki/index.php/Plugins#Plugins_not_on_PyPI)に従ってください.)
-
-Install this plugin as a non-PyPI plugin.
-
-(To install this manually, follow the section under [Plugins not on PyPI](https://plover.wiki/index.php/Plugins#Plugins_not_on_PyPI) on the Plover wiki.)
+(手動でこれをインストールする場合は``Plover wiki``の[Plugins not on PyPI](https://plover.wiki/index.php/Plugins#Plugins_not_on_PyPI)に従ってください)
 
 ---
 ## メジロ式を起動する(Activating Mejiro)
 
-このプラグインをインストールしたあと,次のようにしてPloverで起動します.
-
-Ploveメニューの歯車マーク``configuration``から``Systems``タブを開き,``Mejiro``システムを選択して起動します.
-
-After installing this plugin, you need to turn it on in Plover:
-
-In Plover's ``configuration``, go to the ``Systems`` tab, and change the active system to ``Mejiro``.
+このプラグインをインストールしたあと、Ploveメニューの歯車マーク``configuration``から``Systems``タブを開き、``Mejiro``システムを選択して起動します

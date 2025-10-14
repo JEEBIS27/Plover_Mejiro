@@ -1,12 +1,9 @@
 {
   "#" : "=repeat_last_translation",
   "tk#": "{PLOVER:TOGGLE}",
-  "t#": "{PLOVER:TOGGLE_DICT:!mejiro_romaji.py,!mejiro_kana.py}",
-  "k#": "{PLOVER:SWITCH_SYSTEM:English Stenotype}{#alt(shift(0))}{^}",
+  "t#": "{PLOVER:SWITCH_SYSTEM:English Stenotype}{#F13}{^}",
 
-  "n-": "{^}{#Space}{^}","-n": "{^}{#Return}{^}","n-n": "{^}{#Space}{#Return}{^}",
-
-  "-U":"=undo","-AU":"{#BackSpace}",
+  "-U":"=undo","-AU":"{#BackSpace}","-IU":"{#Delete}",
   "-S":"{#Escape}",
 
                        "-Y":"{^}{#Up}{^}",

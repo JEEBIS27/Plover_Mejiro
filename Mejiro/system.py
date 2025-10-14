@@ -46,8 +46,7 @@ KEYMAPS = {
         '-n' : '#4',
         '-t' : ('-U'),
         '-k' : ('-E'),
-        '*' : ('-D','-Z'),
-        'arpeggiate' : '#5'
+        '*' : ('-D','-Z')
         },
         'Keyboard': {
         'S-' : ('a','q'),
@@ -78,7 +77,7 @@ KEYMAPS = {
         }
 }
 
-DICTIONARIES_ROOT = 'asset:Mejiro:dictionaries'
-DEFAULT_DICTIONARIES = ('Mejiro_Users.json','Mejiro_Commands.json','Mejiro_Kana.py')
+DICTIONARIES_ROOT = 'asset:Mejiro:dictionaries/default/'
+DEFAULT_DICTIONARIES = ('mejiro_users.json','mejiro_commands.json','mejiro_base.py')
 
 
