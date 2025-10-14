@@ -43,7 +43,7 @@ COMPLEX_DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文�
     "YIAUn": ("o", "い"),
 }
 # 親指を使った二重母音のストロークをここにも再掲
-exception_particle = ["Yn", "YIn", "YIUn", "IAUn", "YIAUn"]
+exception_particle = ["YIn", "YIUn", "IAUn", "YIAUn"]
 
 # 行段のアルファベットからひらがなへのマッピング
 ROMA_TO_KANA_MAP = {
