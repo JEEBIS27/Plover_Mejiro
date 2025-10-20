@@ -13,6 +13,7 @@
 import re
 from Mejiro.dictionaries.default.settings import (exception_particle, henkan_command, ABSTRACT_ABBREVIATIONS_MAP)
 from Mejiro.dictionaries.default.func import (stroke_to_kana, extra_sound, joshi)
+from Mejiro.dictionaries.default.verb import stroke_to_verb
 
 LONGEST_KEY = 1
 LAST_VOWEL_STROKE = "A"
@@ -62,13 +63,20 @@ def lookup(key):
     main_base = (left_kana + left_extra_sound + right_kana + right_extra_sound)
     # 主要助詞を変数に格納
     main_joshi = joshi(left_particle_stroke, right_particle_stroke)
+    # 動詞変換処理
+    verb = stroke_to_verb(left_conso_stroke + left_vowel_stroke + '-' + right_conso_stroke + right_vowel_stroke, left_particle_stroke, right_particle_stroke, asterisk)
 
     # メインの変換処理
     if not main_kana and main_joshi and not asterisk:
         result = main_joshi
         print("助詞")
+    elif verb and not left_kana and right_kana and not left_extra_sound:
+        result = verb * (2 if hyphen == "#" else 1)
+        print("動詞")
     elif asterisk:
-        if main_kana in ABSTRACT_ABBREVIATIONS_MAP:
+        if verb:
+            result = verb * (2 if hyphen == "#" else 1)
+        elif main_kana in ABSTRACT_ABBREVIATIONS_MAP:
             result = ABSTRACT_ABBREVIATIONS_MAP[main_kana] * (2 if hyphen == "#" else 1)
             result += (main_joshi.replace("ー", "です").replace("ん", "です。" + henkan_command))
             print("略語「" + result + "」")
@@ -78,9 +86,12 @@ def lookup(key):
         elif main_base[-1] == 'し':
             result = main_base + 'て'
             print("～して")
+        elif main_base[-1] == 'ま':
+            result = main_base + 'す'
+            print("～ます")
         else:
             result = main_kana * (2 if hyphen == "#" else 1)
-            result += (main_joshi.replace("ー", "です").replace("ん", "です。" + henkan_command)) if main_joshi else "する"
+            result += (main_joshi.replace("ー", "です").replace("ん", "です。" + henkan_command)) if main_joshi else ""
             print(main_kana + "(" + stroke + ")の略語は登録されていません")
             
     elif right_particle_stroke not in ["","n"] and (left_conso_stroke or left_vowel_stroke) and not right_conso_stroke and not right_vowel_stroke:
