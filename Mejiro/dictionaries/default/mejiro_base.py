@@ -91,7 +91,7 @@ def lookup(key):
             print("～ます")
         else:
             result = main_kana * (2 if hyphen == "#" else 1)
-            result += (main_joshi.replace("ー", "です").replace("ん", "です。" + henkan_command)) if main_joshi else ""
+            result += (main_joshi.replace("ー", "です").replace("ん", "です。" + henkan_command)) if main_joshi else "する"
             print(main_kana + "(" + stroke + ")の略語は登録されていません")
             
     elif right_particle_stroke not in ["","n"] and (left_conso_stroke or left_vowel_stroke) and not right_conso_stroke and not right_vowel_stroke:
