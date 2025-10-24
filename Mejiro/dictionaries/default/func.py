@@ -2,7 +2,7 @@ from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, COMPLEX_DIP
                                                   conso_stroke_to_roma, vowel_stroke_to_roma, ROMA_TO_KANA_MAP,
                                                   PARTICLE_KEY_LIST, SECOND_SOUND_LIST,
                                                   L_PARTICLE, R_PARTICLE,
-                                                  henkan_command, EXCEPTION_STROKE_MAP)
+                                                  COMMA, henkan_command, EXCEPTION_STROKE_MAP)
 
 def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str) -> str:
     
@@ -90,13 +90,13 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
         left_joshi = L_PARTICLE[l_index]
         right_joshi = R_PARTICLE[r_index]
         if left_particle_stroke == "n":
-            joshi = right_joshi + '、' + henkan_command
+            joshi = right_joshi + COMMA
         elif right_particle_stroke in ["k", "nk"] and left_joshi not in ["", "の"]:
             joshi = "の" + left_joshi
             if "n" in right_particle_stroke:
-                joshi += '、' + henkan_command
+                joshi += COMMA
         else:
             joshi = left_joshi + right_joshi
             if "n" in right_particle_stroke :
-                joshi += '、' + henkan_command
+                joshi += COMMA
     return joshi
