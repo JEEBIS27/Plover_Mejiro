@@ -1,6 +1,7 @@
 {
   "SKNIA-SAUtk*": "{^めじろしきそっき^}",
   "SKNIA-SInk*": "{^めじろしき^}",
+  "SKNIA-SNI*": "{^めじろ^}",
   "SN-S*": "{^SNS^}",
   "A-I*": "{^AI^}",
   "KNUntk-KN*": "{^Google^}",
@@ -27,6 +28,5 @@
   "YAU-STAU*": "{^よろしく^}",
   "TA-TAU*": "{^たとえば、}{#Space}{#Return}{^}",
   "KNU-TY*": "{^ぐたいてきには、}{#Space}{#Return}{^}",
-  "TA-SI*": "{^たしかに、^}{#Space}{#Return}{^}",
-  "t-tk*": "{^にもかかわらず、}{#Space}{#Return}{^}"
+  "TA-SI*": "{^たしかに、^}{#Space}{#Return}{^}"
 }
