@@ -70,31 +70,35 @@ PARTICLE_KEY_LIST = ["", "n", "t", "k", "tk", "nt", "nk", "ntk"]
 # 追加音の定義
 SECOND_SOUND_LIST = ["", "ん", "つ", "く", "っ", "ち", "き", "ー"]
 
+# 変換&確定をよく使うので変数にしておく
+henkan_command = "}{#Space}{#Return}{"
+
+# ドット、コンマの定義(変換コマンドはオプションです)
+DOT = "。" + henkan_command
+COMMA = "、" + henkan_command
+
 # 左側の助詞文字列の定義
-L_PARTICLE = ["", "、", "に", "の", "で", "と", "を", "か"]
+L_PARTICLE = ["", COMMA, "に", "の", "で", "と", "を", "か"]
 
 # 右側の助詞文字列の定義
-R_PARTICLE = ["", "、", "は", "が", "も", "は、", "が、", "も、"]
-
-# 変換&句読点をよく使うので変数にしておく
-henkan_command = "}{#Space}{#Return}{"
+R_PARTICLE = ["", COMMA, "は", "が", "も", "は" + COMMA, "が" + COMMA, "も" + COMMA]
 
 # 例外的な助詞ストロークのマッピング
 EXCEPTION_STROKE_MAP = {
     "-n": "}{#Return}{", "n-": "}{#Space}{", "n-n": henkan_command, 
-    "-nt": '。' + henkan_command, "-nk": '、' + henkan_command, "-ntk": "ー",
-    "n-nt": "?", "n-nk": "!", "n-ntk": "ん"
+    "-nt": DOT, "-nk": COMMA, "-ntk": "や",
+    "n-nt": "?", "n-nk": "!", "n-ntk": "や" + COMMA,
 }
 
 # 略語の定義
 ABSTRACT_ABBREVIATIONS_MAP = {
-    "": "する",
     "とこ": "ところ",
     "とお": "とおり",
     "あた": "あたり",
     "つも": "つもり",
+    "すべ": "すべて",
+    "なが": "ながら",
     "おか": "おかげ",
     "しご": "しごと",
     "であ": "である",
-    "でき": "できる",
 }
