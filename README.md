@@ -13,7 +13,8 @@
 
 もちろん一般的なキーボードでも使うことはできますが、より快適に使うためには親指のキーが分かれているものを使うことをおすすめします
 
-<img width="1914" height="621" alt="Mejiro_v2_Layout_NoBlank" src="https://github.com/user-attachments/assets/f4b1274c-da07-4918-b303-aa2949c763c2" />
+![image](https://github.com/user-attachments/assets/4488c707-be26-44e2-8471-e12992a61253)
+
 
 ```
 # S T Y I U    U I Y T S *
@@ -224,19 +225,15 @@ tab a s d f g h j k l ; '
 
 #### (例)
 
-`KAnk-KNn*` → 「考えを、」
-
-`SKNIA-SNI*` → 「メジロ式速記」
-
-`SKNIAtk-SNInt*` → 「メジロ式速記では、」
+`AUtk-KA*` → 「おかげで」
 
 ユーザ辞書に登録する略語は、基本的に固有名詞や極端に長い語です
 
 #### (例)
 
-`KAU-SKYU` → 「コミュ」
+`KAU-SKNYU` → 「コミュ」
 
-`KAU-SKYU*` → 「コミュニケーション」
+`KAU-SKNYU*` → 「コミュニケーション」
 
 ---
 
