@@ -11,9 +11,9 @@
 ## レイアウト(Layout)
 このシステムは、メジロ式専用キーボード（Mejiro31）や、速記用キーボード（Uni v4）、スペースバーが2つあるキーボードで使うことができます
 
-もちろん一般的なキーボードでも使うことはできますが、より快適に使うためには親指のキーが分かれているものを使うことをおすすめします
+![image](https://github.com/user-attachments/assets/8af6ceb9-730f-4d41-a531-8ac2b05dc7b9)
 
-<img width="1914" height="621" alt="Mejiro_v2_Layout_NoBlank" src="https://github.com/user-attachments/assets/f4b1274c-da07-4918-b303-aa2949c763c2" />
+もちろん一般的なキーボードでも使うことはできますが、より快適に使うためには親指のキーが分かれているものを使うことをおすすめします
 
 ```
 # S T Y I U    U I Y T S *
