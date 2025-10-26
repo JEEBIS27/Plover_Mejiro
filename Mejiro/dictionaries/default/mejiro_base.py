@@ -91,7 +91,7 @@ def lookup(key):
             print("～ます")
         else:
             result = main_kana
-            result += (main_joshi.replace("や" + COMMA, "です" + DOT).replace("や", "です")) if main_joshi else "する"
+            result += (main_joshi.replace("や" + COMMA, "である").replace("や", "だ")) if main_joshi else "です"
             print(main_kana + "(" + stroke + ")の略語は登録されていません")
             
     elif right_particle_stroke not in ["","n"] and (left_conso_stroke or left_vowel_stroke) and not right_conso_stroke and not right_vowel_stroke:
