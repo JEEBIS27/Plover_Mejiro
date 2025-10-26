@@ -83,12 +83,6 @@ def lookup(key):
         elif main_kana[-1] in ['い', 'き', 'し', 'ち', 'に', 'ひ', 'み', 'り', 'ぎ', 'じ', 'ぢ', 'び', 'ぴ', 'ぃ'] and main_base[-1] == 'ん':
             result = (main_base + 'ぐ')
             print("～ing")
-        elif main_base[-1] == 'し':
-            result = main_base + 'て'
-            print("～して")
-        elif main_base[-1] == 'ま':
-            result = main_base + 'す'
-            print("～ます")
         else:
             result = main_kana
             result += (main_joshi.replace("や" + COMMA, "である").replace("や", "だ")) if main_joshi else "です"
