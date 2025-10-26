@@ -320,7 +320,7 @@ tab a s d f g h j k l ; '
 1. Ploverメニューの``Tools``から``Plugins Manager``をクリックします
 2. 一番右下の``GIT``ボタンをクリックし、``Install from Git repo``を開きます
 3. ``https://github.com/JEEBIS27/Plover_Mejiro``を入力して``OK``ボタンをクリックします
-4. ``Successfully installed Mejiro``と表示されたらインストール完了です
+4. ``Successfully installed Mejiro-2.X.X``のように表示されたらインストール完了です
 ---
 ## メジロ式を起動する(Activating Mejiro)
 
