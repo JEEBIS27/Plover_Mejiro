@@ -91,7 +91,7 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
         right_joshi = R_PARTICLE[r_index]
         if left_particle_stroke == "n":
             joshi = right_joshi + COMMA
-        elif right_particle_stroke in ["k", "nk"] and left_joshi not in ["", "の"]:
+        elif right_particle_stroke in ["k", "nk"] and left_joshi:
             joshi = "の" + left_joshi
             if "n" in right_particle_stroke:
                 joshi += COMMA

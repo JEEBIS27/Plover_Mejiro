@@ -88,6 +88,7 @@ EXCEPTION_STROKE_MAP = {
     "-n": "}{#Return}{", "n-": "}{#Space}{", "n-n": henkan_command, 
     "-nt": DOT, "-nk": COMMA, "-ntk": "や",
     "n-nt": "?", "n-nk": "!", "n-ntk": "や" + COMMA,
+    "k-k": "のほう", "nt-k": "ということ", "ntk-k": "かどうか"
 }
 
 # 略語の定義
