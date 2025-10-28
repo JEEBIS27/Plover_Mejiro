@@ -53,8 +53,10 @@ def lookup(key):
     is_found_exception = [False, False] # 初期化
     result = "" # 初期化
     # 左右のかなを変数に格納
-    left_kana = stroke_to_kana(left_conso_stroke, left_vowel_stroke, left_particle_stroke)
-    right_kana = stroke_to_kana(right_conso_stroke, right_vowel_stroke, right_particle_stroke)
+    left_kana_list = stroke_to_kana(left_conso_stroke, left_vowel_stroke, left_particle_stroke)
+    right_kana_list = stroke_to_kana(right_conso_stroke, right_vowel_stroke, right_particle_stroke)
+    left_kana, left_conso, left_vowel = left_kana_list
+    right_kana, right_conso, right_vowel = right_kana_list
     main_kana = left_kana + right_kana
     # 左右の追加音を変数に格納
     left_extra_sound = ("" if left_vowel_stroke + left_particle_stroke in exception_particle else extra_sound(left_particle_stroke))
@@ -64,7 +66,7 @@ def lookup(key):
     # 主要助詞を変数に格納
     main_joshi = joshi(left_particle_stroke, right_particle_stroke)
     # 動詞変換処理
-    verb = stroke_to_verb(left_conso_stroke + left_vowel_stroke, right_conso_stroke + right_vowel_stroke, left_particle_stroke, right_particle_stroke, main_kana, hyphen, asterisk)
+    verb = stroke_to_verb(left_conso_stroke + left_vowel_stroke + '-' + right_conso_stroke + right_vowel_stroke, right_conso, right_vowel_stroke, left_particle_stroke, right_particle_stroke, left_kana, right_kana, hyphen, asterisk)
 
     # メインの変換処理
     if not main_kana and main_joshi and not asterisk:

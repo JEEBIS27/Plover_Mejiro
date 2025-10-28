@@ -38,123 +38,68 @@ CONJUGATE_SIMO_MAP = { # (下一段活用限定)
     'r': ['れ', 'れ', 'れる', 'れ', 'れよ', 'れれ', 'れろ'],
     'w': ['え', 'え', 'える', 'え', 'えよ', 'えれ', 'えろ'],
 }
-SAHEN_LIST = ['し', 'し', 'する', 'し', 'しよ', 'すれ', 'しろ']
+SAHEN_LIST = ['し', 'し', 'する', 'し', 'しよ', 'すれ', 'しろ'] # "*"
+KAHEN_LIST = ['こ', 'き', 'くる', 'き', 'こよ', 'くれ', 'こい'] # "K-", "-KAU"
 VERB_GODAN_MAP = { # ストローク: [語幹, 行]
-    "-K": ["", 'k'],# ～く
-    "-KA": ["", 'k'],# ～く
-    "-KN": ["", 'g'],# ～ぐ
-    "-KNA": ["", 'g'],# ～ぐ
-    "-S": ["", 's'],# ～す
-    "-SA": ["", 's'],# ～す
-    "-T": ["", 't'],# ～つ
-    "-TA": ["", 't'],# ～つ
-    "-N": ["", 'n'],# ～ぬ
-    "-NA": ["", 'n'],# ～ぬ
-    "-TKN": ["", 'b'],# ～ぶ
-    "-TKNA": ["", 'b'],# ～ぶ
-    "-SKN": ["", 'm'],# ～む
-    "-SKNA": ["", 'm'],# ～む
-    "-ST": ["", 'r'],# ～る
-    "-STA": ["", 'r'],# ～る
-    "-SK": ["", 'w'],# ～う
-    "-ASK": ["", 'w'],# ～う
+    "SI-SU": ["しめ", 's'],# 示す
     "-TN": ["で", 's'],# です
-    "-SKNA": ["ま", 's'],# ます
-    "I-K": ["い", 'k'],# 行く
-    "TA-TN": ["いただ", 'k'],# 頂く
-    "AU-K": ["お", 'k'],# 置く
-    "KA-K": ["か", 'k'],# 書く
+    "TA-TNA": ["いただ", 'k'],# 頂く
     "KI-TU": ["きがつ", 'k'],# 気が付く
     "KI-TNU": ["きづ", 'k'],# 気付く
-    "TA-T": ["たた", 'k'],# 叩く
-    "TU-K": ["つ", 'k'],# 付く
-    "NA-K": ["な", 'k'],# 泣く
-    "TKA-T": ["はたら", 'k'],# 働く
-    "TKI-K": ["ひ", 'k'],# 引く
+    "TA-TA": ["たた", 'k'],# 叩く
+    "TKA-TA": ["はたら", 'k'],# 働く
     "I-SAU": ["いそ", 'g'],# 急ぐ
-    "KA-S": ["かか", 's'],# 欠かす
-    "TKA-N": ["はな", 's'],# 話す
-    "SKNIA-S": ["め", 's'],# 召す
-    "TA-T": ["た", 't'],# 立つ
-    "SI-N": ["し", 'n'],# 死ぬ
-    "SKNA-N": ["まな", 'b'],# 学ぶ
-    "TKA-S": ["はさ", 'm'],# 挟む
-    "TKU-K": ["ふく", 'm'],# 吹く
-    "A-": ["あ", 'r'],# 有る
+    "I-KA": ["いか", 's'],# 活かす
+    "AU-TAU": ["おと", 's'],# 落とす
+    "KA-KA": ["かか", 's'],# 欠かす
+    "TKA-NA": ["はな", 's'],# 話す
+    "SKNI-NA": ["みな", 's'],# 見なす
+    "SKNA-NA": ["まな", 'b'],# 学ぶ
+    "TKA-SA": ["はさ", 'm'],# 挟む
+    "TKU-KU": ["ふく", 'm'],# 吹く
     "A-KN": ["あが", 'r'],# 上がる
     "A-TA": ["あた", 'r'],# 当る
-    "I-ST": ["い", 'r'],# 要る
     "AU-SKA": ["おわ", 'r'],# 終わる
-    "-YA": ["や", 'r'],# やる
-    "KA-SK": ["かわ", 'r'],# 変わる
-    "KNA-TKN": ["がんば", 'r'],# 頑張る
-    "SI-ST": ["し", 'r'],# 知る
+    "KA-SKA": ["かわ", 'r'],# 変わる
+    "KNA-TKNA": ["がんば", 'r'],# 頑張る
     "SI-SKNA": ["しま", 'r'],# 閉まる
     "TU-SKNAU": ["つも", 'r'],# 積もる
     "TAU-AU": ["とお", 'r'],# 通る
-    "NA-ST": ["な", 'r'],# 成る
     "TKY-ST": ["はい", 'r'],# 入る
+    "TKA-KA": ["はか", 'r'],# 計る
+    "TKA-TKIA": ["はべ", 'r'],# 侍る
     "TKI-KA": ["ひか", 'r'],# 光る
-    "SKA-K": ["わか", 'r'],# 分かる
+    "YA-": ["や", 'r'],# やる
+    "-YA": ["や", 'r'],# やる
+    "SKA-KA": ["わか", 'r'],# 分かる
     "-A": ["あ", 'w'],# 会う
     "I-": ["い", 'w'],# 言う
-    "AU-SKN": ["おも", 'w'],# 思う
+    "AU-SKNAU": ["おも", 'w'],# 思う
     "SI-SKNIAU": ["しま", 'w'],# 仕舞う
     "TU-KA": ["つか", 'w'],# 使う
-    "TAU-SKN": ["ともな", 'w'],# 伴う
+    "TAU-SKNAU": ["ともな", 'w'],# 伴う
+    "SKNA-TAU": ["まと", 'w'],# 纏う
     "SKNAU-STA": ["もら", 'w'],# 貰う
+    "TKA-STA": ["はら", 'w'],# 払う
+    "SKA-STA": ["わら", 'w'],# 笑う
 }
 VERB_KAMI_MAP = { # ストローク: [語幹, 行]
-    "-KI": ["", 'k'],# ～きる
-    "-KNI": ["", 'g'],# ～ぎる
-    "-SNI": ["", 'z'],# ～じる
-    "-TI": ["", 't'],# ～ちる
-    "-NI": ["", 'n'],# ～にる
-    "-TKNI": ["", 'b'],# ～びる
-    "-SKNI": ["", 'm'],# ～みる
-    "-STI": ["", 'r'],# ～りる
-    "-I": ["", 'w'],# ～いる
-    "-SKI": ["", 'w'],# ～いる
-    "I-KI": ["い", 'k'],# 生きる
-    "AU-KI": ["お", 'k'],# 起きる
-    "TNIA-KI": ["で", 'k'],# 出来る
-    "AU-TI": ["お", 't'],# 落ちる
     "KA-SNI": ["かん", 'z'],# 感じる
-    "KIAU-SNI": ["こう", 'z'],# 講じる
-    "SIY-SNI": ["しょう", 'z'],# 生じる
-    "SI-SNI": ["しん", 'z'],# 信じる
-    "SIAU-SNI": ["そう", 'z'],# 総じる
-    "TIAU-SNI": ["とう", 'z'],# 投じる
-    "NAU-TKNI": ["の", 'b'],# 伸びる
+    "TNA-SNI": ["だん", 'z'],# 断じる
+    "KA-SKNI": ["かんが", 'm'],# 鑑みる
 }
 VERB_SIMO_MAP = { # ストローク: [語幹, 行]
-    "-KIA": ["", 'k'],# ～ける
-    "-KNIA": ["", 'g'],# ～げる
-    "-SIA": ["", 's'],# ～せる
-    "-SNIA": ["", 'z'],# ～ぜる
-    "-TIA": ["", 't'],# ～てる
-    "-TNIA": ["", 'd'],# ～でる
-    "-NIA": ["", 'n'],# ～ねる
-    "-TKIA": ["", 'h'],# ～へる
-    "-TKNIA": ["", 'b'],# ～べる
-    "-SKNIA": ["", 'm'],# ～める
-    "-STIA": ["", 'r'],# ～れる
-    "-IA": ["", 'w'],# ～える
-    "-SKIA": ["", 'w'],# ～える
     "TU-TN": ["つづ", 'k'],# 続ける
-    "KA-IA": ["かえ", 'k'],# 変える
-    "KAU-KNIA": ["こ", 'g'],# 焦げる
-    "YA-SKNIA": ["や", 'm'],# やめる
     "TKA-SNI": ["はじ", 'm'],# 始める
+    "SKNAU-TAU": ["もと", 'm'],# 求める
     "KA-KN": ["かんが", 'w'],# 考える
-    "KI-IA": ["き", 'w'],# 消える
-    "SA-S": ["ささ", 'w'],# 支える
+    "SA-SA": ["ささ", 'w'],# 支える
 }
 # 文語調の活用
 AUXILIARY_VERB_LEFT_MAP = { # ストローク: [活用形, 助動詞]
     "": [[None, ""], [None, ""]],
     "n": [[3, "てい"], [3, "て"]],
-    "t": [[0, "せ"], [3, "てみ"]],
+    "t": [[0, "せ"], [3, "ちゃ"]],
     "k": [[0, "れ"], [5, ""]],
     "nt": [[0, "せていただ"], [0, "せて"]],
     "nk": [[0, "れてい"], [5, "て"]],
@@ -180,8 +125,8 @@ AUXILIARY_VERB_EXCEPTION_MAP = { # 左がntkのときの例外処理
     "tk": [[2, "こと"], [1, "ますか"]],
     "ntk": [[3, "てください"], [1, "ませんか"]],
 }
-def stroke_to_verb(left_kana_stroke, right_kana_stroke, left_particle_stroke, right_particle_stroke, main_kana, hyphen, asterisk):
-    kana_stroke = left_kana_stroke + '-' + right_kana_stroke
+def stroke_to_verb(kana_stroke, right_conso, right_vowel_stroke, left_particle_stroke, right_particle_stroke, left_kana, right_kana, hyphen, asterisk):
+    main_kana = left_kana + right_kana
     print(f"動詞変換処理: '{kana_stroke}' + '{left_particle_stroke}' + '{right_particle_stroke}' + '{main_kana}' + '{hyphen}' + '{asterisk}'")
     auxiliary_list = [None, ""]
     hash_num = 1 if hyphen == "#" else 0
@@ -192,10 +137,12 @@ def stroke_to_verb(left_kana_stroke, right_kana_stroke, left_particle_stroke, ri
         auxiliary_list[0] = AUXILIARY_VERB_LEFT_MAP[left_particle_stroke][hash_num][0] if left_particle_stroke else AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][hash_num][0]
         auxiliary_list[1] = AUXILIARY_VERB_LEFT_MAP[left_particle_stroke][hash_num][1]
         if hyphen != "#" and left_particle_stroke == "nt": # させていただk
-            auxiliary_list[1] += CONJUGATE_GODAN_MAP['k'][AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][hash_num][0]]
+            auxiliary_list[1] += CONJUGATE_GODAN_MAP['k'][AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][0][0]]
+        elif hyphen == "#" and left_particle_stroke == "t": # ちゃw
+            auxiliary_list[1] += CONJUGATE_GODAN_MAP['w'][AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][0][0]]
         if left_particle_stroke:
             auxiliary_list[1] += AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][0][1]
-            if (left_particle_stroke != "nt" or hyphen == "#") and not right_particle_stroke:
+            if not (hyphen != "#" and left_particle_stroke == "nt" or hyphen == "#" and left_particle_stroke == "t") and not right_particle_stroke:
                 auxiliary_list[1] += "る"
         else:
             auxiliary_list[1] += AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][hash_num][1]
@@ -221,10 +168,36 @@ def stroke_to_verb(left_kana_stroke, right_kana_stroke, left_particle_stroke, ri
         if hyphen != "#" and left_particle_stroke != "ntk" and ('t' in left_particle_stroke or 'k' in left_particle_stroke) or hyphen == "#" and left_particle_stroke == "tk":
             output += "さ" if 't' in left_particle_stroke else "ら"
         output += auxiliary_list[1]
-    elif not right_kana_stroke:
+    elif kana_stroke in ["K-", "-KAU"]:
+        print("カ行変格活用")
+        output = KAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
+        if hyphen != "#" and left_particle_stroke != "ntk" and ('t' in left_particle_stroke or 'k' in left_particle_stroke) or hyphen == "#" and left_particle_stroke == "tk":
+            output += "さ" if 't' in left_particle_stroke else "ら"
+    elif not right_kana:
         print("サ行変格活用")
         output = main_kana + (SAHEN_LIST[auxiliary_list[0]] if (hyphen != "#" or left_particle_stroke not in ['k', 'nk']) else "でき") + auxiliary_list[1]
         output = output.replace("しせ", "させ").replace("しれ", "され").replace("しず", "せず")
+    elif right_vowel_stroke == "" and right_conso in ['k', 'g', 's', 't', 'n', 'b', 'm', 'r', 'w']:
+        print("五段活用(特殊)")
+        output = left_kana + CONJUGATE_GODAN_MAP[right_conso][auxiliary_list[0]]
+        output += auxiliary_list[1].replace("て", "で").replace("た", "だ") if right_conso in ['g', 'n', 'b', 'm'] and auxiliary_list[0] == 3 else auxiliary_list[1]
+        output = output.replace("あらな", "な")
+    elif right_vowel_stroke == "I" and right_conso in ['k', 'g', 'z', 't', 'n', 'b', 'm', 'r', 'w', '']:
+        print("上一段活用(特殊)")
+        if right_conso == '':
+            right_conso = 'w'
+        output = left_kana + CONJUGATE_KAMI_MAP[right_conso][auxiliary_list[0]]
+        if hyphen != "#" and left_particle_stroke != "ntk" and ('t' in left_particle_stroke or 'k' in left_particle_stroke) or hyphen == "#" and left_particle_stroke == "tk":
+            output += "さ" if 't' in left_particle_stroke else "ら"
+        output += auxiliary_list[1]
+    elif right_vowel_stroke == "IA" and right_conso in ['k', 'g', 's', 'z', 't', 'd', 'n', 'h', 'b', 'm', 'r', 'w', '']:
+        print("下一段活用(特殊)")
+        if right_conso == '':
+            right_conso = 'w'
+        output = left_kana + CONJUGATE_SIMO_MAP[right_conso][auxiliary_list[0]]
+        if hyphen != "#" and left_particle_stroke != "ntk" and ('t' in left_particle_stroke or 'k' in left_particle_stroke) or hyphen == "#" and left_particle_stroke == "tk":
+            output += "さ" if 't' in left_particle_stroke else "ら"
+        output += auxiliary_list[1]
     else:
         print("この動詞は登録されていません")
         output = None
