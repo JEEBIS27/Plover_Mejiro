@@ -1,6 +1,9 @@
 # Mejiro設定ファイル
 # 変換ロジックや辞書の設定をここで行う
 
+# タイピングゲーム時の入力法設定
+typing_mode = 0 # 0: ローマ字入力, 1: JISかな入力
+
 # 基本子音ストロークの定義
 # (変更時は配列の右側のアルファベットを変更する)
 # STKN
@@ -74,8 +77,8 @@ SECOND_SOUND_LIST = ["", "ん", "つ", "く", "っ", "ち", "き", "ー"]
 henkan_command = "}{#Space}{#Return}{"
 
 # ドット、コンマの定義(変換コマンドはオプションです)
-DOT = "。" + henkan_command
-COMMA = "、" + henkan_command
+DOT = "。"
+COMMA = "、"
 
 # 左側の助詞文字列の定義
 L_PARTICLE = ["", COMMA, "に", "の", "で", "と", "を", "か"]

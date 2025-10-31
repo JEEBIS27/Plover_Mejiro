@@ -11,24 +11,30 @@
 #                         └─────┴─────┘        └─────┴─────┘
 #mejiro_kana
 import re
-from Mejiro.dictionaries.default.settings import (exception_particle, DOT, COMMA, ABSTRACT_ABBREVIATIONS_MAP)
+from Mejiro.dictionaries.default.settings import (typing_mode, exception_particle, DOT, COMMA, ABSTRACT_ABBREVIATIONS_MAP)
 from Mejiro.dictionaries.default.func import (stroke_to_kana, extra_sound, joshi)
 from Mejiro.dictionaries.default.verb import stroke_to_verb
+from Mejiro.dictionaries.default.translate import HEPBURN_ROMA_MAP, JIS_KANA_MAP
 
 LONGEST_KEY = 1
 LAST_VOWEL_STROKE = "A"
+is_typing_mode = False
 is_found_exception = [False, False]
 
 def lookup(key):
     global LONGEST_KEY
     global LAST_VOWEL_STROKE
+    global is_typing_mode
     global is_found_exception
     assert len(key) <= LONGEST_KEY
     stroke = key[0]
 
-    if stroke == "#":
-        print("key error*")
-        raise KeyError
+    if stroke == "n#":
+        print("typing mode off")
+        is_typing_mode = False
+    if stroke == "#n":
+        print("typing mode on")
+        is_typing_mode = True
     
     regex = re.compile(r"(S?T?K?N?)(Y?I?A?U?)(n?t?k?)(\-?#?)(S?T?K?N?)(Y?I?A?U?)(n?t?k?)(\*?)")
     regex_groups = re.search(regex, stroke)
@@ -95,6 +101,13 @@ def lookup(key):
         print("左+助詞")
     else:
         result = main_base * (2 if hyphen == "#" else 1)
+
+    # タイピングゲーム時の変換処理
+    if is_typing_mode:
+        if typing_mode == 0:
+            result = result.translate(str.maketrans(HEPBURN_ROMA_MAP))
+        else:
+            result = result.translate(str.maketrans(JIS_KANA_MAP))
 
     # 結果の出力(両端に{^ ^}をつけることで、英語の自動スペースを防ぐ)
     print("{^" + result + "^}")

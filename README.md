@@ -119,11 +119,13 @@ tab a s d f g h j k l ; '
 | うう | `YIAU`|
 
 `KY-TYIAU` → 「共通」
+
 `TKNU-STYIAn` → 「ブレイン」
 
 ※ また、母音キーを入力しなかった場合、直前に入力した文字の母音を引き継ぎます
 
 `SYI-TYI` → 「集中」
+
 `SYI-T` → 「集中」
 
 ---
@@ -146,16 +148,19 @@ tab a s d f g h j k l ; '
 #### (1) 基本「左+右」
 
 `nt-t` → 「とは」
+
 `tk-tk` → 「でも」
 
 #### (2) 対角のnと同時で「〜、」
 
 `nt-nt` → 「とは、」
+
 `n-k` → 「が、」
 
 #### (3) 「〜が」→「の〜」
 
 `tk-k` → 「ので」
+
 `t-k` → 「のに」
 
 #### (4) 例外
@@ -204,17 +209,24 @@ tab a s d f g h j k l ; '
 ユーザ略語は、固有名詞や挨拶など、特定の語を簡単に入力するために使います
 
 `KI-TKNAU*` → 「キーボード」
+
 `KAU-SKNYU*` → 「コミュニケーション」
+
 #### 動詞略語(Verb Abbreviations)
 動詞略語は、verb.pyに登録された動詞を入力するために使います
+
 `TKA-TA*` → 「働く」
+
 `KI-TU*` → 「気が付く」
+
 `*` → 「する」
 
 登録の有無にかかわらず、左手だけで活用部分を作ることもできますから、動詞の登録は必須ではありません
 
 その際は、「右側のかな+左の活用部分」という形で動詞が作られます
+
 `KAn-KNA` `-SKNI` → 「鑑みる」
+
 `KAn-KNA` `-IA` → 「考える」
 
 すべての動詞は、追加音のキーで活用形を指定できます
@@ -227,9 +239,10 @@ tab a s d f g h j k l ; '
 | nt|せていただ|なかった|
 | nk|れている|ません|
 | tk|させられ|ました|
-|ntk|   |連用形|
+|ntk|---|連用形|
 
 `KA-KNAn` → 「考えない」
+
 `KItk-TNUt*` → 「気づかせられた」
 
 左が`ntk`のときは特別な活用になります
@@ -246,6 +259,7 @@ tab a s d f g h j k l ; '
 |ntk-ntk|てください|
 
 `SIntk-SNInt*` → 「信じなければ」
+
 `KNAntk-TKNAntk*` → 「頑張ってください」
 
 `#`と同時で他の活用も使えます
@@ -261,6 +275,7 @@ tab a s d f g h j k l ; '
 |ntk|---|まして|
 
 `SInk#SNIn*` → 「信じれてない」
+
 `KNAt#TKNAt*` → 「頑張っちゃった」
 
 `#`と同時かつ、右だけの場合、あるいは左が`ntk`のときは特別な活用になります
@@ -285,6 +300,7 @@ tab a s d f g h j k l ; '
 |ntk#ntk|ませんか|
 
 `SKNA#NA` → 「学んで」
+
 `YAntk#SKNIAntk` → 「やめませんか」
 
 #### 一般略語(Abstract Abbreviations)
@@ -307,18 +323,26 @@ tab a s d f g h j k l ; '
 `KAU-TAU*` → 「ことです」
 
 ---
+### タイピングモード(Typing Mode)
+タイピングモードでは、ローマ字入力あるいはJISかな入力で出力できます
 
+タイピングモードは、`#n`でon、`n#`でoffに切り替えられます
+
+---
 ## もっと詳しく知りたい方は(More To Know the Theory)
 
 最新情報は[**X**](https://x.com/jeebis_steno)や[**note**](https://note.com/jeebis_keyboard)をご確認ください
 
 ---
 ## メジロ式をインストールする(Installing Mejiro)
+
 このプラグインはPloverのプラグインマネージャーからインストールできます
+
 1. Ploverメニューの``Tools``から``Plugins Manager``をクリックします
 2. 一番右下の``GIT``ボタンをクリックし、``Install from Git repo``を開きます
 3. ``https://github.com/JEEBIS27/Plover_Mejiro``を入力して``OK``ボタンをクリックします
 4. ``Successfully installed Mejiro-2.X.X``のように表示されたらインストール完了です
+
 ---
 ## メジロ式を起動する(Activating Mejiro)
 
