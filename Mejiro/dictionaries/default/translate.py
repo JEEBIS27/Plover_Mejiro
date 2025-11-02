@@ -1,3 +1,4 @@
+from Mejiro.dictionaries.default.settings import typing_mode
 HEPBURN_ROMA_MAP = {
     'あ':'a', 'い':'i', 'う':'u', 'え':'e', 'お':'o',
     'ぁ':'la', 'ぃ':'li', 'ぅ':'lu', 'ぇ':'le', 'ぉ':'lo',
@@ -15,7 +16,7 @@ HEPBURN_ROMA_MAP = {
     'や':'ya', 'ゆ':'yu', 'よ':'yo',
     'ゃ':'lya', 'ゅ':'lyu', 'ょ':'lyo',
     'ら':'ra', 'り':'ri', 'る':'ru', 'れ':'re', 'ろ':'ro',
-    'わ':'wa', 'を':'wo', 'ん':'nn', 'っ':'xtsu',
+    'わ':'wa', 'を':'wo', 'ん':'nn', 'っ':'ltsu',
     '-':'-', ',':',', '.':'.',
     'ー':'-', '、':',', '。':'.'
 }
@@ -40,3 +41,11 @@ JIS_KANA_MAP = {
     '-':'|', ',':'<', '.':'>',
     'ー':'|', '、':'<', '。':'>'
 }
+def kana_to_typing_output(kana_string):
+    if typing_mode == 0:
+        output = kana_string.translate(str.maketrans(HEPBURN_ROMA_MAP))
+        output = output.replace("nnk", "nk").replace("nng", "ng").replace("nnc", "nc").replace("nnq", "nq").replace("nns", "ns").replace("nnz", "nz").replace("nnj", "nj").replace("nnt", "nt").replace("nnd", "nd").replace("nnh", "nh").replace("nnb", "nb").replace("nnp", "np").replace("nnf", "nf").replace("nnv", "nv").replace("nnm", "nm").replace("nnr", "nr").replace("nnw", "nw").replace("nnl", "nl")
+        output = output.replace("ltsuk", "kk").replace("ltsug", "gg").replace("ltsuc", "cc").replace("ltsuq", "qq").replace("ltsus", "ss").replace("ltsuz", "zz").replace("ltsuj", "jj").replace("ltsut", "tt").replace("ltsud", "dd").replace("ltsuh", "hh").replace("ltsub", "bb").replace("ltsup", "pp").replace("ltsuf", "ff").replace("ltsuv", "vv").replace("ltsum", "mm").replace("ltsuy", "yy").replace("ltsur", "rr").replace("ltsuw", "ww").replace("ltsul", "ll")
+        return output
+    else:
+        return kana_string.translate(str.maketrans(JIS_KANA_MAP))
