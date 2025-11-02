@@ -11,10 +11,10 @@
 #                         └─────┴─────┘        └─────┴─────┘
 #mejiro_kana
 import re
-from Mejiro.dictionaries.default.settings import (typing_mode, exception_particle, DOT, COMMA, ABSTRACT_ABBREVIATIONS_MAP)
+from Mejiro.dictionaries.default.settings import (exception_particle, DOT, COMMA, ABSTRACT_ABBREVIATIONS_MAP)
 from Mejiro.dictionaries.default.func import (stroke_to_kana, extra_sound, joshi)
 from Mejiro.dictionaries.default.verb import stroke_to_verb
-from Mejiro.dictionaries.default.translate import HEPBURN_ROMA_MAP, JIS_KANA_MAP
+from Mejiro.dictionaries.default.translate import kana_to_typing_output
 
 LONGEST_KEY = 1
 LAST_VOWEL_STROKE = "A"
@@ -104,10 +104,7 @@ def lookup(key):
 
     # タイピングゲーム時の変換処理
     if is_typing_mode:
-        if typing_mode == 0:
-            result = result.translate(str.maketrans(HEPBURN_ROMA_MAP))
-        else:
-            result = result.translate(str.maketrans(JIS_KANA_MAP))
+        result = kana_to_typing_output(result)
 
     # 結果の出力(両端に{^ ^}をつけることで、英語の自動スペースを防ぐ)
     print("{^" + result + "^}")
