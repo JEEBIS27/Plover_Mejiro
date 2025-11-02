@@ -44,7 +44,7 @@ JIS_KANA_MAP = {
 def kana_to_typing_output(kana_string):
     if typing_mode == 0:
         output = kana_string.translate(str.maketrans(HEPBURN_ROMA_MAP))
-        output = output.replace("teli", "thi").replace("deli", "dhi")
+        output = output.replace("teli", "thi").replace("deli", "dhi").replace("ful", "f")
         output = output.replace("shily", "sh").replace("shil", "sh").replace("jily", "j").replace("jil", "j").replace("chily", "ch").replace("chil", "ch").replace("ily", "y")
         output = output.replace("nnk", "nk").replace("nng", "ng").replace("nnc", "nc").replace("nnq", "nq").replace("nns", "ns").replace("nnz", "nz").replace("nnj", "nj").replace("nnt", "nt").replace("nnd", "nd").replace("nnh", "nh").replace("nnb", "nb").replace("nnp", "np").replace("nnf", "nf").replace("nnv", "nv").replace("nnm", "nm").replace("nnr", "nr").replace("nnw", "nw").replace("nnl", "nl")
         output = output.replace("ltsuk", "kk").replace("ltsug", "gg").replace("ltsuc", "cc").replace("ltsuq", "qq").replace("ltsus", "ss").replace("ltsuz", "zz").replace("ltsuj", "jj").replace("ltsut", "tt").replace("ltsud", "dd").replace("ltsuh", "hh").replace("ltsub", "bb").replace("ltsup", "pp").replace("ltsuf", "ff").replace("ltsuv", "vv").replace("ltsum", "mm").replace("ltsuy", "yy").replace("ltsur", "rr").replace("ltsuw", "ww").replace("ltsul", "ll")
