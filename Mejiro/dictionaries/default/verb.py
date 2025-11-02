@@ -98,6 +98,7 @@ VERB_SIMO_MAP = { # ストローク: [語幹, 行]
     "SKNAU-TAU": ["もと", 'm'],# 求める
     "KA-KNA": ["かんが", 'w'],# 考える
     "SA-SA": ["ささ", 'w'],# 支える
+    "SKNA-KNA": ["まちが", 'w'],# 間違える
 }
 # 文語調の活用
 AUXILIARY_VERB_LEFT_MAP = { # ストローク: [活用形, 助動詞]
