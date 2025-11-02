@@ -7,7 +7,7 @@ HEPBURN_ROMA_MAP = {
     'さ':'sa', 'し':'shi', 'す':'su', 'せ':'se', 'そ':'so',
     'ざ':'za', 'じ':'ji', 'ず':'zu', 'ぜ':'ze', 'ぞ':'zo',
     'た':'ta', 'ち':'chi', 'つ':'tsu', 'て':'te', 'と':'to',
-    'だ':'da', 'ぢ':'ji', 'づ':'zu', 'で':'de', 'ど':'do',
+    'だ':'da', 'ぢ':'di', 'づ':'du', 'で':'de', 'ど':'do',
     'な':'na', 'に':'ni', 'ぬ':'nu', 'ね':'ne', 'の':'no',
     'は':'ha', 'ひ':'hi', 'ふ':'fu', 'へ':'he', 'ほ':'ho',
     'ば':'ba', 'び':'bi', 'ぶ':'bu', 'べ':'be', 'ぼ':'bo',
@@ -44,7 +44,8 @@ JIS_KANA_MAP = {
 def kana_to_typing_output(kana_string):
     if typing_mode == 0:
         output = kana_string.translate(str.maketrans(HEPBURN_ROMA_MAP))
-        output = output.replace("ily", "y")
+        output = output.replace("teli", "thi").replace("deli", "thi")
+        output = output.replace("shily", "sh").replace("shil", "sh").replace("jily", "j").replace("jil", "j").replace("chily", "ch").replace("chil", "ch").replace("ily", "y")
         output = output.replace("nnk", "nk").replace("nng", "ng").replace("nnc", "nc").replace("nnq", "nq").replace("nns", "ns").replace("nnz", "nz").replace("nnj", "nj").replace("nnt", "nt").replace("nnd", "nd").replace("nnh", "nh").replace("nnb", "nb").replace("nnp", "np").replace("nnf", "nf").replace("nnv", "nv").replace("nnm", "nm").replace("nnr", "nr").replace("nnw", "nw").replace("nnl", "nl")
         output = output.replace("ltsuk", "kk").replace("ltsug", "gg").replace("ltsuc", "cc").replace("ltsuq", "qq").replace("ltsus", "ss").replace("ltsuz", "zz").replace("ltsuj", "jj").replace("ltsut", "tt").replace("ltsud", "dd").replace("ltsuh", "hh").replace("ltsub", "bb").replace("ltsup", "pp").replace("ltsuf", "ff").replace("ltsuv", "vv").replace("ltsum", "mm").replace("ltsuy", "yy").replace("ltsur", "rr").replace("ltsuw", "ww").replace("ltsul", "ll")
         return output
