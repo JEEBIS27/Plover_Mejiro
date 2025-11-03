@@ -182,7 +182,7 @@ def stroke_to_verb(kana_stroke, right_conso, right_vowel_stroke, left_particle_s
             output += "さ" if 't' in left_particle_stroke else "ら"
         output += auxiliary_list[1]
     # カ変活用
-    elif kana_stroke == "K-" or right_kana == "こ":
+    elif kana_stroke == "K-" or right_conso == 'K' and right_vowel_stroke == 'AU':
         if right_kana == "こ":
             output = left_kana
         output += KAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
