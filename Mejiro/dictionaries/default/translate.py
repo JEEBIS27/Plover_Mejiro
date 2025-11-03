@@ -1,3 +1,4 @@
+import re
 from Mejiro.dictionaries.default.settings import typing_mode
 HEPBURN_ROMA_MAP = {
     'あ':'a', 'い':'i', 'う':'u', 'え':'e', 'お':'o',
@@ -41,13 +42,60 @@ JIS_KANA_MAP = {
     '-':'|', ',':'<', '.':'>',
     'ー':'|', '、':'<', '。':'>'
 }
+
+def create_replacer_function(kana_map):
+
+    sorted_keys = sorted(kana_map.keys(), key=len, reverse=True)
+
+    pattern_string = '|'.join(re.escape(k) for k in sorted_keys)
+
+    def replacer(match):
+        return kana_map[match.group(0)]
+
+    return re.compile(f"({pattern_string})"), replacer
+
+HEPBURN_PATTERN, HEPBURN_REPLACER = create_replacer_function(HEPBURN_ROMA_MAP)
+# 子音(k,g,c,z,s,x,j,d,t,b,p,f,r,v) i(またはu) l (a,e,i,o,u,y)
+YOUON_PATTERN = re.compile(r"([kgczsxjdtbpfrv](?:u|i)?)([l][yaeuiou])")
+
+def youon_replacer(match):
+    # 'ki' から 'i' を削除し、'lya' から 'l' を削除して結合 -> 'k' + 'ya' = 'kya'
+    base_consonant = match.group(1)[:-1] # 'ki' から 'i' を削除 -> 'k'
+    youon_vowel = match.group(2)[1:]      # 'lya' から 'l' を削除 -> 'ya'
+    return base_consonant + youon_vowel
+
+HATSUON_PATTERN = re.compile(r"n(n)([kgcqstjdhbpfvmrywzl])")
+
+HATSUON_REPLACER = r"n\2"
+
+SOKUON_PATTERN = re.compile(r"ltsu([kgcqstjdhbpfvmrywz])")
+
+SOKUON_REPLACER = r"\1\1"
+
+F_V_SHORTEN_PATTERN = re.compile(r"(f|v)ul")
+
+F_V_SHORTEN_REPLACER = r"\1"
+
+SH_CH_J_SHORTEN_PATTERN = re.compile(r"(sh|ch|j|y)il(y?)")
+
+SH_CH_J_SHORTEN_REPLACER = r"\1"
+
 def kana_to_typing_output(kana_string):
     if typing_mode == 0:
-        output = kana_string.translate(str.maketrans(HEPBURN_ROMA_MAP))
-        output = output.replace("teli", "thi").replace("deli", "dhi").replace("ful", "f").replace("vul", "v")
-        output = output.replace("shily", "sh").replace("shil", "sh").replace("jily", "j").replace("jil", "j").replace("chily", "ch").replace("chil", "ch").replace("ily", "y")
-        output = output.replace("nnk", "nk").replace("nng", "ng").replace("nnc", "nc").replace("nnq", "nq").replace("nns", "ns").replace("nnz", "nz").replace("nnj", "nj").replace("nnt", "nt").replace("nnd", "nd").replace("nnh", "nh").replace("nnb", "nb").replace("nnp", "np").replace("nnf", "nf").replace("nnv", "nv").replace("nnm", "nm").replace("nnr", "nr").replace("nnw", "nw").replace("nnl", "nl")
-        output = output.replace("ltsuk", "kk").replace("ltsug", "gg").replace("ltsuc", "cc").replace("ltsuq", "qq").replace("ltsus", "ss").replace("ltsuz", "zz").replace("ltsuj", "jj").replace("ltsut", "tt").replace("ltsud", "dd").replace("ltsuh", "hh").replace("ltsub", "bb").replace("ltsup", "pp").replace("ltsuf", "ff").replace("ltsuv", "vv").replace("ltsum", "mm").replace("ltsuy", "yy").replace("ltsur", "rr").replace("ltsuw", "ww").replace("ltsul", "ll")
+
+        output = HEPBURN_PATTERN.sub(HEPBURN_REPLACER, kana_string)
+
+        output = YOUON_PATTERN.sub(youon_replacer, output)
+
+        output = HATSUON_PATTERN.sub(HATSUON_REPLACER, output)
+
+        output = SOKUON_PATTERN.sub(SOKUON_REPLACER, output)
+
+        output = F_V_SHORTEN_PATTERN.sub(F_V_SHORTEN_REPLACER, output)
+
+        output = SH_CH_J_SHORTEN_PATTERN.sub(SH_CH_J_SHORTEN_REPLACER, output)
+
+        output = output.replace("teli", "thi").replace("deli", "dhi").replace("dolu", "dwu")
         return output
     else:
         return kana_string.translate(str.maketrans(JIS_KANA_MAP))
