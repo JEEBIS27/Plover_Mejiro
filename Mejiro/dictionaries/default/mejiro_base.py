@@ -48,14 +48,6 @@ def lookup(key):
     right_particle_stroke = regex_groups.group(7)
     asterisk = regex_groups.group(8)
 
-    print("LeftConsonant\tLeftVowel\tLeftParticle\tHyphen")
-    print(left_conso_stroke + "\t\t" + left_vowel_stroke + "\t\t" + left_particle_stroke + "\t\t" + hyphen)
-
-    print("RightConsonant\tRightVowel\tRightParticle\tAsterisk")
-    print(right_conso_stroke + "\t\t" + right_vowel_stroke + "\t\t" + right_particle_stroke + "\t\t" + asterisk)
-
-    print(stroke)
-
     is_found_exception = [False, False] # 初期化
     result = "" # 初期化
     # 左右のかなを変数に格納
@@ -74,38 +66,42 @@ def lookup(key):
     # 動詞変換処理
     verb = stroke_to_verb(left_conso_stroke + left_vowel_stroke + '-' + right_conso_stroke + right_vowel_stroke, right_conso, right_vowel_stroke, left_particle_stroke, right_particle_stroke, left_kana, right_kana, hyphen, asterisk)
 
+    message = ""
     # メインの変換処理
     if not main_kana and main_joshi and not asterisk:
         result = main_joshi
-        print("助詞")
+        message = "助詞"
     elif verb and not left_kana and right_kana and not left_extra_sound:
         result = verb
-        print("動詞")
+        message = "動詞略語(*省略)"
     elif asterisk:
         if verb:
             result = verb
+            message = "動詞略語"
         elif main_kana in ABSTRACT_ABBREVIATIONS_MAP:
             result = ABSTRACT_ABBREVIATIONS_MAP[main_kana]
             result += (main_joshi.replace("や" + COMMA, "です" + DOT).replace("や", "です"))
-            print("略語「" + result + "」")
+            message = "一般略語"
         elif main_kana[-1] in ['い', 'き', 'し', 'ち', 'に', 'ひ', 'み', 'り', 'ぎ', 'じ', 'ぢ', 'び', 'ぴ', 'ぃ'] and main_base[-1] == 'ん':
             result = (main_base + 'ぐ')
-            print("～ing")
+            message = "特殊略語：～ing"
         else:
+            message = "かな+助詞"
             result = main_kana
             result += (main_joshi.replace("や" + COMMA, "である").replace("や", "だ")) if main_joshi else "です"
-            print(main_kana + "(" + stroke + ")の略語は登録されていません")
-            
     elif right_particle_stroke not in ["","n"] and (left_conso_stroke or left_vowel_stroke) and not right_conso_stroke and not right_vowel_stroke:
+        message = "左かな+助詞(*省略)"
         result = left_kana + left_extra_sound + joshi("", right_particle_stroke)
-        print("左+助詞")
     else:
+        message = "通常出力"
         result = main_base * (2 if hyphen == "#" else 1)
 
     # タイピングゲーム時の変換処理
     if is_typing_mode:
-        result = kana_to_typing_output(result)
+        translated_result = kana_to_typing_output(result)
+        result = translated_result
+
+    print("|\t" + stroke + "\t|\t" + result + "\t|\t" + message + "\t|\t" + ("on" if is_typing_mode else "off") + "\t|")
 
     # 結果の出力(両端に{^ ^}をつけることで、英語の自動スペースを防ぐ)
-    print("{^" + result + "^}")
     return "{^" + result + "^}"
