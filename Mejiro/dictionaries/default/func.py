@@ -62,7 +62,6 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str) -
         return '', '', ''  # 両方空の場合は空文字を返す
     else:
         # 5. 長音文字を付加して返す
-        print(f"stroke_to_kana: '{base_kana + suffix}', '{conso_roma}', '{vowel_roma}'")
         return base_kana + suffix, conso_roma, vowel_roma
 
 def extra_sound(particle_stroke: str) -> str:

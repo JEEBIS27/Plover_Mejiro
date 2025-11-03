@@ -55,6 +55,7 @@ VERB_GODAN_MAP = { # ストローク: [語幹, 行]
     "TKA-NA": ["はな", 's'],# 話す
     "SKNI-NA": ["みな", 's'],# 見なす
     "SKNA-NA": ["まな", 'b'],# 学ぶ
+    "TU-TU": ["つつ", 'm'],# 包む
     "TKA-SA": ["はさ", 'm'],# 挟む
     "TKU-KU": ["ふく", 'm'],# 吹く
     "A-": ["あ", 'r'],# ある
@@ -63,6 +64,7 @@ VERB_GODAN_MAP = { # ストローク: [語幹, 行]
     "AU-SKA": ["おわ", 'r'],# 終わる
     "KA-SKA": ["かわ", 'r'],# 変わる
     "KNA-TKNA": ["がんば", 'r'],# 頑張る
+    "TU-TNU": ["つづ", 'r'],# 綴る
     "SI-SKNA": ["しま", 'r'],# 閉まる
     "TU-SKNAU": ["つも", 'r'],# 積もる
     "TAU-AU": ["とお", 'r'],# 通る
@@ -94,7 +96,7 @@ VERB_KAMI_MAP = { # ストローク: [語幹, 行]
     "KA-SKNI": ["かんが", 'm'],# 鑑みる
 }
 VERB_SIMO_MAP = { # ストローク: [語幹, 行]
-    "TU-TN": ["つづ", 'k'],# 続ける
+    "TNU-KIA": ["つづ", 'k'],# 続ける
     "TKA-SNI": ["はじ", 'm'],# 始める
     "SKNAU-TAU": ["もと", 'm'],# 求める
     "KA-KNA": ["かんが", 'w'],# 考える
@@ -133,79 +135,88 @@ AUXILIARY_VERB_EXCEPTION_MAP = { # 左がntkのときの例外処理
 }
 def stroke_to_verb(kana_stroke, right_conso, right_vowel_stroke, left_particle_stroke, right_particle_stroke, left_kana, right_kana, hyphen, asterisk):
     main_kana = left_kana + right_kana
-    print(f"動詞変換処理: '{kana_stroke}' + '{left_particle_stroke}' + '{right_particle_stroke}' + '{main_kana}' + '{hyphen}' + '{asterisk}'")
     auxiliary_list = [None, ""]
+    output = ""
     hash_num = 1 if hyphen == "#" else 0
+    # 左がntkのとき
     if left_particle_stroke == "ntk":
         auxiliary_list = AUXILIARY_VERB_EXCEPTION_MAP[right_particle_stroke][hash_num]
-        print(f"例外処理: {auxiliary_list}")
     else:
+        # 活用リストは原則左優先
         auxiliary_list[0] = AUXILIARY_VERB_LEFT_MAP[left_particle_stroke][hash_num][0] if left_particle_stroke else AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][hash_num][0]
         auxiliary_list[1] = AUXILIARY_VERB_LEFT_MAP[left_particle_stroke][hash_num][1]
-        if hyphen != "#" and left_particle_stroke == "nt": # させていただk
+        # ～させていただく
+        if hyphen != "#" and left_particle_stroke == "nt":
             auxiliary_list[1] += CONJUGATE_GODAN_MAP['k'][AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][0][0]]
-        elif hyphen == "#" and left_particle_stroke == "t": # ちゃw
+        # ～ちゃう
+        elif hyphen == "#" and left_particle_stroke == "t":
             auxiliary_list[1] += CONJUGATE_GODAN_MAP['w'][AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][0][0]]
+        # 左の活用系指定があるとき
         if left_particle_stroke:
             auxiliary_list[1] += AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][0][1]
+            # ている、させる、られるの辞書形のときの「る」
             if not (hyphen != "#" and left_particle_stroke == "nt" or hyphen == "#" and left_particle_stroke == "t") and not right_particle_stroke:
                 auxiliary_list[1] += "る"
+        # 右単体での活用系指定のとき
         else:
             auxiliary_list[1] += AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][hash_num][1]
-    print(f"活用形: {auxiliary_list}")
 
+    # 登録された五段活用
     if kana_stroke in VERB_GODAN_MAP:
-        print("五段活用")
         verb_list = VERB_GODAN_MAP[kana_stroke]
         output = verb_list[0] + CONJUGATE_GODAN_MAP[verb_list[1]][auxiliary_list[0]]
         output += auxiliary_list[1].replace("て", "で").replace("た", "だ") if verb_list[1] in ['g', 'n', 'b', 'm'] and auxiliary_list[0] == 3 else auxiliary_list[1]
         output = output.replace("あらな", "な")
+    # 登録された上一段活用
     elif kana_stroke in VERB_KAMI_MAP:
-        print("上一段活用")
         verb_list = VERB_KAMI_MAP[kana_stroke]
         output = verb_list[0] + CONJUGATE_KAMI_MAP[verb_list[1]][auxiliary_list[0]]
         if hyphen != "#" and left_particle_stroke != "ntk" and ('t' in left_particle_stroke or 'k' in left_particle_stroke) or hyphen == "#" and left_particle_stroke == "tk":
             output += "さ" if 't' in left_particle_stroke else "ら"
         output += auxiliary_list[1]
+    # 登録された下一段活用
     elif kana_stroke in VERB_SIMO_MAP:
-        print("下一段活用")
         verb_list = VERB_SIMO_MAP[kana_stroke]
         output = verb_list[0] + CONJUGATE_SIMO_MAP[verb_list[1]][auxiliary_list[0]]
         if hyphen != "#" and left_particle_stroke != "ntk" and ('t' in left_particle_stroke or 'k' in left_particle_stroke) or hyphen == "#" and left_particle_stroke == "tk":
             output += "さ" if 't' in left_particle_stroke else "ら"
         output += auxiliary_list[1]
-    elif kana_stroke in ["K-", "-KAU"]:
-        print("カ行変格活用")
-        output = KAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
+    # カ変活用
+    elif kana_stroke == "K-" or right_kana == "こ":
+        if right_kana == "こ":
+            output = left_kana
+        output += KAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
         if hyphen != "#" and left_particle_stroke != "ntk" and ('t' in left_particle_stroke or 'k' in left_particle_stroke) or hyphen == "#" and left_particle_stroke == "tk":
             output += "さ" if 't' in left_particle_stroke else "ら"
+    # サ変活用
     elif not right_kana:
-        print("サ行変格活用")
         output = main_kana + (SAHEN_LIST[auxiliary_list[0]] if (hyphen != "#" or left_particle_stroke not in ['k', 'nk']) else "でき") + auxiliary_list[1]
         output = output.replace("しせ", "させ").replace("しれ", "され").replace("しず", "せず")
+    # 五段活用
     elif right_vowel_stroke == "" and right_conso in ['k', 'g', 's', 't', 'n', 'b', 'm', 'r', 'w']:
-        print("五段活用(特殊)")
         output = left_kana + CONJUGATE_GODAN_MAP[right_conso][auxiliary_list[0]]
         output += auxiliary_list[1].replace("て", "で").replace("た", "だ") if right_conso in ['g', 'n', 'b', 'm'] and auxiliary_list[0] == 3 else auxiliary_list[1]
         output = output.replace("あらな", "な")
+    # ～あう
+    elif right_vowel_stroke == "A" and not right_conso:# ～あう
+        output = left_kana + 'あ' + CONJUGATE_GODAN_MAP['w'][auxiliary_list[0]] + auxiliary_list[1]
+    # 上一段活用
     elif right_vowel_stroke == "I" and right_conso in ['k', 'g', 'z', 't', 'n', 'b', 'm', 'r', 'w', '']:
-        print("上一段活用(特殊)")
         if right_conso == '':
             right_conso = 'w'
         output = left_kana + CONJUGATE_KAMI_MAP[right_conso][auxiliary_list[0]]
         if hyphen != "#" and left_particle_stroke != "ntk" and ('t' in left_particle_stroke or 'k' in left_particle_stroke) or hyphen == "#" and left_particle_stroke == "tk":
             output += "さ" if 't' in left_particle_stroke else "ら"
         output += auxiliary_list[1]
+    # 下一段活用
     elif right_vowel_stroke == "IA" and right_conso in ['k', 'g', 's', 'z', 't', 'd', 'n', 'h', 'b', 'm', 'r', 'w', '']:
-        print("下一段活用(特殊)")
         if right_conso == '':
             right_conso = 'w'
         output = left_kana + CONJUGATE_SIMO_MAP[right_conso][auxiliary_list[0]]
         if hyphen != "#" and left_particle_stroke != "ntk" and ('t' in left_particle_stroke or 'k' in left_particle_stroke) or hyphen == "#" and left_particle_stroke == "tk":
             output += "さ" if 't' in left_particle_stroke else "ら"
         output += auxiliary_list[1]
+    # 動詞ではないと判定
     else:
-        print("この動詞は登録されていません")
         output = None
-    print(f"動詞: '{output}'")
     return output
