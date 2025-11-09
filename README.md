@@ -349,7 +349,7 @@ tab a s d f g h j k l ; '
 ---
 ## もっと詳しく知りたい方は(More To Know the Theory)
 
-最新情報は[**X**](https://x.com/jeebis_steno)や[**note**](https://note.com/jeebis_keyboard)をご確認ください
+最新情報は[**X**](https://x.com/jeebis_iox)や[**note**](https://note.com/jeebis_keyboard)をご確認ください
 
 ---
 ## メジロ式をインストールする(Installing Mejiro)
