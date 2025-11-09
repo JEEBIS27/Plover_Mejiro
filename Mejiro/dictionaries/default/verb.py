@@ -89,6 +89,7 @@ VERB_GODAN_MAP = { # ストローク: [語幹, 行]
     "SKA-STA": ["わら", 'w'],# 笑う
 }
 VERB_KAMI_MAP = { # ストローク: [語幹, 行]
+    "TN-KI": ["で", 'k'],# 出来る
     "SI-SNI": ["しん", 'z'],# 信じる
     "KA-SNI": ["かん", 'z'],# 感じる
     "KI-SNI": ["きん", 'z'],# 禁じる
@@ -97,6 +98,8 @@ VERB_KAMI_MAP = { # ストローク: [語幹, 行]
 }
 VERB_SIMO_MAP = { # ストローク: [語幹, 行]
     "TNU-KIA": ["つづ", 'k'],# 続ける
+    "TU-TN": ["つづ", 'k'],# 続ける
+    "TN-": ["", 'd'],# 出る
     "TKA-SNI": ["はじ", 'm'],# 始める
     "SKNAU-TAU": ["もと", 'm'],# 求める
     "KA-KNA": ["かんが", 'w'],# 考える
@@ -182,7 +185,7 @@ def stroke_to_verb(kana_stroke, right_conso, right_vowel_stroke, left_particle_s
             output += "さ" if 't' in left_particle_stroke else "ら"
         output += auxiliary_list[1]
     # カ変活用
-    elif kana_stroke == "K-" or right_kana == "こ":
+    elif kana_stroke == "K-" or right_conso == 'K' and right_vowel_stroke == 'AU':
         if right_kana == "こ":
             output = left_kana
         output += KAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
