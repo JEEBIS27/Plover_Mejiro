@@ -1,4 +1,4 @@
-from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, COMPLEX_DIPHTHONG_MAPPING, exception_particle,
+from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, COMPLEX_DIPHTHONG_MAPPING,
                                                   conso_stroke_to_roma, vowel_stroke_to_roma, ROMA_TO_KANA_MAP,
                                                   PARTICLE_KEY_LIST, SECOND_SOUND_LIST,
                                                   L_PARTICLE, R_PARTICLE,
@@ -12,8 +12,10 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str) -
     global DIPHTHONG_MAPPING
     global COMPLEX_DIPHTHONG_MAPPING
     global ROMA_TO_KANA_MAP
+    global PARTICLE_KEY_LIST
+    global SECOND_SOUND_LIST
 
-    # 1. 母音ストロークの決定と更新
+    # 母音ストロークの決定と更新
     if not vowel_stroke:
         if not LAST_VOWEL_STROKE:
             LAST_VOWEL_STROKE = "A"
@@ -22,31 +24,36 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str) -
         current_vowel_stroke = vowel_stroke
         LAST_VOWEL_STROKE = vowel_stroke
 
-    # 2. 子音ストロークからローマ字の子音（行）を取得
+    # 子音ストロークからローマ字の子音（行）を取得
     conso_roma = next((roma for stroke, roma in conso_stroke_to_roma if conso_stroke == stroke), None)
     if conso_roma is None:
         print(f"子音ストローク '{conso_stroke}' が見つかりません")
         raise KeyError
 
-    # 3. 母音ストロークからローマ字の基本母音（段）と長音文字を決定
+    # 母音ストロークからローマ字の基本母音（段）と長音文字を決定
     
     vowel_roma = None
     suffix = "" # 長音文字
 
-    # a. 特殊な二重母音マッピングをチェック
-    if current_vowel_stroke + particle_stroke in exception_particle:
+    # 特殊な二重母音マッピングをチェック
+    if current_vowel_stroke + particle_stroke in COMPLEX_DIPHTHONG_MAPPING:
         vowel_roma, suffix = COMPLEX_DIPHTHONG_MAPPING[current_vowel_stroke + particle_stroke]
         vowel_index = [item[1] for item in vowel_stroke_to_roma].index(vowel_roma)
-    # b. 基本の二重母音マッピングをチェックあえん
+        extra_sound = ""  # 追加音はなし
+    # 基本の二重母音マッピングをチェック
     elif current_vowel_stroke in DIPHTHONG_MAPPING:
         vowel_roma, suffix = DIPHTHONG_MAPPING[current_vowel_stroke]
         vowel_index = [item[1] for item in vowel_stroke_to_roma].index(vowel_roma)
-    # c. それ以外の場合、基本母音ストロークから取得
+        # 辞書から直接対応する文字列を取得。
+        extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
+    # それ以外の場合、基本母音ストロークから取得
     else:
         vowel_tuple = next(((i, roma) for i, (stroke, roma) in enumerate(vowel_stroke_to_roma) if current_vowel_stroke == stroke), None)
         if vowel_tuple is not None:
             vowel_index, vowel_roma = vowel_tuple
         suffix = "" # 基本母音には長音文字なし
+        # 辞書から直接対応する文字列を取得。
+        extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
         
     if vowel_roma is None:
         print(f"母音ストローク '{current_vowel_stroke}' が見つかりません")
@@ -59,17 +66,11 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str) -
         raise KeyError
 
     if conso_stroke + vowel_stroke == "":
-        return '', '', ''  # 両方空の場合は空文字を返す
+        return '', '', '', ''  # 両方空の場合は空文字を返す
     else:
         # 5. 長音文字を付加して返す
-        return base_kana + suffix, conso_roma, vowel_roma
-
-def extra_sound(particle_stroke: str) -> str:
-    global PARTICLE_KEY_LIST
-    global SECOND_SOUND_LIST
-    # 辞書から直接対応する文字列を取得。
-    return SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
-
+        return base_kana + suffix, extra_sound, conso_roma, vowel_roma
+    
 def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
     global exception_particle
     global EXCEPTION_STROKE_MAP

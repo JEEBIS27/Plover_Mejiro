@@ -1,5 +1,4 @@
 import re
-from Mejiro.dictionaries.default.settings import typing_mode
 HEPBURN_ROMA_MAP = {
     'あ':'a', 'い':'i', 'う':'u', 'え':'e', 'お':'o',
     'ぁ':'la', 'ぃ':'li', 'ぅ':'lu', 'ぇ':'le', 'ぉ':'lo',
@@ -80,7 +79,7 @@ SH_CH_J_SHORTEN_PATTERN = re.compile(r"(sh|ch|j|y)il(y?)")
 
 SH_CH_J_SHORTEN_REPLACER = r"\1"
 
-def kana_to_typing_output(kana_string):
+def kana_to_typing_output(kana_string: str, typing_mode: int) -> str:
     if typing_mode == 0:
 
         output = HEPBURN_PATTERN.sub(HEPBURN_REPLACER, kana_string)
