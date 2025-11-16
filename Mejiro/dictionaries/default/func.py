@@ -15,7 +15,7 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str) -
     global PARTICLE_KEY_LIST
     global SECOND_SOUND_LIST
 
-    # 1. 母音ストロークの決定と更新
+    # 母音ストロークの決定と更新
     if not vowel_stroke:
         if not LAST_VOWEL_STROKE:
             LAST_VOWEL_STROKE = "A"
@@ -24,29 +24,29 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str) -
         current_vowel_stroke = vowel_stroke
         LAST_VOWEL_STROKE = vowel_stroke
 
-    # 2. 子音ストロークからローマ字の子音（行）を取得
+    # 子音ストロークからローマ字の子音（行）を取得
     conso_roma = next((roma for stroke, roma in conso_stroke_to_roma if conso_stroke == stroke), None)
     if conso_roma is None:
         print(f"子音ストローク '{conso_stroke}' が見つかりません")
         raise KeyError
 
-    # 3. 母音ストロークからローマ字の基本母音（段）と長音文字を決定
+    # 母音ストロークからローマ字の基本母音（段）と長音文字を決定
     
     vowel_roma = None
     suffix = "" # 長音文字
 
-    # a. 特殊な二重母音マッピングをチェック
+    # 特殊な二重母音マッピングをチェック
     if current_vowel_stroke + particle_stroke in COMPLEX_DIPHTHONG_MAPPING:
         vowel_roma, suffix = COMPLEX_DIPHTHONG_MAPPING[current_vowel_stroke + particle_stroke]
         vowel_index = [item[1] for item in vowel_stroke_to_roma].index(vowel_roma)
         extra_sound = ""  # 追加音はなし
-    # b. 基本の二重母音マッピングをチェック
+    # 基本の二重母音マッピングをチェック
     elif current_vowel_stroke in DIPHTHONG_MAPPING:
         vowel_roma, suffix = DIPHTHONG_MAPPING[current_vowel_stroke]
         vowel_index = [item[1] for item in vowel_stroke_to_roma].index(vowel_roma)
         # 辞書から直接対応する文字列を取得。
         extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
-    # c. それ以外の場合、基本母音ストロークから取得
+    # それ以外の場合、基本母音ストロークから取得
     else:
         vowel_tuple = next(((i, roma) for i, (stroke, roma) in enumerate(vowel_stroke_to_roma) if current_vowel_stroke == stroke), None)
         if vowel_tuple is not None:
