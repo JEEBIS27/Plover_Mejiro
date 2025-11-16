@@ -110,8 +110,6 @@ def lookup(key):
     # 結果の出力(両端に{^ ^}をつけることで、英語の自動スペースを防ぐ)
     return "{^" + result + "^}"
 
-# Optional: return an array of stroke tuples that would translate back
-# to <text> (an empty array if not possible).
 def reverse_lookup(text):
     result = ""
     string = kana_to_typing_output(text, 0) # ローマ字に変換してから解析
