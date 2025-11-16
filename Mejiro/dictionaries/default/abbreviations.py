@@ -36,7 +36,7 @@ ABSTRACT_MAP = { # 一般略語の定義
   "TAU-AU": "とおり",
   "A-TA": "あたり",
   "TU-SKNAU": "つもり",
-  "SU-TKIA": "すべて",
+  "SU-TIA": "すべて",
   "NA-KNA": "ながら",
   "AU-KA": "おかげ",
   "SI-KNAU": "しごと",
