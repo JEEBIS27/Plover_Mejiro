@@ -76,7 +76,6 @@ KEYMAPS = {
         'arpeggiate' : ']'
         }
 }
-
 DICTIONARIES_ROOT = 'asset:Mejiro:dictionaries/default'
 DEFAULT_DICTIONARIES = ('mejiro_commands.json','mejiro_base.py')
 
