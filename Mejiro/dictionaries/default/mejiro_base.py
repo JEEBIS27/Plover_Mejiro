@@ -39,7 +39,6 @@ typing_mode = 1 # 0: ローマ字入力, 1: JISかな入力
 
 # メインの関数
 def lookup(key):
-    global users_map
     global LONGEST_KEY
     global LAST_VOWEL_STROKE
     global typing_mode
