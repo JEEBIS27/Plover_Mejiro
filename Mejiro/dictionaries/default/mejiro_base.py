@@ -11,7 +11,7 @@
 #                         └─────┴─────┘        └─────┴─────┘
 #mejiro_kana
 import re
-from Mejiro.dictionaries.default.settings import (exception_particle, DOT, COMMA, ABSTRACT_ABBREVIATIONS_MAP)
+from Mejiro.dictionaries.default.settings import (exception_particle, DOT, COMMA, ABSTRACT_ABBREVIATIONS_MAP, conso_stroke_to_roma)
 from Mejiro.dictionaries.default.func import (stroke_to_kana, extra_sound, joshi)
 from Mejiro.dictionaries.default.verb import stroke_to_verb
 from Mejiro.dictionaries.default.translate import kana_to_typing_output
@@ -21,9 +21,13 @@ LAST_VOWEL_STROKE = "A"
 is_typing_mode = False
 is_found_exception = [False, False]
 
+# タイピングゲーム時の入力法設定
+typing_mode = 1 # 0: ローマ字入力, 1: JISかな入力
+
 def lookup(key):
     global LONGEST_KEY
     global LAST_VOWEL_STROKE
+    global typing_mode
     global is_typing_mode
     global is_found_exception
     assert len(key) <= LONGEST_KEY
@@ -98,10 +102,21 @@ def lookup(key):
 
     # タイピングゲーム時の変換処理
     if is_typing_mode:
-        translated_result = kana_to_typing_output(result)
+        translated_result = kana_to_typing_output(result, typing_mode)
         result = translated_result
 
     print("|\t" + stroke + "\t|\t" + result + "\t|\t" + message + "\t|\t" + ("on" if is_typing_mode else "off") + "\t|")
 
     # 結果の出力(両端に{^ ^}をつけることで、英語の自動スペースを防ぐ)
     return "{^" + result + "^}"
+
+# Optional: return an array of stroke tuples that would translate back
+# to <text> (an empty array if not possible).
+def reverse_lookup(text):
+    result = ""
+    string = kana_to_typing_output(text, 0) # ローマ字に変換してから解析
+    conso_stroke = next((stroke for roma, stroke in conso_stroke_to_roma if roma == string), None)
+    if text == "きき":
+        return [("KI-KI", ), ("KInk-", ), ("KI-", "KI-")]
+    
+    return []

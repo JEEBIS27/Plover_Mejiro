@@ -1,9 +1,6 @@
 # Mejiro設定ファイル
 # 変換ロジックや辞書の設定をここで行う
 
-# タイピングゲーム時の入力法設定
-typing_mode = 0 # 0: ローマ字入力, 1: JISかな入力
-
 # 基本子音ストロークの定義
 # (変更時は配列の右側のアルファベットを変更する)
 # STKN
@@ -40,13 +37,17 @@ DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文字目)
 # (変更時はマップの右側の配列のアルファベット・ひらがなを変更する)
 # YIAUn
 COMPLEX_DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文字目)
+    "IAUn": ("o", "お"),
     "YIn": ("i", "い"),
     "YIUn": ("a", "え"),
-    "IAUn": ("o", "お"),
     "YIAUn": ("o", "い"),
+    "IAUntk": ("ya", "う"),
+    "YIntk": ("ya", "い"),
+    "YIUntk": ("yu", "い"),
+    "YIAUntk": ("yo", "い"),
 }
 # 親指を使った二重母音のストロークをここにも再掲
-exception_particle = ["YIn", "YIUn", "IAUn", "YIAUn"]
+exception_particle = ["IAUn", "YIn", "YIUn", "YIAUn", "IAUntk", "YIntk", "YIUntk", "YIAUntk"]
 
 # 行段のアルファベットからひらがなへのマッピング
 ROMA_TO_KANA_MAP = {
