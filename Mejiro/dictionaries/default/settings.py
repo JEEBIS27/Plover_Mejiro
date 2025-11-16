@@ -35,7 +35,7 @@ DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文字目)
 }
 # 親指も使った二重母音ストロークの定義
 # (変更時はマップの右側の配列のアルファベット・ひらがなを変更する)
-# YIAUn
+# YIAUntk
 COMPLEX_DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文字目)
     "IAUn": ("o", "お"),
     "YIn": ("i", "い"),
@@ -46,9 +46,6 @@ COMPLEX_DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文�
     "YIUntk": ("yu", "い"),
     "YIAUntk": ("yo", "い"),
 }
-# 親指を使った二重母音のストロークをここにも再掲
-exception_particle = ["IAUn", "YIn", "YIUn", "YIAUn", "IAUntk", "YIntk", "YIUntk", "YIAUntk"]
-
 # 行段のアルファベットからひらがなへのマッピング
 ROMA_TO_KANA_MAP = {
     '':  ['あ', 'い', 'う', 'え', 'お', 'や', 'ゆ', 'よ'],
