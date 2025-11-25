@@ -27,19 +27,24 @@ USERS_MAP = { # ユーザー略語の定義
   "TKI-TAU": "ひとびと",
   "AU-NIA": "おねがい",
   "YAU-STAU": "よろしく",
-  "TA-TAU": "たとえば、",
-  "KNU-TY": "ぐたいてきには、",
-  "TA-SI": "たしかに、"
+  "TA-TAU": "たとえば",
+  "KNU-TY": "ぐたいてきには",
+  "TA-SI": "たしかに",
+  "KIA-STIA": "けれども",
 }
 ABSTRACT_MAP = { # 一般略語の定義
   "TAU-KAU": "ところ",
-  "TAU-AU": "とおり",
-  "A-TA": "あたり",
-  "TU-SKNAU": "つもり",
+  "KAU-TAU": "こと",
+  "TKI-TAU": "ひと",
+  "TAU-KI": "とき",
+  "SKNAU-NAU": "もの",
+  "SKYU-TAU": "いうところ",
+  "SKYU-KAU": "いうこと",
+  "SKYU-TKI": "いうひと",
+  "SKYU-KI": "いうとき",
+  "SKYU-SKNAU": "いうもの",
   "TKNIA-TIA": "すべて",
   "NA-KNA": "ながら",
   "AU-KA": "おかげ",
-  "SI-KNAU": "しごと",
-  "AU-NA": "おなじ",
-  "TI-KNA": "ちがう",
+  "SI-KNAU": "しごと"
 }
