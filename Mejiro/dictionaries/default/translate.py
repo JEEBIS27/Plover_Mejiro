@@ -63,7 +63,7 @@ def youon_replacer(match):
     youon_vowel = match.group(2)[1:]      # 'lya' から 'l' を削除 -> 'ya'
     return base_consonant + youon_vowel
 
-HATSUON_PATTERN = re.compile(r"n(n)([kgcqstjdhbpfvmrywzl])")
+HATSUON_PATTERN = re.compile(r"n(n)([kgcqstjdhbpfvmrwzl])")
 
 HATSUON_REPLACER = r"n\2"
 

@@ -4,7 +4,7 @@ from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, COMPLEX_DIP
                                                   L_PARTICLE, R_PARTICLE,
                                                   COMMA, henkan_command, EXCEPTION_STROKE_MAP)
 
-def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str) -> str:
+def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, asterisk: str) -> str:
     
     global LAST_VOWEL_STROKE
     global conso_stroke_to_roma
@@ -42,7 +42,7 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str) -
         suffix = "" # 長音文字
 
         # 特殊な二重母音マッピングをチェック
-        if current_vowel_stroke + particle_stroke in COMPLEX_DIPHTHONG_MAPPING:
+        if not asterisk and current_vowel_stroke + particle_stroke in COMPLEX_DIPHTHONG_MAPPING:
             vowel_roma, suffix = COMPLEX_DIPHTHONG_MAPPING[current_vowel_stroke + particle_stroke]
             vowel_index = [item[1] for item in vowel_stroke_to_roma].index(vowel_roma)
             extra_sound = ""  # 追加音はなし
@@ -94,7 +94,7 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
         right_joshi = R_PARTICLE[r_index]
         if left_particle_stroke == "n":
             joshi = right_joshi + COMMA
-        elif right_particle_stroke in ["k", "nk"] and left_joshi:
+        elif right_particle_stroke in ["k", "nk"] and left_particle_stroke not in ["", "k"]:
             joshi = "の" + left_joshi
             if "n" in right_particle_stroke:
                 joshi += COMMA

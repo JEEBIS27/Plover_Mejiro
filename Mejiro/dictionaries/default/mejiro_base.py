@@ -14,7 +14,7 @@ import re
 from Mejiro.dictionaries.default.settings import (DOT, COMMA, conso_stroke_to_roma)
 from Mejiro.dictionaries.default.func import (stroke_to_kana, joshi)
 from Mejiro.dictionaries.default.abbreviations import USERS_MAP, ABSTRACT_MAP
-from Mejiro.dictionaries.default.verb import stroke_to_verb
+from Mejiro.dictionaries.default.verb import stroke_to_verb, VERB_KAMI_MAP
 from Mejiro.dictionaries.default.translate import kana_to_typing_output
 
 # ファイル構成
@@ -35,7 +35,7 @@ is_typing_mode = False
 is_found_exception = [False, False]
 
 # タイピングゲーム時の入力法設定
-typing_mode = 1 # 0: ローマ字入力, 1: JISかな入力
+typing_mode = 0 # 0: ローマ字入力, 1: JISかな入力
 
 # メインの関数
 def lookup(key):
@@ -72,8 +72,8 @@ def lookup(key):
     result = "" # 初期化
 
     # 左右のかなを変数に格納
-    left_kana_list = stroke_to_kana(left_conso_stroke, left_vowel_stroke, left_particle_stroke)
-    right_kana_list = stroke_to_kana(right_conso_stroke, right_vowel_stroke, right_particle_stroke)
+    left_kana_list = stroke_to_kana(left_conso_stroke, left_vowel_stroke, left_particle_stroke, asterisk)
+    right_kana_list = stroke_to_kana(right_conso_stroke, right_vowel_stroke, right_particle_stroke, asterisk)
     left_kana, left_extra_sound, left_conso, left_vowel = left_kana_list
     right_kana, right_extra_sound, right_conso, right_vowel = right_kana_list
     main_kana = left_kana + right_kana
@@ -98,25 +98,20 @@ def lookup(key):
         message = "助詞"
     elif verb and not left_kana and right_kana and not left_extra_sound: # 動詞略語(*省略)
         result = verb
-        message = "動詞略語(*省略)"
+        message = "動詞略語"
     elif asterisk:
-        # 動詞略語
-        if verb:
-            result = verb
-            message = "動詞略語"
-        # ～ingの特殊略語
-        elif main_kana[-1] in ['い', 'き', 'し', 'ち', 'に', 'ひ', 'み', 'り', 'ぎ', 'じ', 'ぢ', 'び', 'ぴ', 'ぃ'] and main_base[-1] == 'ん':
+        # 特殊略語：～ing
+        if len(main_base) > 2 and not kana_stroke in VERB_KAMI_MAP and main_kana[-1] in ['い', 'き', 'し', 'ち', 'に', 'ひ', 'み', 'り', 'ぎ', 'じ', 'ぢ', 'び', 'ぴ', 'ぃ'] and main_base[-1] == 'ん':
             result = (main_base + 'ぐ')
             message = "特殊略語：～ing"
-        # かな+助詞
+        # 動詞略語
+        elif verb:
+            result = verb
+            message = "動詞略語"
+        # 通常
         else:
-            message = "かな+助詞"
-            result = main_kana
-            result += (main_joshi.replace("や" + COMMA, "である").replace("や", "だ")) if main_joshi else "です"
-    # かな+助詞(*省略)
-    elif right_particle_stroke not in ["","n"] and (left_conso_stroke or left_vowel_stroke) and not right_conso_stroke and not right_vowel_stroke:
-        message = "左かな+助詞(*省略)"
-        result = left_kana + left_extra_sound + joshi("", right_particle_stroke)
+            message = "通常出力"
+            result = main_base * (2 if hyphen == "#" else 1)
     # 通常
     else:
         message = "通常出力"
