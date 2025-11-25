@@ -59,24 +59,10 @@ VERB_GODAN_MAP = { # ストローク: [語幹, 行]
     "TKA-SA": ["はさ", 'm'],# 挟む
     "TKU-KU": ["ふく", 'm'],# 吹く
     "A-": ["あ", 'r'],# ある
-    "A-KNA": ["あが", 'r'],# 上がる
-    "A-TA": ["あた", 'r'],# 当る
-    "AU-SKA": ["おわ", 'r'],# 終わる
-    "KA-SKA": ["かわ", 'r'],# 変わる
     "KNA-TKNA": ["がんば", 'r'],# 頑張る
-    "TU-TNU": ["つづ", 'r'],# 綴る
-    "SI-SKNA": ["しま", 'r'],# 閉まる
-    "TU-SKNAU": ["つも", 'r'],# 積もる
-    "TAU-AU": ["とお", 'r'],# 通る
-    "TAU-SKNA": ["とま", 'r'],# 止まる
     "NA-": ["な", 'r'],# なる
-    "TKA-KA": ["はか", 'r'],# 計る
-    "TKA-TKIA": ["はべ", 'r'],# 侍る
-    "TKI-KA": ["ひか", 'r'],# 光る
     "YA-": ["や", 'r'],# やる
     "-YA": ["や", 'r'],# やる
-    "SKA-KA": ["わか", 'r'],# 分かる
-    "SKA-TA": ["わた", 'r'],# 渡る
     "-A": ["あ", 'w'],# 会う
     "I-": ["い", 'w'],# 言う
     "AU-SKNAU": ["おも", 'w'],# 思う
@@ -195,6 +181,9 @@ def stroke_to_verb(kana_stroke, right_conso, right_vowel_stroke, left_particle_s
     elif not right_kana:
         output = main_kana + (SAHEN_LIST[auxiliary_list[0]] if (hyphen != "#" or left_particle_stroke not in ['k', 'nk']) else "でき") + auxiliary_list[1]
         output = output.replace("しせ", "させ").replace("しれ", "され").replace("しず", "せず")
+    # ～です
+    elif right_conso == 'd' and right_vowel_stroke == '':
+        output = left_kana + 'で' + CONJUGATE_GODAN_MAP['s'][auxiliary_list[0]] + auxiliary_list[1]
     # 五段活用
     elif right_vowel_stroke == "" and right_conso in ['k', 'g', 's', 't', 'n', 'b', 'm', 'r', 'w']:
         output = left_kana + CONJUGATE_GODAN_MAP[right_conso][auxiliary_list[0]]
@@ -219,7 +208,9 @@ def stroke_to_verb(kana_stroke, right_conso, right_vowel_stroke, left_particle_s
         if hyphen != "#" and left_particle_stroke != "ntk" and ('t' in left_particle_stroke or 'k' in left_particle_stroke) or hyphen == "#" and left_particle_stroke == "tk":
             output += "さ" if 't' in left_particle_stroke else "ら"
         output += auxiliary_list[1]
-    # 動詞ではないと判定
+    # 「～る」動詞(五段活用)
     else:
-        output = None
+        output = main_kana + CONJUGATE_GODAN_MAP['r'][auxiliary_list[0]]
+        output += auxiliary_list[1]
+        output = output.replace("あらな", "な")
     return output
