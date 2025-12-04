@@ -3,6 +3,7 @@ from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, COMPLEX_DIP
                                                   PARTICLE_KEY_LIST, SECOND_SOUND_LIST,
                                                   L_PARTICLE, R_PARTICLE,
                                                   COMMA, henkan_command, EXCEPTION_STROKE_MAP)
+from Mejiro.dictionaries.default.abbreviations import ABSTRACT_MAP, ABSTRACT_MAP_LEFT, ABSTRACT_MAP_RIGHT
 
 def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, asterisk: str) -> str:
     
@@ -71,7 +72,8 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
             print(f"無効な組み合わせ: 子音'{conso_roma}' + 母音'{vowel_roma}'")
             raise KeyError
 
-        return base_kana + suffix, extra_sound, conso_roma, vowel_roma
+        # [CV, C, C, V]
+        return [base_kana + suffix, extra_sound, conso_roma, vowel_roma]
     
 def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
     global exception_particle
@@ -103,3 +105,12 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
             if "n" in right_particle_stroke :
                 joshi += COMMA
     return joshi
+
+def abstract_abbreviation_lookup(left_kana_stroke: str, right_kana_stroke: str) -> str:
+    if left_kana_stroke + right_kana_stroke in ABSTRACT_MAP:
+        output = ABSTRACT_MAP[left_kana_stroke + right_kana_stroke]
+    elif left_kana_stroke in ABSTRACT_MAP_LEFT and right_kana_stroke in ABSTRACT_MAP_RIGHT:
+        output = ABSTRACT_MAP_LEFT[left_kana_stroke] + ABSTRACT_MAP_RIGHT[right_kana_stroke]
+    else:
+        output = ""
+    return output
