@@ -1,5 +1,25 @@
 import re
 HEPBURN_ROMA_MAP = {
+    'きゃ':'kya', 'きゅ':'kyu', 'きょ':'kyo', 'きぇ':'kye',
+    'ぎゃ':'gya', 'ぎゅ':'gyu', 'ぎょ':'gyo', 'ぎぇ':'gye',
+    'くぁ':'qa',  'くぃ':'qi',  'くぇ':'qe',  'くぉ':'qo',
+    'しゃ':'sha', 'しゅ':'shu', 'しょ':'sho', 'しぇ':'she',
+    'じゃ':'ja',  'じゅ':'ju',  'じょ':'jo',  'じぇ':'je',
+    'ちゃ':'cha', 'ちゅ':'chu', 'ちょ':'cho', 'ちぇ':'che',
+    'ぢゃ':'dya', 'ぢゅ':'dyu', 'ぢょ':'dyo', 'ぢぇ':'dye',
+    'つぁ':'tsa', 'つぃ':'tsi', 'つぇ':'tse', 'つぉ':'tso',
+    'てゃ':'tha', 'てゅ':'thu', 'てょ':'tho', 'てぇ':'the',
+    'でゃ':'dha', 'でゅ':'dhu', 'でょ':'dho', 'でぇ':'dhe',
+    'てぃ':'thi', 'とぅ':'twu', 'でぃ':'dhi', 'どぅ':'dwu',
+    'にゃ':'nya', 'にゅ':'nyu', 'にょ':'nyo', 'にぇ':'nye',
+    'ひゃ':'hya', 'ひゅ':'hyu', 'ひょ':'hyo', 'ひぇ':'hye',
+    'びゃ':'bya', 'びゅ':'byu', 'びょ':'byo', 'びぇ':'bye',
+    'ぴゃ':'pya', 'ぴゅ':'pyu', 'ぴょ':'pyo', 'ぴぇ':'pye',
+    'ふぁ':'fa',  'ふぃ':'fi',  'ふぇ':'fe',  'ふぉ':'fo',
+    'みゃ':'mya', 'みゅ':'myu', 'みょ':'myo', 'みぇ':'mye',
+    'りゃ':'rya', 'りゅ':'ryu', 'りょ':'ryo', 'りぇ':'rye',
+    'うぁ':'wha', 'うぃ':'wi',  'うぇ':'we',  'うぉ':'who',
+    'ゔぁ':'va',  'ゔぃ':'vi',  'ゔぇ':'ve',  'ゔぉ':'vo',
     'あ':'a', 'い':'i', 'う':'u', 'え':'e', 'お':'o',
     'ぁ':'la', 'ぃ':'li', 'ぅ':'lu', 'ぇ':'le', 'ぉ':'lo',
     'か':'ka', 'き':'ki', 'く':'ku', 'け':'ke', 'こ':'ko',
@@ -16,11 +36,11 @@ HEPBURN_ROMA_MAP = {
     'や':'ya', 'ゆ':'yu', 'よ':'yo',
     'ゃ':'lya', 'ゅ':'lyu', 'ょ':'lyo',
     'ら':'ra', 'り':'ri', 'る':'ru', 'れ':'re', 'ろ':'ro',
-    'わ':'wa', 'を':'wo', 'ん':'nn', 'っ':'ltsu', 'ゔ':'vu',
+    'わ':'wa', 'を':'wo', 'ん':'N', 'っ':'Q', 'ゔ':'vu',
     '-':'-', ',':',', '.':'.',
     'ー':'-', '、':',', '。':'.'
 }
-JIS_KANA_MAP = {
+JIS_KANA_MAP = { # JIS配列用
     'あ':'3', 'い':'e', 'う':'4', 'え':'5', 'お':'6',
     'ぁ':'#', 'ぃ':'E', 'ぅ':'$', 'ぇ':'%', 'ぉ':'&',
     'か':'t', 'き':'g', 'く':'h', 'け':':', 'こ':'b',
@@ -41,60 +61,51 @@ JIS_KANA_MAP = {
     '-':'|', ',':'<', '.':'>',
     'ー':'|', '、':'<', '。':'>'
 }
+def hiragana_to_romaji(text: str) -> str:
+    """
+    ひらがなをローマ字に変換。
+    2文字キー（拗音）を優先してチェック。
+    """
+    result = []
+    i = 0
+    while i < len(text):
+        # 1. 2文字のキー（拗音）をチェック
+        found = False
+        if i + 1 < len(text):
+            two_chars = text[i:i+2]
+            if two_chars in HEPBURN_ROMA_MAP:
+                result.append(HEPBURN_ROMA_MAP[two_chars])
+                i += 2  # 2文字進める
+                found = True
 
-def create_replacer_function(kana_map):
-
-    sorted_keys = sorted(kana_map.keys(), key=len, reverse=True)
-
-    pattern_string = '|'.join(re.escape(k) for k in sorted_keys)
-
-    def replacer(match):
-        return kana_map[match.group(0)]
-
-    return re.compile(f"({pattern_string})"), replacer
-
-HEPBURN_PATTERN, HEPBURN_REPLACER = create_replacer_function(HEPBURN_ROMA_MAP)
-# 子音(k,g,c,z,s,x,j,d,t,b,p,f,r,v) i(またはu) l (a,e,i,o,u,y)
-YOUON_PATTERN = re.compile(r"([kgczsxjdtbpfrv](?:u|i)?)([l][yaeuiou])")
-
-def youon_replacer(match):
-    # 'ki' から 'i' を削除し、'lya' から 'l' を削除して結合 -> 'k' + 'ya' = 'kya'
-    base_consonant = match.group(1)[:-1] # 'ki' から 'i' を削除 -> 'k'
-    youon_vowel = match.group(2)[1:]      # 'lya' から 'l' を削除 -> 'ya'
-    return base_consonant + youon_vowel
-
-HATSUON_PATTERN = re.compile(r"n(n)([kgcqstjdhbpfvmrwzl])")
-
-HATSUON_REPLACER = r"n\2"
-
-SOKUON_PATTERN = re.compile(r"ltsu([kgcqstjdhbpfvmrywz])")
-
-SOKUON_REPLACER = r"\1\1"
-
-F_V_SHORTEN_PATTERN = re.compile(r"(f|v)ul")
-
-F_V_SHORTEN_REPLACER = r"\1"
-
-SH_CH_J_SHORTEN_PATTERN = re.compile(r"(sh|ch|j|y)il(y?)")
-
-SH_CH_J_SHORTEN_REPLACER = r"\1"
+        # 2. 2文字で見つからなかった場合、1文字のキーをチェック
+        if not found:
+            one_char = text[i]
+            if one_char in HEPBURN_ROMA_MAP:
+                result.append(HEPBURN_ROMA_MAP[one_char])
+            else:
+                # マップにない文字（カタカナや記号など）はそのまま残す
+                result.append(one_char)
+            i += 1  # 1文字進める
+            
+    return "".join(result)
 
 def kana_to_typing_output(kana_string: str, typing_mode: int) -> str:
     if typing_mode == 0:
-
-        output = HEPBURN_PATTERN.sub(HEPBURN_REPLACER, kana_string)
-
-        output = YOUON_PATTERN.sub(youon_replacer, output)
-
-        output = HATSUON_PATTERN.sub(HATSUON_REPLACER, output)
-
-        output = SOKUON_PATTERN.sub(SOKUON_REPLACER, output)
-
-        output = F_V_SHORTEN_PATTERN.sub(F_V_SHORTEN_REPLACER, output)
-
-        output = SH_CH_J_SHORTEN_PATTERN.sub(SH_CH_J_SHORTEN_REPLACER, output)
-
-        output = output.replace("teli", "thi").replace("deli", "dhi").replace("dolu", "dwu")
+        raw_roma = hiragana_to_romaji(kana_string)
+        # 小文字の「っ」処理（促音）：Q(子音) -> 子音を重ねる
+        # (例: niQpoN -> nippoN)
+        output = re.sub(r'Q([bcdfghjklmnpqrstvwxyz])', r'\1\1', raw_roma)
+        # 撥音「ん」の処理：N(子音/Q) -> n(子音/Q)
+        # 後に母音('a','i','u','e','o')や'y'が続かない場合
+        # (例: shiNkyaku -> shinkyaku)
+        output = re.sub(r'N([bcdfghjklmnpqrstvwxzQ])', r'n\1', output)
+        # 残った撥音「N」の最終処理
+        # (例: shiNan -> shinnan)
+        output = output.replace('N', 'nn')
+        # 残った促音「Q」の最終処理 (ltsuに)
+        # (例: aQ -> altsu)
+        output = output.replace('Q', 'ltsu') 
         return output
     else:
         return kana_string.translate(str.maketrans(JIS_KANA_MAP))
