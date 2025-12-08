@@ -75,13 +75,13 @@ AUXILIARY_VERB_EXCEPTION_MAP = { # 左がntkのときの例外処理
 }
 DESU_CONJUGATE_MAP = { # ですの活用形
     '':"です",
-    'n':"ではない",
+    'n':"でして",
     't':"でした",
     'k':"でしょう",
-    'nt':"ではなかった",
-    'nk':"ではありません",
+    'nt':"です" + DOT,
+    'nk':"ですが" + COMMA,
     'tk':"ですか?",
-    'ntk':"でして",
+    'ntk':"ですし",
 }
 def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     left_kana, left_extra_sound, left_conso, left_vowel = left_kana_list
