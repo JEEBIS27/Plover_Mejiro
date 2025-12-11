@@ -104,7 +104,7 @@ def lookup(key):
         # 一般略語
         elif abstract:
             result = abstract
-            result += (main_joshi.replace("や" + COMMA, "です" + DOT).replace("や", "です"))
+            result += (main_joshi.replace("～", "です" + DOT).replace("・", "です"))
             message = "一般略語"
         # 動詞略語
         elif verb:
@@ -115,7 +115,7 @@ def lookup(key):
             message = "通常出力"
             result = main_base * (2 if hyphen == "#" else 1)
     # 左+助詞
-    elif left_kana_list[0] and not right_kana_list[0] and right_particle_stroke:
+    elif left_kana_stroke and not right_kana_stroke and left_particle_stroke + '-' + right_particle_stroke != "ntk-n" and right_particle_stroke:
         message = "左+助詞"
         result = left_kana_list[0] + main_joshi
     # 通常
