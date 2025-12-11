@@ -1,4 +1,4 @@
-from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, COMPLEX_DIPHTHONG_MAPPING,
+from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, COMPLEX_DIPHTHONG_MAPPING, EXCEPTION_KANA_MAP,
                                                   conso_stroke_to_roma, vowel_stroke_to_roma, ROMA_TO_KANA_MAP,
                                                   PARTICLE_KEY_LIST, SECOND_SOUND_LIST,
                                                   L_PARTICLE, R_PARTICLE,
@@ -26,10 +26,14 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
         LAST_VOWEL_STROKE = vowel_stroke
 
     if conso_stroke + vowel_stroke + particle_stroke == "":
-        return '', '', '', ''  # すべてのストロークが空の場合、空文字を返す
+        return ['', '', '', '']  # すべてのストロークが空の場合、空文字を返す
     elif conso_stroke + vowel_stroke == "":
         extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
-        return '', extra_sound, '', ''  # 子音と母音が空の場合、空文字と追加音を返す
+        return ['', extra_sound, '', '']  # 子音と母音が空の場合、空文字と追加音を返す
+    elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP:
+        base_kana = EXCEPTION_KANA_MAP[conso_stroke + vowel_stroke]
+        extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
+        return [base_kana, extra_sound, '', '']
     else:
         # 子音ストロークからローマ字の子音（行）を取得
         conso_roma = next((roma for stroke, roma in conso_stroke_to_roma if conso_stroke == stroke), None)
@@ -107,8 +111,8 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
     return joshi
 
 def abstract_abbreviation_lookup(left_kana_stroke: str, right_kana_stroke: str) -> str:
-    if left_kana_stroke + right_kana_stroke in ABSTRACT_MAP:
-        output = ABSTRACT_MAP[left_kana_stroke + right_kana_stroke]
+    if left_kana_stroke + '-' + right_kana_stroke in ABSTRACT_MAP:
+        output = ABSTRACT_MAP[left_kana_stroke + '-' + right_kana_stroke]
     elif left_kana_stroke in ABSTRACT_MAP_LEFT and right_kana_stroke in ABSTRACT_MAP_RIGHT:
         output = ABSTRACT_MAP_LEFT[left_kana_stroke] + ABSTRACT_MAP_RIGHT[right_kana_stroke]
     else:
