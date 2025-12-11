@@ -1,21 +1,28 @@
 {
   "#" : "=repeat_last_translation",
   "tk#": "{PLOVER:TOGGLE}",
-  "t#": "{PLOVER:SWITCH_SYSTEM:English Stenotype}{#F13}{^}",
-  "#t": "{#F14}",
-  "#k": "{#F13}",
+  "t#": "{PLOVER:SWITCH_SYSTEM:English Stenotype}{#alt_l(grave)}",
+  "k#": "{^}{#alt_l(grave)}",
 
-  "-U":"=undo","-AU":"{#BackSpace}","-IU":"{#Delete}",
+  "-U":"=undo",
+  "-AU":"{#BackSpace}","-IU":"{#Delete}",
   "-S":"{#Escape}",
 
-                       "-Y":"{^}{#Up}{^}",
-  "-A":"{^}{#Left}{^}","-N":"{^}{#Down}{^}","-K":"{^}{#Right}{^}",
+  "-A":"{^}{#Left}{^}","-N":"{^}{#Down}{^}",
+  "-K":"{^}{#Right}{^}","-Y":"{^}{#Up}{^}",
+  "-SA":"{^}{#shift_l(#Left)}{^}","-SN":"{^}{#shift_l(#Down)}{^}",
+  "-SK":"{^}{#shift_l(#Right)}{^}","-SY":"{^}{#shift_l(#Up)}{^}",
   "-I":"{^}{#Home}{^}","-T":"{^}{#End}{^}",
-  "-YI":"{^(^}","-SYI":"{^<^}","-TY":"{^)^}","-STY":"{^>^}",
-  "-TYI":"{^()^}{#Left}{^}","-STYI":"{^<>^}{#Left}{^}",
-
-  "-NA":"{^[^}","-SNA":"{^\\{^}","-KN":"{^]^}","-SKN":"{^\\}^}",  
-  "-KNA":"{^[]^}{#Left}{^}","-SKNA":"{^\\{\\}^}{#Left}{^}",
-
-  "-TN":"{^/^}", "-KY": "{^%^}"
+  "-SI":"{^}{#control_l(#Home)}{^}","-ST":"{^}{#control_l(#End)}{^}",
+  "-YI":"{^（^}","-TY":"{^）^}",
+  "-SYI":"{^【^}","-STY":"{^】^}",
+  "-TYI":"{^（）^}{#Left}{^}","-STYI":"{^【】^}{#Left}{^}",
+  "-NA":"{^「^}","-KN":"{^」^}",
+  "-SNA":"{^『^}","-SKN":"{^』^}",
+  "-KNA":"{^「」^}{#Left}{^}","-SKNA":"{^『』^}{#Left}{^}",
+  "-NYIA":"{^〈^}","-TKNY":"{^〉^}",
+  "-SNYIA":"{^《^}","-STKNY":"{^》^}",
+  "-TKNYIA":"{^〈〉^}{#Left}{^}","-STKNYIA":"{^《》^}{#Left}{^}",
+  "-TK":"{^|^}", "-TKIA": "{^||^}",
+  "-TN":"{^……^}", "-KY":"{^※^}"
 }
