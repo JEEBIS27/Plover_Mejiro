@@ -97,12 +97,7 @@ def lookup(key):
         result = main_joshi
         message = "助詞"
     elif asterisk:
-        # 特殊略語：～ing
-        if left_kana_list[0] and right_kana_list[0] and len(main_base) > 2 and not kana_stroke in VERB_KAMI_MAP and main_kana[-1] in ['い', 'き', 'し', 'ち', 'に', 'ひ', 'み', 'り', 'ぎ', 'じ', 'ぢ', 'び', 'ぴ', 'ぃ'] and main_base[-1] == 'ん':
-            result = (main_base + 'ぐ')
-            message = "特殊略語：～ing"
-        # 一般略語
-        elif abstract:
+        if abstract:
             result = abstract
             result += (main_joshi.replace("～", "です" + DOT).replace("・", "です"))
             message = "一般略語"
