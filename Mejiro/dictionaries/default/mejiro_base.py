@@ -78,9 +78,13 @@ def lookup(key):
     # 左右のかなを変数に格納
     left_kana_list = stroke_to_kana(stroke_list[0], stroke_list[1], stroke_list[2], stroke_list[7])
     right_kana_list = stroke_to_kana(stroke_list[4], stroke_list[5], stroke_list[6], stroke_list[7])
+    left_kana = left_kana_list[0]
+    right_kana = right_kana_list[0]
+    left_base = left_kana_list[0] + left_kana_list[1]
+    right_base = right_kana_list[0] + right_kana_list[1]
     main_kana = left_kana_list[0] + right_kana_list[0]
     # 基本形を変数に格納
-    main_base = left_kana_list[0] + left_kana_list[1] + right_kana_list[0] + right_kana_list[1]
+    main_base = left_base + right_base
     # 主要助詞を変数に格納
     main_joshi = joshi(left_particle_stroke, right_particle_stroke)
     # 一般略語変換処理
@@ -93,7 +97,7 @@ def lookup(key):
     if main_stroke in USERS_MAP and asterisk: # ユーザー略語
         result = USERS_MAP[main_stroke]
         message = "ユーザー辞書"
-    elif not main_kana and main_joshi and not asterisk: # 助詞
+    elif kana_stroke == '-' and main_joshi and not asterisk: # 助詞
         result = main_joshi
         message = "助詞"
     elif asterisk:
@@ -110,9 +114,9 @@ def lookup(key):
             message = "通常出力"
             result = main_base * (2 if hyphen == "#" else 1)
     # 左+助詞
-    elif left_kana_stroke and not right_kana_stroke and left_particle_stroke + '-' + right_particle_stroke != "ntk-n" and right_particle_stroke:
+    elif left_kana and not right_kana_stroke and left_particle_stroke + '-' + right_particle_stroke != "ntk-n" and right_particle_stroke:
         message = "左+助詞"
-        result = left_kana_list[0] + main_joshi
+        result = left_kana + main_joshi
     # 通常
     else :
         message = "通常出力"
