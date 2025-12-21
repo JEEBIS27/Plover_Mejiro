@@ -99,7 +99,7 @@ def kana_to_typing_output(kana_string: str, typing_mode: int) -> str:
         # 撥音「ん」の処理：N(子音/Q) -> n(子音/Q)
         # 後に母音('a','i','u','e','o')や'y'が続かない場合
         # (例: shiNkyaku -> shinkyaku)
-        output = re.sub(r'N([bcdfghjklmnpqrstvwxzQ])', r'n\1', output)
+        output = re.sub(r'N([bcdfghjklmpqrstvwxzQ])', r'n\1', output)
         # 残った撥音「N」の最終処理
         # (例: shiNan -> shinnan)
         output = output.replace('N', 'nn')
