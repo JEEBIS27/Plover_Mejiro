@@ -61,6 +61,7 @@ JIS_KANA_MAP = { # JIS配列用
     '-':'|', ',':'<', '.':'>',
     'ー':'|', '、':'<', '。':'>'
 }
+_pending_sokuon = False  # 末尾の促音「っ」を次回に持ち越すためのバッファ
 def hiragana_to_romaji(text: str) -> str:
     """
     ひらがなをローマ字に変換。
@@ -91,15 +92,28 @@ def hiragana_to_romaji(text: str) -> str:
     return "".join(result)
 
 def kana_to_typing_output(kana_string: str, typing_mode: int) -> str:
+    global _pending_sokuon
+
+    # 前回持ち越した促音を先頭に付与
+    working = ('っ' if _pending_sokuon else '') + kana_string
+    _pending_sokuon = False
+
+    # 今回の文字列が促音で終わる場合は出力せず持ち越す
+    if working.endswith('っ'):
+        _pending_sokuon = True
+        working = working[:-1]
+        if not working:
+            return ""
+
     if typing_mode == 0:
-        raw_roma = hiragana_to_romaji(kana_string)
+        raw_roma = hiragana_to_romaji(working)
         # 小文字の「っ」処理（促音）：Q(子音) -> 子音を重ねる
         # (例: niQpoN -> nippoN)
         output = re.sub(r'Q([bcdfghjklmnpqrstvwxyz])', r'\1\1', raw_roma)
         # 撥音「ん」の処理：N(子音/Q) -> n(子音/Q)
-        # 後に母音('a','i','u','e','o')や'y'が続かない場合
+        # 後に母音('a','i','u','e','o')や('n', 'y')が続かない場合
         # (例: shiNkyaku -> shinkyaku)
-        output = re.sub(r'N([bcdfghjklmnpqrstvwxzQ])', r'n\1', output)
+        output = re.sub(r'N([bcdfghjklmpqrstvwxzQ])', r'n\1', output)
         # 残った撥音「N」の最終処理
         # (例: shiNan -> shinnan)
         output = output.replace('N', 'nn')
@@ -108,4 +122,4 @@ def kana_to_typing_output(kana_string: str, typing_mode: int) -> str:
         output = output.replace('Q', 'ltsu') 
         return output
     else:
-        return kana_string.translate(str.maketrans(JIS_KANA_MAP))
+        return working.translate(str.maketrans(JIS_KANA_MAP))
