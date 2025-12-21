@@ -1,3 +1,4 @@
+import re
 from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, COMPLEX_DIPHTHONG_MAPPING, EXCEPTION_KANA_MAP,
                                                   conso_stroke_to_roma, vowel_stroke_to_roma, ROMA_TO_KANA_MAP,
                                                   PARTICLE_KEY_LIST, SECOND_SOUND_LIST,
@@ -30,7 +31,7 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
     elif conso_stroke + vowel_stroke == "":
         extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
         return ['', extra_sound, '', '']  # 子音と母音が空の場合、空文字と追加音を返す
-    elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP:
+    elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP and not asterisk and current_vowel_stroke + particle_stroke not in COMPLEX_DIPHTHONG_MAPPING: # 例外的なかなのマッピングをチェック
         base_kana = EXCEPTION_KANA_MAP[conso_stroke + vowel_stroke]
         extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
         return [base_kana, extra_sound, '', '']
@@ -46,11 +47,15 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
         vowel_roma = None
         suffix = "" # 長音文字
 
-        # 特殊な二重母音マッピングをチェック
+        # 英語フラグをリセット
+        is_english = False
+
+        # 英語母音マッピングをチェック
         if not asterisk and current_vowel_stroke + particle_stroke in COMPLEX_DIPHTHONG_MAPPING:
             vowel_roma, suffix = COMPLEX_DIPHTHONG_MAPPING[current_vowel_stroke + particle_stroke]
             vowel_index = [item[1] for item in vowel_stroke_to_roma].index(vowel_roma)
             extra_sound = ""  # 追加音はなし
+            is_english = True # 英語モードフラグを立てる
         # 基本の二重母音マッピングをチェック
         elif current_vowel_stroke in DIPHTHONG_MAPPING:
             vowel_roma, suffix = DIPHTHONG_MAPPING[current_vowel_stroke]
@@ -72,6 +77,8 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
 
         try:
             base_kana = ROMA_TO_KANA_MAP[conso_roma][vowel_index]
+            if is_english:
+                base_kana = base_kana.replace('ち', 'てぃ').replace('ぢ', 'でぃ')
         except IndexError:
             print(f"無効な組み合わせ: 子音'{conso_roma}' + 母音'{vowel_roma}'")
             raise KeyError
