@@ -77,10 +77,10 @@ COMPLEX_DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文�
 }
 
 EXCEPTION_KANA_MAP = { # 例外的なかなのマッピング
-    "TNYI": "でぃ",
-    "TNYIU": "てぃ",
-    "TNYA": "どぅ",
-    "TNYAU": "とぅ",
+    "TNYI": "どぅ",
+    "TNYIU": "とぅ",
+    "TNYA": "てぃ",
+    "TNYAU": "でぃ",
     "TNYU": "でゅ",
 
     "SKIU": "ゆい",
@@ -108,6 +108,7 @@ EXCEPTION_KANA_MAP = { # 例外的なかなのマッピング
     "STNYIA": "つぇ",
     "STNYIAU": "てゅ",
 }
+
 # 助詞のキーと対応する文字列の定義
 PARTICLE_KEY_LIST = ["", "n", "t", "k", "tk", "nt", "nk", "ntk"]
 # 追加音の定義
