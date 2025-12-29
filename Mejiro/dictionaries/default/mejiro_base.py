@@ -30,7 +30,6 @@ from Mejiro.dictionaries.default.translate import kana_to_typing_output
 
 # グローバル変数の定義
 LONGEST_KEY = 1
-LAST_VOWEL_STROKE = "A"
 is_typing_mode = False
 is_found_exception = [False, False]
 
@@ -118,6 +117,9 @@ def lookup(key):
         message = "左+助詞"
         result = left_kana + main_joshi
     # 通常
+    elif not left_stroke and right_kana and not right_particle_stroke:
+        message = "未定義の右手略語"
+        result = ''
     else :
         message = "通常出力"
         result = main_base * (2 if hyphen == "#" else 1)
