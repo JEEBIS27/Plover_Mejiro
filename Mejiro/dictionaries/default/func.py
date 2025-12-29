@@ -6,6 +6,9 @@ from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, COMPLEX_DIP
                                                   COMMA, henkan_command, EXCEPTION_STROKE_MAP)
 from Mejiro.dictionaries.default.abbreviations import ABSTRACT_MAP, ABSTRACT_MAP_LEFT, ABSTRACT_MAP_RIGHT
 
+global LAST_VOWEL_STROKE
+LAST_VOWEL_STROKE = ''
+
 def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, asterisk: str) -> str:
     
     global LAST_VOWEL_STROKE
@@ -16,11 +19,12 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
     global ROMA_TO_KANA_MAP
     global PARTICLE_KEY_LIST
     global SECOND_SOUND_LIST
+    global is_first_input
 
+    if not LAST_VOWEL_STROKE:
+        LAST_VOWEL_STROKE = "A"
     # 母音ストロークの決定と更新
     if not vowel_stroke:
-        if not LAST_VOWEL_STROKE:
-            LAST_VOWEL_STROKE = "A"
         current_vowel_stroke = LAST_VOWEL_STROKE
     else:
         current_vowel_stroke = vowel_stroke
