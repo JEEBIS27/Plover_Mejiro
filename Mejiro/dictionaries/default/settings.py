@@ -130,6 +130,6 @@ R_PARTICLE = ["", COMMA, "は", "が", "も", "は" + COMMA, "が" + COMMA, "も
 # 例外的な助詞ストロークのマッピング
 EXCEPTION_STROKE_MAP = {
     "-n": "}{#Return}{", "n-": "}{#Space}{", "n-n": "}{#Tab}{", 
-    "-nt": DOT, "-nk": COMMA, "-ntk": "・",
-    "n-nt": "?", "n-nk": "!", "n-ntk": "～",
+    "-nt": DOT, "-nk": COMMA, "-ntk": "}{#F7}{",
+    "n-nt": "?", "n-nk": "!", "n-ntk": "}{#F8}{",
 }

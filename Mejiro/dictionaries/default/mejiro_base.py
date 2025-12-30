@@ -31,7 +31,6 @@ from Mejiro.dictionaries.default.translate import kana_to_typing_output
 # グローバル変数の定義
 LONGEST_KEY = 1
 is_typing_mode = False
-is_found_exception = [False, False]
 
 # タイピングゲーム時の入力法設定
 typing_mode = 0 # 0: ローマ字入力, 1: JISかな入力
@@ -39,10 +38,8 @@ typing_mode = 0 # 0: ローマ字入力, 1: JISかな入力
 # メインの関数
 def lookup(key):
     global LONGEST_KEY
-    global LAST_VOWEL_STROKE
     global typing_mode
     global is_typing_mode
-    global is_found_exception
     assert len(key) <= LONGEST_KEY
     stroke = key[0]
 
@@ -71,7 +68,6 @@ def lookup(key):
     kana_stroke = left_kana_stroke + '-' + right_kana_stroke
     main_stroke = left_stroke + '-' + right_stroke
     stroke_list = [left_conso_stroke, left_vowel_stroke, left_particle_stroke, hyphen, right_conso_stroke, right_vowel_stroke, right_particle_stroke, asterisk]
-    is_found_exception = [False, False] # 初期化
     result = "" # 初期化
 
     # 左右のかなを変数に格納
@@ -102,7 +98,7 @@ def lookup(key):
     elif asterisk:
         if abstract:
             result = abstract
-            result += (main_joshi.replace("～", "です" + DOT).replace("・", "です"))
+            result += (main_joshi.replace("}{#Space}{", "である").replace("}{#Return}{", "だ").replace("}{#Tab}{", "だった").replace("}{#F8}{", "でした").replace("}{#F7}{", "です"))
             message = "一般略語"
         # 動詞略語
         elif verb:
