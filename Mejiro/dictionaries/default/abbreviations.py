@@ -111,6 +111,7 @@ VERB_GODAN_MAP = { # ストローク: [語幹, 行]
     "TAU-SKNAU": ["ともな", 'w'],# 伴う
     "SKNA-TAU": ["まと", 'w'],# 纏う
     "SKNAU-STA": ["もら", 'w'],# 貰う
+    "SKNAU-STIAU": ["もら", 'w'],# 貰う
     "TKA-STA": ["はら", 'w'],# 払う
     "SKA-STA": ["わら", 'w'],# 笑う
 }
