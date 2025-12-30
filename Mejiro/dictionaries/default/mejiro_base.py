@@ -98,7 +98,7 @@ def lookup(key):
     elif asterisk:
         if abstract:
             result = abstract
-            result += (main_joshi.replace("～", "です" + DOT).replace("・", "です"))
+            result += (main_joshi.replace("}{#Space}{", "である").replace("}{#Return}{", "だ").replace("}{#Tab}{", "だった").replace("}{#F8}{", "でした").replace("}{#F7}{", "です"))
             message = "一般略語"
         # 動詞略語
         elif verb:
