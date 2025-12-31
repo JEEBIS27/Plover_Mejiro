@@ -9,7 +9,7 @@ USERS_MAP = { # ユーザー略語の定義
   "KAUn-TAntk": "こんぴゅーたー",
   "TNIA-SNI": "でじたる",
   "In-STA": "いんふら",
-  "KAUn-NI": "こんびに",
+  "KAUn-TKNIn": "こんびに",
   "SU-STKNAU": "すまーとふぉん",
   "SU-TKAU": "すまほ",
   "SY-IAn": "さいえんす",
