@@ -118,7 +118,7 @@ tab a s d f g h j k l ; '
 | `IAU` | おう |
 | `YIAU` | うう |
 
-`KY-TYIAU` → 「共通」
+`KYI-TYIAU` → 「共通」
 
 `TKNU-STYIAn` → 「ブレイン」
 
