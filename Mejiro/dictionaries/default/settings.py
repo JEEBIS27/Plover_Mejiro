@@ -122,7 +122,7 @@ DOT = "。"
 COMMA = "、"
 
 # 左側の助詞文字列の定義
-L_PARTICLE = ["", COMMA, "に", "の", "で", "と", "を", "か"]
+L_PARTICLE = ["", COMMA, "に", "の", "で", "と", "を", "へ"]
 
 # 右側の助詞文字列の定義
 R_PARTICLE = ["", COMMA, "は", "が", "も", "は" + COMMA, "が" + COMMA, "も" + COMMA]
