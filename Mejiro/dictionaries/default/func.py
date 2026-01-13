@@ -32,7 +32,7 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
 
     if conso_stroke + vowel_stroke + particle_stroke == "":
         return ['', '', '', '']  # すべてのストロークが空の場合、空文字を返す
-    elif conso_stroke + vowel_stroke == "":
+    elif conso_stroke + vowel_stroke in ['', "STN"]:
         extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
         return ['', extra_sound, '', '']  # 子音と母音が空の場合、空文字と追加音を返す
     elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP and not asterisk and current_vowel_stroke + particle_stroke not in COMPLEX_DIPHTHONG_MAPPING: # 例外的なかなのマッピングをチェック
