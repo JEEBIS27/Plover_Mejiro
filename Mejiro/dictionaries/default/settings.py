@@ -94,12 +94,12 @@ EXCEPTION_KANA_MAP = { # 例外的なかなのマッピング
     "SKIAU": "ゎ",
     "SKYIAU": "うぁ",
 
-    "STKNYI": "じぇ",
-    "STKNYIU": "しぇ",
-    "STKNYA": "ゔぁ",
-    "STKNYAU": "ゔぉ",
+    "STKNYI": "ゔぉ",
+    "STKNYIU": "ゔぇ",
+    "STKNYA": "しぇ",
+    "STKNYAU": "じぇ",
     "STKNYU": "ゔぃ",
-    "STKNIU": "ゔぇ",
+    "STKNIU": "ゔぁ",
 
     "STN": "",
     "STNIU": "つぃ",
