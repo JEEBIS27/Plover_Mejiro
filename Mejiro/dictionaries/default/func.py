@@ -3,7 +3,7 @@ from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, COMPLEX_DIP
                                                   conso_stroke_to_roma, vowel_stroke_to_roma, ROMA_TO_KANA_MAP,
                                                   PARTICLE_KEY_LIST, SECOND_SOUND_LIST,
                                                   L_PARTICLE, R_PARTICLE,
-                                                  COMMA, henkan_command, EXCEPTION_STROKE_MAP)
+                                                  COMMA, EXCEPTION_STROKE_MAP)
 from Mejiro.dictionaries.default.abbreviations import ABSTRACT_MAP, ABSTRACT_MAP_LEFT, ABSTRACT_MAP_RIGHT
 
 global LAST_VOWEL_STROKE
@@ -95,7 +95,6 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
     global EXCEPTION_STROKE_MAP
     global L_PARTICLE
     global R_PARTICLE
-    global henkan_command
     # ストロークを直接置換するため、'ｰ'をつける。
     particle_stroke = left_particle_stroke + '-' + right_particle_stroke
     if particle_stroke in EXCEPTION_STROKE_MAP:
@@ -111,7 +110,7 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
         right_joshi = R_PARTICLE[r_index]
         if left_particle_stroke == "n":
             joshi = right_joshi + COMMA
-        elif right_particle_stroke in ["k", "nk"] and left_particle_stroke not in ["", "k"]:
+        elif right_particle_stroke in ["k", "nk"] and left_particle_stroke not in ["", "k", "ntk"]:
             joshi = "の" + left_joshi
             if "n" in right_particle_stroke:
                 joshi += COMMA

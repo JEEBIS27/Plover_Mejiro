@@ -7,11 +7,29 @@
 
 両手の10本指をフル活用した効率的な日本語入力を体験できます
 
----
-## レイアウト(Layout)
-このシステムは、メジロ式専用キーボード（Mejiro31）や、速記用キーボード（Uni v4）、スペースバーが2つあるキーボードで使うことができます
-
 ![image](https://github.com/user-attachments/assets/8af6ceb9-730f-4d41-a531-8ac2b05dc7b9)
+
+---
+
+## 目次(Outline)
+- [レイアウト(Layout)](#レイアウトlayout)
+- [使い方(How to use)](#使い方how-to-use)
+    - [基本入力(Basic Input)](#基本入力basic-input)
+        - [母音(Vowels)](#母音vowels)
+        - [子音(Consonants)](#子音consonants)
+        - [二音目(Extra)](#二音目extra)
+        - [二重母音(Double Vowels)](#二重母音double-vowels)
+        - [外来音(English Sounds)](#外来音english-sounds)
+        - [例外かな(Exceptional Kana)](#例外かなexceptional-kana)
+    - [助詞(Particle)](#助詞particle)
+    - [繰り返し(Repeater)](#繰り返しrepeater)
+    - [略語(Abbreviations)](#略語abbreviations)
+    - [タイピングモード(Typing Mode)](#タイピングモードtyping-mode)
+- [導入法(Installation)](#導入法installation)
+- [もっと詳しく知りたい方は(More To Know the Theory)](#もっと詳しく知りたい方はmore-to-know-the-theory)
+
+## レイアウト(Layout)
+このシステムは、メジロ式専用キーボード（[Mejiro31](https://github.com/JEEBIS27/Mejiro31)）や、親指シフト用のキーボード、スペースバーが2つあるキーボードで使うことができます
 
 もちろん一般的なキーボードでも使うことはできますが、より快適に使うためには親指のキーが分かれているものを使うことをおすすめします
 
@@ -41,7 +59,9 @@ tab a s d f g h j k l ; '
 ---
 ## 使い方(How to use)
 
-### 母音(Vowels)
+### 基本入力(Basic Input)
+
+#### 母音(Vowels)
 
 | 出力  | 入力  |
 | ---- | ---- |
@@ -55,7 +75,7 @@ tab a s d f g h j k l ; '
 | よ段  | `YAU`|
 
 ---
-### 子音(Consonants)
+#### 子音(Consonants)
 
 | 出力   | 入力   |
 | ----- | ------ |
@@ -85,7 +105,7 @@ tab a s d f g h j k l ; '
 が行`KN`+い段`I` = `KNA` →「ぎ」
 
 ---
-### 2音目(Extra)
+#### 二音目(Extra)
 
 | 出力 |  入力  |
 | --- | ----- |
@@ -104,7 +124,7 @@ tab a s d f g h j k l ; '
 `TAntk` `SNAn` →「ターザン」
 
 ---
-### 二重母音(Double Vowels)
+#### 二重母音(Double Vowels)
 
 「あ・い・う・え・お・や・ゆ・よ」以外の組み合わせのときは、日本語で高頻度で出現する二重母音を打てるようになっています
 
@@ -120,10 +140,14 @@ tab a s d f g h j k l ; '
 
 `KYI-TYIAU` → 「共通」
 
-`TKNU-STYIAn` → 「ブレイン」
+`TYIU-IAU` → 「中央」
+
+`SIU-YIA` → 「水泳」
+
+`TY-KNY` → 「大概」
 
 ---
-### 外来音(English Sounds)
+#### 外来音(English Sounds)
 
 特定の母音と追加音の組み合わせは外来音に変換されます
 
@@ -139,22 +163,22 @@ tab a s d f g h j k l ; '
 
 `SY-YIAtk` → 「サイエンス」
 
-### 例外かな(Exceptional Kana)
+#### 例外かな(Exceptional Kana)
 
 「わ行や段」のような存在しない行段の組み合わせは特定のマイナーかなに変換されます
 
-| 母音 | `D` |  `W` |  `F` |  `L` |
+| 母\子 | `D` |  `W` |  `F` |  `小` |
 | ---- | --- | ---- | ---- | ---- |
-|`YI`  |`でぃ`|`ゐ`  |`じぇ`| ---- |
-|`YIU` |`てぃ`|`ゑ`  |`しぇ`| ---- |
-|`YA`  |`どぅ`|`いぇ`|`ゔぁ`| ---- |
-|`YU`  |`でゅ`|`ゔゅ`|`ちぇ`| ---- |
-|`YAU` |`とぅ`|`を`  |`ゔぉ`| ---- |
-|`IU`  | ---- |`ゆい`|`ゔぃ`|`つぃ`|
-|`IAU` | ---- |`ゎ`  |`ゔぇ`|`つぉ`|
-|`YIAU`| ---- |`うぁ`|`ぢぇ`|`てゅ`|
-|`Y`   | ---- | ---- | ---- |`つゃ`|
-|`YIA` | ---- | ---- | ---- |`てゃ`|
+|`YI`  |`どぅ`|`ゐ`  |`じぇ`| ---- |
+|`YIU` |`とぅ`|`ゑ`  |`しぇ`| ---- |
+|`YA`  |`てぃ`|`いぇ`|`ゔぁ`| ---- |
+|`YAU` |`でぃ`|`を`  |`ゔぉ`| ---- |
+|`YU`  |`でゅ`|`ゔゅ`|`ゔぃ`| ---- |
+|`IU`  |`ちぇ`|`ゆい`|`ゔぇ`|`つぃ`|
+|`IAU` | ---- |`ゎ`  | --- |`つぉ`|
+|`YIAU`|`てゅ`|`うぁ`| ---- |`てゃ`|
+|`Y`   | ---- | ---- | ---- |`つぁ`|
+|`YIA` | ---- | ---- | ---- |`つぇ`|
 
 ---
 ### 助詞(Particle)
@@ -478,12 +502,10 @@ typing_mode = 0  # 0: ローマ字入力, 1: JISかな入力
 タイピングモードは、`#n`でon、`n#`でoffに切り替えられます
 
 ---
-## もっと詳しく知りたい方は(More To Know the Theory)
 
-最新情報は[**X**](https://x.com/jeebis_iox)や[**note**](https://note.com/jeebis_keyboard)をご確認ください
+## 導入法(Installation)
 
----
-## メジロ式をインストールする(Installing Mejiro)
+### メジロ式をインストールする(Installing Mejiro)
 
 このプラグインはPloverのプラグインマネージャーからインストールできます
 
@@ -493,6 +515,12 @@ typing_mode = 0  # 0: ローマ字入力, 1: JISかな入力
 4. ``Successfully installed Mejiro-2.X.X``のように表示されたらインストール完了です
 
 ---
-## メジロ式を起動する(Activating Mejiro)
+### メジロ式を起動する(Activating Mejiro)
 
 このプラグインをインストールしたあと、一度Ploverを再起動し、Ploverメニューの歯車マーク``Configure``から``System``タブを開き、``Mejiro``システムを選択して起動します
+
+## もっと詳しく知りたい方は(More To Know the Theory)
+
+最新情報は[**X**](https://x.com/jeebis_iox)や[**note**](https://note.com/jeebis_keyboard)をご確認ください
+
+---

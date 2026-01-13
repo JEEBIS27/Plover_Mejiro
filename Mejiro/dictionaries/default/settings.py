@@ -82,31 +82,31 @@ EXCEPTION_KANA_MAP = { # 例外的なかなのマッピング
     "TNYA": "てぃ",
     "TNYAU": "でぃ",
     "TNYU": "でゅ",
+    "TNIU": "ちぇ",
+    "TNYIAU": "てゅ",
 
-    "SKIU": "ゆい",
-    "SKYA": "いぇ",
-    "SKYU": "ゔゅ",
-    "SKYAU": "を",
     "SKYI": "ゐ",
     "SKYIU": "ゑ",
+    "SKYA": "いぇ",
+    "SKYAU": "を",
+    "SKYU": "ゔゅ",
+    "SKIU": "ゆい",
     "SKIAU": "ゎ",
     "SKYIAU": "うぁ",
 
-    "STKNIU": "ゔぃ",
-    "STKNIAU": "ゔぇ",
-    "STKNYIAU": "ぢぇ",
     "STKNYI": "じぇ",
     "STKNYIU": "しぇ",
     "STKNYA": "ゔぁ",
-    "STKNYU": "ちぇ",
     "STKNYAU": "ゔぉ",
+    "STKNYU": "ゔぃ",
+    "STKNIU": "ゔぇ",
 
     "STN": "",
     "STNIU": "つぃ",
     "STNIAU": "つぉ",
+    "STNYIAU": "てゃ",
     "STNY": "つぁ",
     "STNYIA": "つぇ",
-    "STNYIAU": "てゅ",
 }
 
 # 助詞のキーと対応する文字列の定義
@@ -114,15 +114,12 @@ PARTICLE_KEY_LIST = ["", "n", "t", "k", "tk", "nt", "nk", "ntk"]
 # 追加音の定義
 SECOND_SOUND_LIST = ["", "ん", "つ", "く", "っ", "ち", "き", "ー"]
 
-# 変換&確定をよく使うので変数にしておく
-henkan_command = "}{#Space}{#Return}{"
-
 # ドット、コンマの定義(変換コマンドはオプションです)
-DOT = "。"
-COMMA = "、"
+DOT = "。" # or "."
+COMMA = "、" # or ","
 
 # 左側の助詞文字列の定義
-L_PARTICLE = ["", COMMA, "に", "の", "で", "と", "を", "か"]
+L_PARTICLE = ["", COMMA, "に", "の", "で", "と", "を", "へ"]
 
 # 右側の助詞文字列の定義
 R_PARTICLE = ["", COMMA, "は", "が", "も", "は" + COMMA, "が" + COMMA, "も" + COMMA]
