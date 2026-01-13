@@ -140,7 +140,11 @@ tab a s d f g h j k l ; '
 
 `KYI-TYIAU` → 「共通」
 
-`TKNU-STYIAn` → 「ブレイン」
+`TYIU-IAU` → 「中央」
+
+`SIU-YIA` → 「水泳」
+
+`TY-KNY` → 「大概」
 
 ---
 #### 外来音(English Sounds)
