@@ -91,7 +91,6 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
         return [base_kana + suffix, extra_sound, conso_roma, vowel_roma]
     
 def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
-    global exception_particle
     global EXCEPTION_STROKE_MAP
     global L_PARTICLE
     global R_PARTICLE
