@@ -39,6 +39,12 @@ ABSTRACT_MAP = { # 一般略語の定義
   "SAU-STIA": "それ",
   "TNAU-STIA": "どれ",
   "TNA-STIA": "だれ",
+  "A-IU": "ああいう",
+  "KAU-IU": "こういう",
+  "SAU-IU": "そういう",
+  "TNAU-IU": "どういう",
+  "TAU-IU": "という",
+  "NA-IU": "なんていう",
   "TAU-KAU": "ところ",
   "KAU-TAU": "こと",
   "TKI-TAU": "ひと",
@@ -63,6 +69,7 @@ ABSTRACT_MAP_LEFT = { # 一般略語の左側ストローク定義
   "KIU": "こういう",
   "SIU": "そういう",
   "TNIU": "どういう",
+  "TIU": "という",
   "NIU": "なんていう"
 }
 
