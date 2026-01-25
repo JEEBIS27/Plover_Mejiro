@@ -114,7 +114,16 @@ def stroke_to_conjugate(left_particle_stroke: str, right_particle_stroke: str) -
 
 def translate_ta_te_form(string: str, auxiliary: int, conso: str) -> str:
     if auxiliary == 5 and conso in ['g', 'n', 'b', 'm']:
-        string = string.replace("んて", "んで").replace("んた", "んだ")
+        if conso == 'g':
+            if string.startswith("いて"):
+                string = "いで" + string[2:]
+            elif string.startswith("いた"):
+                string = "いだ" + string[2:]
+        else:  # n, b, m
+            if string.startswith("んて"):
+                string = "んで" + string[2:]
+            elif string.startswith("んた"):
+                string = "んだ" + string[2:]
     return string
 
 def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
