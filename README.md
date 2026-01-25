@@ -268,8 +268,8 @@ tab a s d f g h j k l ; '
 <abbreviations.py>
 (一例)
 USERS_MAP = { # ユーザー略語の定義
-  "SKNIA-SAUtk": "めじろしきそっき",
-  "In-STKNAU": "いんふぉめーしょん",
+  "A-SKNIA": "あめりか",
+  "KNUntk-KNU": "ぐーぐる",
   ...
 }
 ```
