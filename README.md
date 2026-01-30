@@ -17,7 +17,7 @@
     - [基本入力(Basic Input)](#基本入力basic-input)
         - [母音(Vowels)](#母音vowels)
         - [子音(Consonants)](#子音consonants)
-        - [二音目(Extra)](#二音目extra)
+        - [追加音(Extra)](#追加音extra)
         - [二重母音(Double Vowels)](#二重母音double-vowels)
         - [外来音(English Sounds)](#外来音english-sounds)
         - [例外かな(Exceptional Kana)](#例外かなexceptional-kana)
