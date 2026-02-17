@@ -112,8 +112,19 @@ def stroke_to_conjugate(left_particle_stroke: str, right_particle_stroke: str) -
         auxiliary_list[1] = AUXILIARY_VERB_RIGHT_MAP[right_particle_stroke][1]
     return auxiliary_list
 
-def translate_ta_te_form(string: str, auxiliary: list, conso: list) -> str:
-    return string.replace("て", "で").replace("た", "だ") if conso in ['g', 'n', 'b', 'm'] and auxiliary == 5 else string
+def translate_ta_te_form(string: str, auxiliary: int, conso: str) -> str:
+    if auxiliary == 5 and conso in ['g', 'n', 'b', 'm']:
+        if conso == 'g':
+            if string.startswith("いて"):
+                string = "いで" + string[2:]
+            elif string.startswith("いた"):
+                string = "いだ" + string[2:]
+        else:  # n, b, m
+            if string.startswith("んて"):
+                string = "んで" + string[2:]
+            elif string.startswith("んた"):
+                string = "んだ" + string[2:]
+    return string
 
 def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     left_kana, left_extra_sound, left_conso, left_vowel = left_kana_list
@@ -130,7 +141,7 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     # 登録された五段活用
     if kana_stroke in VERB_GODAN_MAP:
         verb_list = VERB_GODAN_MAP[kana_stroke]
-        output = verb_list[0] + translate_ta_te_form(CONJUGATE_GODAN_MAP[verb_list[1]][auxiliary_list[0]], auxiliary_list[0], verb_list[1]) + auxiliary_list[1]
+        output = verb_list[0] + translate_ta_te_form(CONJUGATE_GODAN_MAP[verb_list[1]][auxiliary_list[0]] + auxiliary_list[1], auxiliary_list[0], verb_list[1])
     # 登録された上一段活用
     elif kana_stroke in VERB_KAMI_MAP:
         verb_list = VERB_KAMI_MAP[kana_stroke]
@@ -161,7 +172,7 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
         output = left_kana + left_extra_sound + DESU_CONJUGATE_MAP[right_particle_stroke]
     # 五段活用
     elif right_vowel_stroke == "" and right_conso in ['k', 'g', 's', 't', 'n', 'b', 'm', 'r', 'w']:
-        output = left_kana + translate_ta_te_form(CONJUGATE_GODAN_MAP[right_conso][auxiliary_list[0]], auxiliary_list[0], right_conso) + auxiliary_list[1]
+        output = left_kana + translate_ta_te_form(CONJUGATE_GODAN_MAP[right_conso][auxiliary_list[0]] + auxiliary_list[1], auxiliary_list[0], right_conso)
     # 上一段活用
     elif right_vowel_stroke == "I" and right_conso in ['k', 'g', 'z', 't', 'n', 'b', 'm', 'r', 'w', '']:
         if right_conso == '':
