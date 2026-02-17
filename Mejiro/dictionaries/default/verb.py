@@ -85,7 +85,7 @@ AUXILIARY_VERB_EXCEPTION_MAP = { # 例外
     'ntk-nt' : [0, "なければ"], # 否定+仮定
     'ntk-nk' : [0, "なく"], # 否定+連用
     'ntk-tk' : [5, "てください"], # 丁寧命令
-    'ntk-ntk': [9, ""], # 命令 
+    'ntk-ntk': [9, ""], # 命令
 }
 DESU_CONJUGATE_MAP = { # ですの活用形
     '':"です",
@@ -123,7 +123,7 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     kana_stroke = left_conso_stroke + left_vowel_stroke + '-' + right_conso_stroke + right_vowel_stroke
 
     output = ""
-    
+
     # 活用を取得
     auxiliary_list = stroke_to_conjugate(left_particle_stroke, right_particle_stroke)
 
@@ -145,6 +145,7 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     # ある
     elif kana_stroke == "A-":
         output += ARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
+        output = "あらず" if output == "ず" else output
     # ござる
     elif kana_stroke == "KNAU-SNA":
         output += GOZARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
