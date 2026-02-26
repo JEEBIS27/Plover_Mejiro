@@ -48,7 +48,7 @@ CONJUGATE_MAP = {
 SAHEN_LIST =  ['し', 'さ', 'さ', 'し', 'する', 'し', 'しよう', 'すれ', 'でき', 'しろ'] # "*"
 KAHEN_LIST =  ['こ', 'こさ', 'こら', 'き', 'くる', 'き', 'こよう', 'くれ', 'これ', 'こい'] # "K-*"
 IKU_LIST =    ['いか', 'いか', 'いか', 'いき', 'いく', 'いっ', 'いこう', 'いけ', 'いけ', 'いけ'] # "I-K*"
-ARU_LIST =    ['', 'あら', 'あら', 'あり', 'ある', 'あっ', 'あろう', 'あれ', 'ありえ', 'あれ'] # "A-*"
+ARU_LIST =    ['あら', 'あら', 'あら', 'あり', 'ある', 'あっ', 'あろう', 'あれ', 'ありえ', 'あれ'] # "A-*"
 GOZARU_LIST = ['ござら', 'ござら', 'ござら', 'ござい', 'ござる', 'ござっ', 'ござろう', 'ござれ', 'ござれ', 'ござれ'] # "KNAU-SNA*"
 
 # 文語調の活用
@@ -56,7 +56,6 @@ AUXILIARY_VERB_LEFT_MAP = { # ストローク: [活用形, 補助動詞の語幹
     'n' : [5, "て", '上', 'w'], # ～ている
     't' : [1, ""  , '下', 's'], # ～させる
     'k' : [2, ""  , '下', 'r'], # ～られる
-    'nt': [5, "てもら", '五', 'w'], # ～てもらう
     'nk': [5, "てしま", '五', 'w'], # ～てしまう
 }
 AUXILIARY_VERB_RIGHT_MAP = { # ストローク: [活用形, 助動詞]
@@ -70,6 +69,14 @@ AUXILIARY_VERB_RIGHT_MAP = { # ストローク: [活用形, 助動詞]
     'ntk': [5, "て"],
 }
 AUXILIARY_VERB_EXCEPTION_MAP = { # 例外
+    'nt-'    : [3, "たい"], # ～たい
+    'nt-n'   : [3, "たくない"], # ～たい+否定
+    'nt-t'   : [3, "たかった"], # ～たい+過去
+    'nt-nt'  : [3, "たくなかった"], # ～たい+否定+過去
+    'nt-k'   : [5, "てほしい"], # ～ほしい
+    'nt-nk'  : [5, "てほしくない"], # ～ほしい+否定
+    'nt-tk'  : [5, "てほしかった"], # ～ほしい+過去
+    'nt-ntk' : [5, "てほしくなかった"], # ～ほしい+否定+過去
     'tk-'    : [8, "る"], # 可能
     'tk-n'   : [8, "ない"], # 可能+否定
     'tk-t'   : [8, "た"], # 可能+過去
@@ -156,7 +163,7 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     # ある
     elif kana_stroke == "A-":
         output += ARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
-        output = "あらず" if output == "ず" else output
+        output = output.replace("あらな", "な")
     # ござる
     elif kana_stroke == "KNAU-SNA":
         output += GOZARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
