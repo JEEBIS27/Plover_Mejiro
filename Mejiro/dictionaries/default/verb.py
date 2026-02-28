@@ -48,7 +48,7 @@ CONJUGATE_MAP = {
 SAHEN_LIST =  ['し', 'さ', 'さ', 'し', 'する', 'し', 'しよう', 'すれ', 'でき', 'しろ'] # "*"
 KAHEN_LIST =  ['こ', 'こさ', 'こら', 'き', 'くる', 'き', 'こよう', 'くれ', 'これ', 'こい'] # "K-*"
 IKU_LIST =    ['いか', 'いか', 'いか', 'いき', 'いく', 'いっ', 'いこう', 'いけ', 'いけ', 'いけ'] # "I-K*"
-ARU_LIST =    ['あら', 'あら', 'あら', 'あり', 'ある', 'あっ', 'あろう', 'あれ', 'ありえ', 'あれ'] # "A-*"
+ARU_LIST =    ['', 'あら', 'あら', 'あり', 'ある', 'あっ', 'あろう', 'あれ', 'ありえ', 'あれ'] # "A-*"
 GOZARU_LIST = ['ござら', 'ござら', 'ござら', 'ござい', 'ござる', 'ござっ', 'ござろう', 'ござれ', 'ござれ', 'ござれ'] # "KNAU-SNA*"
 
 # 文語調の活用
@@ -88,11 +88,11 @@ AUXILIARY_VERB_EXCEPTION_MAP = { # 例外
     'ntk-'   : [3, ""], # 連用
     'ntk-n'  : [0, "ず"], # 否定
     'ntk-t'  : [7, "ば"], # 仮定
-    'ntk-k'  : [6, ""], # 意向
+    'ntk-k'  : [3, "ましょう"], # 提案
     'ntk-nt' : [0, "なければ"], # 否定+仮定
     'ntk-nk' : [0, "なく"], # 否定+連用
     'ntk-tk' : [5, "てください"], # 丁寧命令
-    'ntk-ntk': [9, ""], # 命令
+    'ntk-ntk'  : [6, ""], # 意向
 }
 DESU_CONJUGATE_MAP = { # ですの活用形
     '':"です",
@@ -163,7 +163,7 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     # ある
     elif kana_stroke == "A-":
         output += ARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
-        output = output.replace("あらな", "な")
+        if output == "ず": output = "あらず"
     # ござる
     elif kana_stroke == "KNAU-SNA":
         output += GOZARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
