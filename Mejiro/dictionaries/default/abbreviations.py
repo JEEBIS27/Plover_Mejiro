@@ -30,11 +30,6 @@ USERS_MAP = { # ユーザー略語の定義
     "TA-SI": "たしかに",
 }
 ABSTRACT_MAP = { # 一般略語の定義
-  "YAU-STIA": "あれ",
-  "KAU-STIA": "これ",
-  "SAU-STIA": "それ",
-  "TNAU-STIA": "どれ",
-  "TNA-STIA": "だれ",
   "A-TNA": "あれだけ",
   "KAU-TNA": "これだけ",
   "SAU-TNA": "それだけ",
@@ -46,15 +41,6 @@ ABSTRACT_MAP = { # 一般略語の定義
   "TNAU-IU": "どういう",
   "TAU-IU": "という",
   "NA-IU": "なんていう",
-  "TAU-KAU": "ところ",
-  "KAU-TAU": "こと",
-  "TKI-TAU": "ひと",
-  "TAU-KI": "とき",
-  "SKNAU-NAU": "もの",
-  "TKNIA-TIA": "すべて",
-  "NA-KNA": "ながら",
-  "AU-KA": "おかげ",
-  "SI-KNAU": "しごと"
 }
 
 ABSTRACT_MAP_LEFT = { # 一般略語の左側ストローク定義
@@ -121,6 +107,7 @@ VERB_GODAN_MAP = { # ストローク: [語幹, 行]
     "KAU-STAU": ["ころ", 's'],# 殺す
     "KAU-SKA": ["こわ", 's'],# 壊す
     "TA-AU": ["たお", 's'],# 倒す
+    "TNA-": ["だ", 's'],# 出す
     "TU-TKNU": ["つぶ", 's'],# 潰す
     "TIA-STA": ["てら", 's'],# 照らす
     "NA-AU": ["なお", 's'],# 直す

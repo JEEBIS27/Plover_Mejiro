@@ -151,35 +151,34 @@ tab a s d f g h j k l ; '
 
 特定の母音と追加音の組み合わせは外来音に変換されます
 
-| 母音 | `n` | `tk` | `ntk` |
-| --- | ---- | ---- | ----- |
-|`IAU`| ~own | ~ow | ~able |
-|`YI`| ~ing | ~ism | ~ical |
-|`YIU`| ~ial | ~ist | ~ity |
-|`YIAU`| ~al | ~ul | ~ogy |
-|`YIA`| --- | ~ense | --- |
+|V/C |`t`|`k`|`nt`|`nk`|`tk`|`ntk`|
+|----|---|---|----|----|---|----|
+|`IAU`|~at|~as|~and|~ang|~al|~ali|
+|`YI`|~it|~is|~ind|~ing|~il|~ili|
+|`YIU`|~ut|~us|~ent|~ank|~ul|~uli|
+|`YIA`|~et|~es|~end|~eng|~el|~eli|
+|`YIAU`|~ot|~os|~ont|~ong|~ol|~oli|
 
-`TY-STKYIn` → 「タイピング」(Typing)
+`TY-STKYInk` → 「タイピング」(Typing)
 
-`SY-YIAtk` → 「サイエンス」(Science)
+`TKY-YIAnt` → 「ハイエンド」(High-end)
 
 #### 例外かな(Exceptional Kana)
 
 「わ行や段」のような存在しない行段の組み合わせは特定のマイナーかなに変換されます
 
-| 母\子 | `D` |  `W` |  `F` |  `小` |
-| ---- | --- | ---- | ---- | ---- |
-| `U`  | --- | `ゔ` | `ふゅ` | --- |
-|`IU`  |`ちぇ`|`ゆい`|`ゔぁ`|`つぃ`|
-|`YI`  |`どぅ`|`ゐ`  |`ゔぉ`| ---- |
-|`YIU` |`とぅ`|`ゑ`  |`ゔぇ`| ---- |
-|`YA`  |`てぃ`|`いぇ`|`しぇ`| ---- |
-|`YAU` |`でぃ`|`を`  |`じぇ`| ---- |
-|`YU`  |`でゅ`|`ゔゅ`|`ゔぃ`| ---- |
-|`IAU` | ---- |`ゎ`  | --- |`つぉ`|
-|`YIAU`|`てゅ`|`うぁ`| ---- |`てゃ`|
-|`Y`   | ---- | ---- | ---- |`つぁ`|
-|`YIA` | ---- | ---- | ---- |`つぇ`|
+|stroke|`U` |`YA`|`YI`|`YU` |`YIU`|`YAU`|`YIAU`|`IAU`|`IU  `|`Y   `|`YIA`|
+|---|---|---|---|----|---|---|----|---|----|----|----|
+|`F`|vu |va |vi |fyu |ve |vo |jei |je |vyu |----|----|
+|`W`|xwa|wha|wyi|yui |wye|who|chei|che|iu  |----|----|
+|`D`|---|thi|twu|dhu |dwu|dhi|ye  |---|thu |----|----|
+|`X`|---|sta|sti|sthi|ste|sto|shei|she|kusu|stai|stei|
+
+※ `SKIAUtk`（チェッ）や`STKNIAUtk`（ジェッ）は[外来音](#外来音english-sounds)と競合するため、それぞれ代わりに`SKYUtk`、`STKNYUtk`を使います
+
+`SKYU-It` → 「唯一」
+
+`SKYUtk-KU` → 「チェック」
 
 ---
 ### 助詞(Particle)
@@ -365,7 +364,7 @@ VERB_SIMO_MAP = { # ストローク: [語幹, 行]
 | `n` |ている|ない|
 | `t` |させる|た|
 | `k` |られる|ます|
-| `nt`|てもらう|なかった|
+| `nt`|---|なかった|
 | `nk`|てしまう|ません|
 | `tk`|れる（ら抜き）|ました|
 |`ntk`|---|て|
@@ -374,22 +373,32 @@ VERB_SIMO_MAP = { # ストローク: [語幹, 行]
 
 `KItk-TNUt*` → 「気付けた」
 
-左が`ntk`のときは特別な活用になります
+左が`nt`、`ntk`のときは特別な活用になります
 
 |入力|出力|
 |---|---|
+|`nt-`|たい|
+|`nt-n`|たくない|
+|`nt-t`|たかった|
+|`nt-nt`|たくなかった|
+|`nt-k`|てほしい|
+|`nt-nk`|てほしくない|
+|`nt-tk`|てほしかった|
+|`nt-ntk`|てほしくなかった|
 |`ntk-`|連用形|
 |`ntk-n`|ず|
 |`ntk-t`|ば|
-|`ntk-k`|よう（意向形）|
+|`ntk-k`|ましょう|
 |`ntk-nt`|なければ|
 |`ntk-nk`|なく|
 |`ntk-tk`|てください|
-|`ntk-ntk`|ろ（命令形）|
+|`ntk-ntk`|よう（意向形）|
 
 `SIntk-SNInt*` → 「信じなければ」
 
 `KNAntk-TKNAtk*` → 「頑張ってください」
+
+`SKNAnt-KIAntk*` → 「負けてほしくなかった」
 
 ---
 #### 助動詞略語(Auxiliary Verb Abbreviations)
@@ -436,12 +445,8 @@ VERB_SIMO_MAP = { # ストローク: [語幹, 行]
 <abbreviations.py>
 (一例)
 ABSTRACT_MAP = { # 一般略語の定義
-  "YAU-STIA": "あれ",
-  "KAU-STIA": "これ",
-  "SAU-STIA": "それ",
-  "TNAU-STIA": "どれ",
-  "TNA-STIA": "だれ",
-  "TAU-KAU": "ところ",
+  "A-TNA": "あれだけ",
+  "KAU-TNA": "これだけ",
   ...
 }
 ```
@@ -450,9 +455,9 @@ ABSTRACT_MAP = { # 一般略語の定義
 
 また、一般略語は助詞を語の最後に追加できます
 
-`TAUt-KAUnt*` → 「ところには、」
+`Atk-TNAnt*` → 「あれだけでは、」
 
-`KAUtk-STIAn*` → 「これで、」
+`TNIAUn-IUnt*` → 「どういう？」
 
 ただし、一部の助詞は特定の語尾に変換されます
 
@@ -464,7 +469,7 @@ ABSTRACT_MAP = { # 一般略語の定義
 |`-ntk`|です|
 |`n-ntk`|でした|
 
-`KAUn-TAUntk*` → 「ことでした」
+`SAUn-TNAntk*` → 「それだけでした」
 
 また、「左の略語+右の略語」のように左右それぞれを組み合わせることもできます
 
@@ -491,7 +496,7 @@ ABSTRACT_MAP_RIGHT = { # 一般略語の右側ストローク定義
 ```
 `YIAU-KAU*` → 「あのこと」
 
-`SIU-TAU*` → 「そういうところ」
+`SIUn-TKAn*` → 「そういうはなしだった」
 
 ---
 ### タイピングモード(Typing Mode)

@@ -6,7 +6,7 @@
 # STKN
 # ストローク -> 基本子音 (s, t, k, n, r, w, h, z, d, g, b, p, m, y, f, l)
 conso_stroke_to_roma = [ # (ストローク, 子音)
-    ["", ''], ["S", 's'], ["T", 't'], ["K", 'k'], ["N", 'n'], 
+    ["", ''], ["S", 's'], ["T", 't'], ["K", 'k'], ["N", 'n'],
     ["ST", 'r'], ["SK", 'w'], ["TK", 'h'],
     ["SN", 'z'], ["TN", 'd'], ["KN", 'g'], ["TKN", 'b'],
     ["STK", 'p'], ["STN", 'l'], ["SKN", 'm'], ["STKN", 'f']
@@ -31,13 +31,13 @@ ROMA_TO_KANA_MAP = {
     'h': ['は', 'ひ', 'ふ', 'へ', 'ほ', 'ひゃ', 'ひゅ', 'ひょ'],
     'm': ['ま', 'み', 'む', 'め', 'も', 'みゃ', 'みゅ', 'みょ'],
     'r': ['ら', 'り', 'る', 'れ', 'ろ', 'りゃ', 'りゅ', 'りょ'],
-    'w': ['わ', 'うぃ', 'ゔ', 'うぇ', 'うぉ', 'わ', 'ゔゅ', 'を'],
+    'w': ['わ', 'うぃ', 'う', 'うぇ', 'うぉ', 'うぁ', 'う', 'うぉ'],
     'g': ['が', 'ぎ', 'ぐ', 'げ', 'ご', 'ぎゃ', 'ぎゅ', 'ぎょ'],
     'z': ['ざ', 'じ', 'ず', 'ぜ', 'ぞ', 'じゃ', 'じゅ', 'じょ'],
     'd': ['だ', 'ぢ', 'づ', 'で', 'ど', 'ぢゃ', 'ぢゅ', 'ぢょ'],
     'b': ['ば', 'び', 'ぶ', 'べ', 'ぼ', 'びゃ', 'びゅ', 'びょ'],
     'p': ['ぱ', 'ぴ', 'ぷ', 'ぺ', 'ぽ', 'ぴゃ', 'ぴゅ', 'ぴょ'],
-    'f': ['ふぁ', 'ふぃ', 'ふゅ', 'ふぇ', 'ふぉ', 'ふゃ', 'ふゅ', 'ふょ'],
+    'f': ['ふぁ', 'ふぃ', 'ふ', 'ふぇ', 'ふぉ', 'ふゃ', 'ふゅ', 'ふょ'],
     'l': ['ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'ゃ', 'ゅ', 'ょ']
 }
 
@@ -57,55 +57,107 @@ DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文字目)
 # (変更時はマップの右側の配列のアルファベット・ひらがなを変更する)
 # YIAUntk
 COMPLEX_DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文字目)
-    # ～ん
-    "IAUn": ("a", "うん"), # ~oun, ~own
-    "YIn": ("i", "んぐ"), # ~ing
-    "YIUn": ("ya", "る"), # ~ial
-    "YIAUn": ("a", "る"), # ~al
-    # ～っ
-    "IAUtk": ("a", "う"), # ~ou, ~ow
-    "YItk": ("i", "ずむ"), # ~ism
-    "YIUtk": ("i", "すと"), # ~ist
-    "Ytk": ("a", "いざ－"), # ~izer
-    "YIAtk": ("e", "んす"), # ~ense, ~ence
-    "YIAUtk": ("u", "る"), # ~ul
-    # ～ー
-    "IAUntk": ("a", "ぶる"), # ~able
-    "YIntk": ("i", "かる"), # ~ical
-    "YIUntk": ("i", "てぃ－"), # ~ity
-    "YIAUntk": ("o", "じ－"), # ~ogy
+
+# V/C | t | k | nt | nk |tk |ntk |
+# ----|---|---|----|----|---|----|
+# IAU |~at|~as|~and|~ang|~al|~ali|
+# YI  |~it|~is|~ind|~ing|~il|~ili|
+# YIU |~ut|~us|~ent|~ank|~ul|~uli|
+# YIA |~et|~es|~end|~eng|~el|~eli|
+# YIAU|~ot|~os|~ont|~ong|~ol|~oli|
+
+    # IAU
+    "IAUt", ("a", "っと"),   # ~at
+    "IAUk", ("a", "す"),     # ~as
+    "IAUnt", ("a", "んど"),  # ~and
+    "IAUnk", ("a", "んぐ"),  # ~ang
+    "IAUtk", ("a", "る"),    # ~al
+    "IAUntk", ("a", "り"),   # ~ali
+
+    # YI
+    "YIt", ("i", "っと"),   # ~it
+    "YIk", ("i", "す"),     # ~is
+    "YInt", ("i", "んど"),  # ~ind
+    "YInk", ("i", "んぐ"),  # ~ing
+    "YItk", ("i", "る"),    # ~il
+    "YIntk", ("i", "り"),   # ~ili
+
+    # YIU
+    "YIUt", ("u", "っと"),  # ~ut
+    "YIUk", ("u", "す"),    # ~us
+    "YIUnt", ("e", "んと"), # ~ent
+    "YIUnk", ("a", "んく"), # ~ank
+    "YIUtk", ("u", "る"),   # ~ul
+    "YIUntk", ("u", "り"),  # ~uli
+
+    # YIA
+    "YIAt", ("e", "っと"),  # ~et
+    "YIAk", ("e", "す"),    # ~es
+    "YIAnt", ("e", "んど"), # ~end
+    "YIAnk", ("e", "んぐ"), # ~eng
+    "YIAtk", ("e", "る"),   # ~el
+    "YIAntk", ("e", "り"),  # ~eli
+
+    # YIAU
+    "YIAUt", ("o", "っと"),  # ~ot
+    "YIAUk", ("o", "す"),    # ~os
+    "YIAUnt", ("o", "んと"), # ~ont
+    "YIAUnk", ("o", "んぐ"), # ~ong
+    "YIAUtk", ("o", "る"),   # ~ol
+    "YIAUntk", ("o", "り"),  # ~oli
 }
 
 EXCEPTION_KANA_MAP = { # 例外的なかなのマッピング
-    "TNYI": "どぅ",
-    "TNYIU": "とぅ",
-    "TNYA": "てぃ",
-    "TNYAU": "でぃ",
-    "TNYU": "でゅ",
-    "TNIU": "ちぇ",
-    "TNYIAU": "てゅ",
 
-    "SKYI": "ゐ",
-    "SKYIU": "ゑ",
-    "SKYA": "いぇ",
-    "SKYAU": "を",
-    "SKYU": "ゔゅ",
-    "SKIU": "ゆい",
-    "SKIAU": "ゎ",
-    "SKYIAU": "うぁ",
+#  |U  |YA |YI |YU  |YIU|YAU|YIAU|IAU|IU  |Y   |YIA
+# -|---|---|---|----|---|---|----|---|----|----|----
+# F|vu |va |vi |fyu |ve |vo |jei |je |vyu |----|----
+# W|xwa|wha|wyi|yui |wye|who|chei|che|iu  |----|----
+# D|---|thi|twu|dhu |dwu|dhi|ye  |---|thu |----|----
+# X|---|sta|sti|sthi|ste|sto|shei|she|kusu|stai|stei
 
-    "STKNYI": "ゔぉ",
+    # F
+    "STKNU": "ゔ",
+    "STKNYA": "ゔぁ",
+    "STKNYI": "ゔぃ",
+    "STKNYU": "ふゅ",
     "STKNYIU": "ゔぇ",
-    "STKNYA": "しぇ",
-    "STKNYAU": "じぇ",
-    "STKNYU": "ゔぃ",
-    "STKNIU": "ゔぁ",
+    "STKNYAU": "ゔぉ",
+    "STKNYIAU": "じぇい",
+    "STKNIAU": "じぇ",
+    "STKNIU": "ゔゅ",
 
-    "STNIU": "つぃ",
-    "STNIAU": "つぉ",
-    "STNYIAU": "てゃ",
-    "STNY": "つぁ",
-    "STNYIA": "つぇ",
+    # W
+    "SKU": "ゎ",
+    "SKYA": "うぁ",
+    "SKYI": "ゐ",
+    "SKYU": "ゆい",
+    "SKYIU": "ゑ",
+    "SKYAU": "うぉ",
+    "SKYIAU": "ちぇい",
+    "SKIAU": "ちぇ",
+    "SKIU": "いう",
+
+    # D
+    "TNYA": "てぃ",
+    "TNYI": "とぅ",
+    "TNYU": "でゅ",
+    "TNYIU": "どぅ",
+    "TNYAU": "でぃ",
+    "TNYIAU": "いぇ",
+    "TNIU": "てゅ",
+
+    # X
+    "STNYA": "すた",
+    "STNYI": "すち",
+    "STNYU": "すてぃ",
+    "STNYIU": "すて",
+    "STNYAU": "すと",
+    "STNYIAU": "しぇい",
+    "STNIAU": "しぇ",
+    "STNIU": "くす",
+    "STNY": "すたい",
+    "STNYIA": "すてい",
 }
 
 # 助詞のキーと対応する文字列の定義
@@ -125,7 +177,7 @@ R_PARTICLE = ["", COMMA, "は", "が", "も", "は" + COMMA, "が" + COMMA, "も
 
 # 例外的な助詞ストロークのマッピング
 EXCEPTION_STROKE_MAP = {
-    "-n": "}{#Return}{", "n-": "}{#Space}{", "n-n": "}{#Tab}{", 
+    "-n": "}{#Return}{", "n-": "}{#Space}{", "n-n": "}{#Tab}{",
     "-nt": DOT, "-nk": COMMA, "-ntk": "}{#F7}{",
     "n-nt": "?", "n-nk": "!", "n-ntk": "}{#F8}{",
 }

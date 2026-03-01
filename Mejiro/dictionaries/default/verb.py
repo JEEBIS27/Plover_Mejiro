@@ -56,7 +56,6 @@ AUXILIARY_VERB_LEFT_MAP = { # ストローク: [活用形, 補助動詞の語幹
     'n' : [5, "て", '上', 'w'], # ～ている
     't' : [1, ""  , '下', 's'], # ～させる
     'k' : [2, ""  , '下', 'r'], # ～られる
-    'nt': [5, "てもら", '五', 'w'], # ～てもらう
     'nk': [5, "てしま", '五', 'w'], # ～てしまう
 }
 AUXILIARY_VERB_RIGHT_MAP = { # ストローク: [活用形, 助動詞]
@@ -70,6 +69,14 @@ AUXILIARY_VERB_RIGHT_MAP = { # ストローク: [活用形, 助動詞]
     'ntk': [5, "て"],
 }
 AUXILIARY_VERB_EXCEPTION_MAP = { # 例外
+    'nt-'    : [3, "たい"], # ～たい
+    'nt-n'   : [3, "たくない"], # ～たい+否定
+    'nt-t'   : [3, "たかった"], # ～たい+過去
+    'nt-nt'  : [3, "たくなかった"], # ～たい+否定+過去
+    'nt-k'   : [5, "てほしい"], # ～ほしい
+    'nt-nk'  : [5, "てほしくない"], # ～ほしい+否定
+    'nt-tk'  : [5, "てほしかった"], # ～ほしい+過去
+    'nt-ntk' : [5, "てほしくなかった"], # ～ほしい+否定+過去
     'tk-'    : [8, "る"], # 可能
     'tk-n'   : [8, "ない"], # 可能+否定
     'tk-t'   : [8, "た"], # 可能+過去
@@ -81,11 +88,11 @@ AUXILIARY_VERB_EXCEPTION_MAP = { # 例外
     'ntk-'   : [3, ""], # 連用
     'ntk-n'  : [0, "ず"], # 否定
     'ntk-t'  : [7, "ば"], # 仮定
-    'ntk-k'  : [6, ""], # 意向
+    'ntk-k'  : [3, "ましょう"], # 提案
     'ntk-nt' : [0, "なければ"], # 否定+仮定
     'ntk-nk' : [0, "なく"], # 否定+連用
     'ntk-tk' : [5, "てください"], # 丁寧命令
-    'ntk-ntk': [9, ""], # 命令 
+    'ntk-ntk'  : [6, ""], # 意向
 }
 DESU_CONJUGATE_MAP = { # ですの活用形
     '':"です",
@@ -134,7 +141,7 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     kana_stroke = left_conso_stroke + left_vowel_stroke + '-' + right_conso_stroke + right_vowel_stroke
 
     output = ""
-    
+
     # 活用を取得
     auxiliary_list = stroke_to_conjugate(left_particle_stroke, right_particle_stroke)
 
@@ -156,6 +163,7 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     # ある
     elif kana_stroke == "A-":
         output += ARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
+        if output == "ず": output = "あらず"
     # ござる
     elif kana_stroke == "KNAU-SNA":
         output += GOZARU_LIST[auxiliary_list[0]] + auxiliary_list[1]

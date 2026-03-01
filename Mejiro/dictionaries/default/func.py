@@ -10,7 +10,7 @@ global LAST_VOWEL_STROKE
 LAST_VOWEL_STROKE = ''
 
 def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, asterisk: str) -> str:
-    
+
     global LAST_VOWEL_STROKE
     global conso_stroke_to_roma
     global vowel_stroke_to_roma
@@ -38,6 +38,8 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
     elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP and not asterisk and current_vowel_stroke + particle_stroke not in COMPLEX_DIPHTHONG_MAPPING: # 例外的なかなのマッピングをチェック
         base_kana = EXCEPTION_KANA_MAP[conso_stroke + vowel_stroke]
         extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
+        if base_kana == "ゆい" and extra_sound == "っ": base_kana = "ちぇ"
+        if base_kana == "ふゅ" and extra_sound == "っ": base_kana = "じぇ"
         return [base_kana, extra_sound, '', '']
     else:
         # 子音ストロークからローマ字の子音（行）を取得
@@ -47,7 +49,7 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
             raise KeyError
 
         # 母音ストロークからローマ字の基本母音（段）と長音文字を決定
-        
+
         vowel_roma = None
         suffix = "" # 長音文字
 
@@ -74,7 +76,7 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
             suffix = "" # 基本母音には長音文字なし
             # 辞書から直接対応する文字列を取得。
             extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
-            
+
         if vowel_roma is None:
             print(f"母音ストローク '{current_vowel_stroke}' が見つかりません")
             raise KeyError
@@ -89,7 +91,7 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
 
         # [CV, C, C, V]
         return [base_kana + suffix, extra_sound, conso_roma, vowel_roma]
-    
+
 def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
     global EXCEPTION_STROKE_MAP
     global L_PARTICLE
