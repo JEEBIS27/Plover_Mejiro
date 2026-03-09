@@ -1,5 +1,5 @@
 import re
-from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, ENGLISH_DIPHTHONG_MAPPING, EXCEPTION_KANA_MAP,
+from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, ENGLISH_DIPHTHONG_MAPPING, MINOR_DIPHTHONG_MAPPING, EXCEPTION_KANA_MAP,
                                                   conso_stroke_to_roma, vowel_stroke_to_roma, ROMA_TO_KANA_MAP,
                                                   PARTICLE_KEY_LIST, SECOND_SOUND_LIST,
                                                   L_PARTICLE, R_PARTICLE,
@@ -16,6 +16,7 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
     global vowel_stroke_to_roma
     global DIPHTHONG_MAPPING
     global ENGLISH_DIPHTHONG_MAPPING
+    global MINOR_DIPHTHONG_MAPPING
     global ROMA_TO_KANA_MAP
     global PARTICLE_KEY_LIST
     global SECOND_SOUND_LIST
@@ -88,7 +89,7 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
         try:
             base_kana = ROMA_TO_KANA_MAP[conso_roma][vowel_index]
             if is_english:
-                base_kana = base_kana.replace('ち', 'てぃ').replace('ぢ', 'でぃ').replace('づ', 'どぅ')
+                base_kana = base_kana.replace('ぁ', 'すた').replace('ぃ', 'すち').replace('ぅ', 'すてぃ').replace('ぇ', 'すて').replace('ぉ', 'すと').replace('ち', 'てぃ').replace('ぢ', 'でぃ').replace('づ', 'どぅ')
                 if base_kana + suffix == "るしょん":
                     base_kana, suffix = "りゅ", "ーしょん"
                 elif base_kana + suffix == "ふしょん":
