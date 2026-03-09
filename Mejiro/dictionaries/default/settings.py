@@ -31,7 +31,7 @@ ROMA_TO_KANA_MAP = {
     'h': ['は', 'ひ', 'ふ', 'へ', 'ほ', 'ひゃ', 'ひゅ', 'ひょ'],
     'm': ['ま', 'み', 'む', 'め', 'も', 'みゃ', 'みゅ', 'みょ'],
     'r': ['ら', 'り', 'る', 'れ', 'ろ', 'りゃ', 'りゅ', 'りょ'],
-    'w': ['わ', 'うぃ', 'う', 'うぇ', 'うぉ', 'うぁ', 'う', 'うぉ'],
+    'w': ['わ', 'うぃ', 'う', 'うぇ', 'うぉ', 'うぁ', 'う', 'を'],
     'g': ['が', 'ぎ', 'ぐ', 'げ', 'ご', 'ぎゃ', 'ぎゅ', 'ぎょ'],
     'z': ['ざ', 'じ', 'ず', 'ぜ', 'ぞ', 'じゃ', 'じゅ', 'じょ'],
     'd': ['だ', 'ぢ', 'づ', 'で', 'ど', 'ぢゃ', 'ぢゅ', 'ぢょ'],
@@ -42,7 +42,6 @@ ROMA_TO_KANA_MAP = {
 }
 
 # 二重母音ストロークの定義（親指を使うものは除外）
-# (変更時はマップの右側の配列のアルファベット・ひらがなを変更する)
 # YIAU
 DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文字目)
     "Y": ("a", "い"), # あい
@@ -53,58 +52,62 @@ DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文字目)
     "IU": ("u", "い"), # うい
     "IAU": ("o", "う"), # おう
 }
+
+# 親指も使ったマイナーな二重母音のストローク定義
+MINOR_DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文字目)
+    "IAUtk": ("a", "あ"),   # ~ああ
+    "YItk": ("i", "い"),    # ~いい
+    "YIUtk": ("o", "い"),   # ~おい
+    "YIAtk": ("a", "え"),   # ~あえ
+    "YIAUtk": ("o", "お"),  # ~おお
+}
+
 # 親指も使った外来音ストロークの定義
-# (変更時はマップの右側の配列のアルファベット・ひらがなを変更する)
 # YIAUntk
-COMPLEX_DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文字目)
+ENGLISH_DIPHTHONG_MAPPING = { # ストローク: (一文字目の母音, 二文字目)
 
-# V/C | t | k | nt | nk |tk |ntk |
-# ----|---|---|----|----|---|----|
-# IAU |~at|~as|~and|~ang|~al|~ali|
-# YI  |~it|~is|~ind|~ing|~il|~ili|
-# YIU |~ut|~us|~ent|~ank|~ul|~uli|
-# YIA |~et|~es|~end|~eng|~el|~eli|
-# YIAU|~ot|~os|~ont|~ong|~ol|~oli|
+# |V/C | t | k |  nt   | nk | ntk|
+# |----|---|---|-------|----|----|
+# |IAU |~as|~al|~ation |~ang|~arn|
+# |YI  |~is|~il|~ition |~ing|~een|
+# |YIU |~us|~ul|~usion |~ank|~oom|
+# |YIA |~es|~el|~ention|~eng|~ain|
+# |YIAU|~os|~ol|~otion |~ong|~orn|
 
-    # IAU
-    "IAUt", ("a", "っと"),   # ~at
-    "IAUk", ("a", "す"),     # ~as
-    "IAUnt", ("a", "んど"),  # ~and
-    "IAUnk", ("a", "んぐ"),  # ~ang
-    "IAUtk", ("a", "る"),    # ~al
-    "IAUntk", ("a", "り"),   # ~ali
+    # t
+    "IAUt": ("a", "す"),   # ~as
+    "YIt": ("i", "す"),    # ~is
+    "YIUt": ("u", "す"),   # ~us
+    "YIAt": ("e", "す"),   # ~es
+    "YIAUt": ("o", "す"),  # ~os
 
-    # YI
-    "YIt", ("i", "っと"),   # ~it
-    "YIk", ("i", "す"),     # ~is
-    "YInt", ("i", "んど"),  # ~ind
-    "YInk", ("i", "んぐ"),  # ~ing
-    "YItk", ("i", "る"),    # ~il
-    "YIntk", ("i", "り"),   # ~ili
+    # k
+    "IAUk": ("a", "る"),   # ~al
+    "YIk": ("i", "る"),    # ~il
+    "YIUk": ("u", "る"),   # ~ul
+    "YIAk": ("e", "る"),   # ~el
+    "YIAUk": ("o", "る"),  # ~ol
 
-    # YIU
-    "YIUt", ("u", "っと"),  # ~ut
-    "YIUk", ("u", "す"),    # ~us
-    "YIUnt", ("e", "んと"), # ~ent
-    "YIUnk", ("a", "んく"), # ~ank
-    "YIUtk", ("u", "る"),   # ~ul
-    "YIUntk", ("u", "り"),  # ~uli
+    # nt
+    "IAUnt": ("e", "ーしょん"),  # ~ation
+    "YInt": ("i", "しょん"),     # ~ition
+    "YIUnt": ("u", "しょん"),    # ~usion
+    "YIAnt": ("e", "んしょん"),  # ~ention
+    "YIAUnt": ("o", "ーしょん"), # ~otion
 
-    # YIA
-    "YIAt", ("e", "っと"),  # ~et
-    "YIAk", ("e", "す"),    # ~es
-    "YIAnt", ("e", "んど"), # ~end
-    "YIAnk", ("e", "んぐ"), # ~eng
-    "YIAtk", ("e", "る"),   # ~el
-    "YIAntk", ("e", "り"),  # ~eli
+    # nk
+    "IAUnk": ("a", "んぐ"),  # ~ang
+    "YInk": ("i", "んぐ"),   # ~ing
+    "YIUnk": ("a", "んく"),  # ~ank
+    "YIAnk": ("e", "んぐ"),  # ~eng
+    "YIAUnk": ("o", "んぐ"), # ~ong
 
-    # YIAU
-    "YIAUt", ("o", "っと"),  # ~ot
-    "YIAUk", ("o", "す"),    # ~os
-    "YIAUnt", ("o", "んと"), # ~ont
-    "YIAUnk", ("o", "んぐ"), # ~ong
-    "YIAUtk", ("o", "る"),   # ~ol
-    "YIAUntk", ("o", "り"),  # ~oli
+    # ntk
+    "IAUntk": ("a", "ーん"),  # ~arn
+    "YIntk": ("i", "ーん"),   # ~een
+    "YIUntk": ("u", "ーん"),  # ~oom
+    "YIAntk": ("e", "ーん"),  # ~ain
+    "YIAUntk": ("o", "ーん"), # ~orn
 }
 
 EXCEPTION_KANA_MAP = { # 例外的なかなのマッピング
@@ -112,7 +115,7 @@ EXCEPTION_KANA_MAP = { # 例外的なかなのマッピング
 #  |U  |YA |YI |YU  |YIU|YAU|YIAU|IAU|IU  |Y   |YIA
 # -|---|---|---|----|---|---|----|---|----|----|----
 # F|vu |va |vi |fyu |ve |vo |jei |je |vyu |----|----
-# W|xwa|wha|wyi|yui |wye|who|chei|che|iu  |----|----
+# W|xwa|wha|wyi|yui |wye|wo |chei|che|iu  |----|----
 # D|---|thi|twu|dhu |dwu|dhi|ye  |---|thu |----|----
 # X|---|sta|sti|sthi|ste|sto|shei|she|kusu|stai|stei
 
@@ -133,7 +136,7 @@ EXCEPTION_KANA_MAP = { # 例外的なかなのマッピング
     "SKYI": "ゐ",
     "SKYU": "ゆい",
     "SKYIU": "ゑ",
-    "SKYAU": "うぉ",
+    "SKYAU": "を",
     "SKYIAU": "ちぇい",
     "SKIAU": "ちぇ",
     "SKIU": "いう",
