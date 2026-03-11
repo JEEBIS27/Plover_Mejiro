@@ -19,6 +19,7 @@
         - [子音(Consonants)](#子音consonants)
         - [追加音(Extra)](#追加音extra)
         - [二重母音(Double Vowels)](#二重母音double-vowels)
+        - [マイナー二重母音(Minor Double Vowels)](#マイナー二重母音minor-double-vowels)
         - [外来音(English Sounds)](#外来音english-sounds)
         - [例外かな(Exceptional Kana)](#例外かなexceptional-kana)
     - [助詞(Particle)](#助詞particle)
@@ -147,21 +148,34 @@ tab a s d f g h j k l ; '
 `TY-KNY` → 「大概」
 
 ---
+#### マイナー二重母音(Minor Double Vowels)
+
+頻度の少ない二重母音、大和言葉でしか使わない二重母音は、母音キーだけでなく追加音キーも使って入力します。
+
+| 入力   | 出力 |
+| ------ | ---- |
+|`IAUtk` | あう |
+|`YItk`  | いい |
+|`YIUtk` | おい |
+|`YIAtk` | あえ |
+|`YIAUtk`| おお |
+
+---
 #### 外来音(English Sounds)
 
 特定の母音と追加音の組み合わせは外来音に変換されます
 
-|V/C |`t`|`k`|`nt`|`nk`|`tk`|`ntk`|
-|----|---|---|----|----|---|----|
-|`IAU`|~at|~as|~and|~ang|~al|~ali|
-|`YI`|~it|~is|~ind|~ing|~il|~ili|
-|`YIU`|~ut|~us|~ent|~ank|~ul|~uli|
-|`YIA`|~et|~es|~end|~eng|~el|~eli|
-|`YIAU`|~ot|~os|~ont|~ong|~ol|~oli|
+|V/C | t | k |  nt   | nk | ntk|
+|----|---|---|-------|----|----|
+|IAU |~as|~al|~ation |~ind|~arn|
+|YI  |~is|~il|~ition |~ing|~een|
+|YIU |~us|~ul|~usion |~and|~oom|
+|YIA |~es|~el|~ention|~end|~ain|
+|YIAU|~os|~ol|~otion |~ong|~orn|
 
 `TY-STKYInk` → 「タイピング」(Typing)
 
-`TKY-YIAnt` → 「ハイエンド」(High-end)
+`SIAUt-STKYIAnt` → 「サスペンション」(Suspension)
 
 #### 例外かな(Exceptional Kana)
 
@@ -436,8 +450,6 @@ VERB_SIMO_MAP = { # ストローク: [語幹, 行]
 ---
 #### 一般略語(Abstract Abbreviations)
 一般略語は、抽象名詞や形式名詞など、特定の語を簡単に入力するために使います
-
-`TAU-KAU*` → 「ところ」
 
 定義は`abbreviations.py`の`ABSTRACT_MAP`に登録します
 

@@ -177,6 +177,9 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     # ～です
     elif right_conso_stroke == 'TN' and right_vowel_stroke == '':
         output = left_kana + left_extra_sound + DESU_CONJUGATE_MAP[right_particle_stroke]
+    # ～いう
+    elif not right_conso_stroke and right_vowel_stroke == 'IU':
+        output = left_kana + "い" + CONJUGATE_GODAN_MAP['w'][auxiliary_list[0]] + auxiliary_list[1]
     # 五段活用
     elif right_vowel_stroke == "" and right_conso in ['k', 'g', 's', 't', 'n', 'b', 'm', 'r', 'w']:
         output = left_kana + translate_ta_te_form(CONJUGATE_GODAN_MAP[right_conso][auxiliary_list[0]] + auxiliary_list[1], auxiliary_list[0], right_conso)
