@@ -230,6 +230,7 @@ tab a s d f g h j k l ; '
 
 |入力|出力|
 |---|---|
+|`k-k`|な|
 |`n-`|Space|
 |`-n`|Enter|
 |`n-n`|Tab|
@@ -239,6 +240,8 @@ tab a s d f g h j k l ; '
 |`n-nk`|！|
 |`-ntk`|カタカナ|
 |`n-ntk`|ﾊﾝｶｸｶﾀｶﾅ|
+
+`k-nk` → 「な、」
 
 ---
 ### 繰り返し(Repeater)
