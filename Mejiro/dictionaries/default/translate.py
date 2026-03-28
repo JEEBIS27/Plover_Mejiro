@@ -15,7 +15,7 @@ HEPBURN_ROMA_MAP = {
     'ひゃ':'hya', 'ひゅ':'hyu', 'ひょ':'hyo', 'ひぇ':'hye',
     'びゃ':'bya', 'びゅ':'byu', 'びょ':'byo', 'びぇ':'bye',
     'ぴゃ':'pya', 'ぴゅ':'pyu', 'ぴょ':'pyo', 'ぴぇ':'pye',
-    'ふぁ':'fa',  'ふぃ':'fi',  'ふぇ':'fe',  'ふぉ':'fo',
+    'ふぁ':'fa', 'ふゅ':'fyu', 'ふぃ':'fi',  'ふぇ':'fe',  'ふぉ':'fo',
     'みゃ':'mya', 'みゅ':'myu', 'みょ':'myo', 'みぇ':'mye',
     'りゃ':'rya', 'りゅ':'ryu', 'りょ':'ryo', 'りぇ':'rye',
     'うぁ':'wha', 'うぃ':'wi',  'うぇ':'we',  'うぉ':'who',
@@ -88,7 +88,7 @@ def hiragana_to_romaji(text: str) -> str:
                 # マップにない文字（カタカナや記号など）はそのまま残す
                 result.append(one_char)
             i += 1  # 1文字進める
-            
+
     return "".join(result)
 
 def kana_to_typing_output(kana_string: str, typing_mode: int) -> str:
@@ -119,7 +119,7 @@ def kana_to_typing_output(kana_string: str, typing_mode: int) -> str:
         output = output.replace('N', 'nn')
         # 残った促音「Q」の最終処理 (ltsuに)
         # (例: aQ -> altsu)
-        output = output.replace('Q', 'ltsu') 
+        output = output.replace('Q', 'ltsu')
         return output
     else:
         return working.translate(str.maketrans(JIS_KANA_MAP))

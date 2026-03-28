@@ -92,8 +92,6 @@ def stroke_to_syllable(conso_stroke: str, vowel_stroke: str, particle_stroke: st
     elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP and current_vowel_stroke + particle_stroke not in ENGLISH_DIPHTHONG_MAPPING: # 例外的なかなのマッピングをチェック
         base_kana = EXCEPTION_KANA_MAP[conso_stroke + vowel_stroke]
         extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
-        if base_kana == "ゆい" and extra_sound == "っ": base_kana = "ちぇ"
-        if base_kana == "ふゅ" and extra_sound == "っ": base_kana = "じぇ"
         return base_kana + extra_sound
     else:
         # 母音ストロークからローマ字の基本母音（段）と長音文字を決定
