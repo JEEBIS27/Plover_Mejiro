@@ -1,4 +1,5 @@
-from Mejiro.dictionaries.default.settings import COMMA, DOT
+from Mejiro.dictionaries.default.settings import DOT
+from Mejiro.dictionaries.default.func import get_conso
 from Mejiro.dictionaries.default.abbreviations import VERB_KAMI_MAP, VERB_SIMO_MAP, VERB_GODAN_MAP
 
 CONJUGATE_GODAN_MAP = { # (五段活用限定)
@@ -49,7 +50,6 @@ SAHEN_LIST =  ['し', 'さ', 'さ', 'し', 'する', 'し', 'しよう', 'すれ
 KAHEN_LIST =  ['こ', 'こさ', 'こら', 'き', 'くる', 'き', 'こよう', 'くれ', 'これ', 'こい'] # "K-*"
 IKU_LIST =    ['いか', 'いか', 'いか', 'いき', 'いく', 'いっ', 'いこう', 'いけ', 'いけ', 'いけ'] # "I-K*"
 ARU_LIST =    ['', 'あら', 'あら', 'あり', 'ある', 'あっ', 'あろう', 'あれ', 'ありえ', 'あれ'] # "A-*"
-GOZARU_LIST = ['ござら', 'ござら', 'ござら', 'ござい', 'ござる', 'ござっ', 'ござろう', 'ござれ', 'ござれ', 'ござれ'] # "KNAU-SNA*"
 
 # 文語調の活用
 AUXILIARY_VERB_LEFT_MAP = { # ストローク: [活用形, 補助動詞の語幹, 活用段, 活用行]
@@ -133,12 +133,12 @@ def translate_ta_te_form(string: str, auxiliary: int, conso: str) -> str:
                 string = "んだ" + string[2:]
     return string
 
-def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
-    left_kana, left_extra_sound, left_conso, left_vowel = left_kana_list
-    right_kana, right_extra_sound, right_conso, right_vowel = right_kana_list
+def stroke_to_verb(left_kana, left_syllable, right_kana, stroke_list) -> str:
     left_conso_stroke, left_vowel_stroke, left_particle_stroke, right_conso_stroke, right_vowel_stroke, right_particle_stroke = stroke_list[0], stroke_list[1], stroke_list[2], stroke_list[4], stroke_list[5], stroke_list[6]
     main_kana = left_kana + right_kana
     kana_stroke = left_conso_stroke + left_vowel_stroke + '-' + right_conso_stroke + right_vowel_stroke
+
+    right_conso = get_conso(right_conso_stroke)
 
     output = ""
 
@@ -164,9 +164,6 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     elif kana_stroke == "A-":
         output += ARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
         if output == "ず": output = "あらず"
-    # ござる
-    elif kana_stroke == "KNAU-SNA":
-        output += GOZARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
     # カ変活用
     elif kana_stroke == "K-":
         output += KAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
@@ -176,7 +173,7 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
         output = output.replace("しず", "せず")
     # ～です
     elif right_conso_stroke == 'TN' and right_vowel_stroke == '':
-        output = left_kana + left_extra_sound + DESU_CONJUGATE_MAP[right_particle_stroke]
+        output = left_syllable + DESU_CONJUGATE_MAP[right_particle_stroke]
     # ～いう
     elif not right_conso_stroke and right_vowel_stroke == 'IU':
         output = left_kana + "い" + CONJUGATE_GODAN_MAP['w'][auxiliary_list[0]] + auxiliary_list[1]
@@ -197,4 +194,5 @@ def stroke_to_verb(left_kana_list, right_kana_list, stroke_list) -> str:
     else:
         output = main_kana + CONJUGATE_GODAN_MAP['r'][auxiliary_list[0]] + auxiliary_list[1]
         output = output.replace("ござり", "ござい")
+        output = output.replace("なさり", "なさい")
     return output
