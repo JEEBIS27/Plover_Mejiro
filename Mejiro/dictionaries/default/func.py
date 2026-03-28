@@ -9,11 +9,64 @@ from Mejiro.dictionaries.default.abbreviations import ABSTRACT_MAP, ABSTRACT_MAP
 global LAST_VOWEL_STROKE
 LAST_VOWEL_STROKE = ''
 
-def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, asterisk: str) -> str:
+def get_conso(conso_stroke: str) -> str:
+    global conso_stroke_to_roma
+    # 子音ストロークからローマ字の子音（行）を取得
+    return next((roma for stroke, roma in conso_stroke_to_roma if conso_stroke == stroke), "")
+
+
+def stroke_to_kana(conso_stroke: str, vowel_stroke: str) -> str:
+
+    global ROMA_TO_KANA_MAP
+    global vowel_stroke_to_roma
+    global LAST_VOWEL_STROKE
+
+    if not LAST_VOWEL_STROKE:
+        LAST_VOWEL_STROKE = "A"
+    # 母音ストロークの決定と更新
+    if not vowel_stroke:
+        current_vowel_stroke = LAST_VOWEL_STROKE
+    else:
+        current_vowel_stroke = vowel_stroke
+        LAST_VOWEL_STROKE = vowel_stroke
+
+    # 例外処理
+    if conso_stroke + vowel_stroke in ["", "STN"]:
+        return ""  # すべてのストロークが空、STNの場合、空文字を返す
+    elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP: # 例外的なかなのマッピングをチェック
+        kana = EXCEPTION_KANA_MAP[conso_stroke + vowel_stroke]
+        return kana
+    else:
+        # 母音ストロークからローマ字の基本母音（段）と長音文字を決定
+        vowel_roma = None
+        suffix = "" # 長音文字
+
+        # 基本の二重母音マッピングをチェック
+        if current_vowel_stroke in DIPHTHONG_MAPPING:
+            vowel_roma, suffix = DIPHTHONG_MAPPING[current_vowel_stroke]
+            vowel_index = [item[1] for item in vowel_stroke_to_roma].index(vowel_roma)
+        # それ以外の場合、基本母音ストロークから取得
+        else:
+            vowel_tuple = next(((i, roma) for i, (stroke, roma) in enumerate(vowel_stroke_to_roma) if current_vowel_stroke == stroke), None)
+            if vowel_tuple is not None:
+                vowel_index, vowel_roma = vowel_tuple
+            suffix = "" # 基本母音には長音文字なし
+
+        # 子音をローマ字で入手
+        conso_roma = get_conso(conso_stroke)
+
+        try:
+            # ローマ字からかなに変換
+            base_kana = ROMA_TO_KANA_MAP[conso_roma][vowel_index]
+        except IndexError:
+            print(f"無効な組み合わせ: 子音'{conso_roma}' + 母音'{vowel_roma}'")
+            raise KeyError
+
+        return base_kana + suffix
+
+def stroke_to_syllable(conso_stroke: str, vowel_stroke: str, particle_stroke: str) -> str:
 
     global LAST_VOWEL_STROKE
-    global conso_stroke_to_roma
-    global vowel_stroke_to_roma
     global DIPHTHONG_MAPPING
     global ENGLISH_DIPHTHONG_MAPPING
     global MINOR_DIPHTHONG_MAPPING
@@ -31,26 +84,17 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
         current_vowel_stroke = vowel_stroke
         LAST_VOWEL_STROKE = vowel_stroke
 
+    # 例外処理
     if conso_stroke + vowel_stroke + particle_stroke == "":
-        return ['', '', '', '']  # すべてのストロークが空の場合、空文字を返す
+        return ""
     elif conso_stroke + vowel_stroke in ['', "STN"]:
-        extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
-        return ['', extra_sound, '', '']  # 子音と母音が空の場合、空文字と追加音を返す
-    elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP and not asterisk and current_vowel_stroke + particle_stroke not in ENGLISH_DIPHTHONG_MAPPING: # 例外的なかなのマッピングをチェック
+        return SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
+    elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP and current_vowel_stroke + particle_stroke not in ENGLISH_DIPHTHONG_MAPPING: # 例外的なかなのマッピングをチェック
         base_kana = EXCEPTION_KANA_MAP[conso_stroke + vowel_stroke]
         extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
-        if base_kana == "ゆい" and extra_sound == "っ": base_kana = "ちぇ"
-        if base_kana == "ふゅ" and extra_sound == "っ": base_kana = "じぇ"
-        return [base_kana, extra_sound, '', '']
+        return base_kana + extra_sound
     else:
-        # 子音ストロークからローマ字の子音（行）を取得
-        conso_roma = next((roma for stroke, roma in conso_stroke_to_roma if conso_stroke == stroke), None)
-        if conso_roma is None:
-            print(f"子音ストローク '{conso_stroke}' が見つかりません")
-            raise KeyError
-
         # 母音ストロークからローマ字の基本母音（段）と長音文字を決定
-
         vowel_roma = None
         suffix = "" # 長音文字
 
@@ -58,12 +102,12 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
         is_english = False
 
         # 英語母音マッピングをチェック
-        if not asterisk and current_vowel_stroke + particle_stroke in ENGLISH_DIPHTHONG_MAPPING:
+        if current_vowel_stroke + particle_stroke in ENGLISH_DIPHTHONG_MAPPING:
             vowel_roma, suffix = ENGLISH_DIPHTHONG_MAPPING[current_vowel_stroke + particle_stroke]
             vowel_index = [item[1] for item in vowel_stroke_to_roma].index(vowel_roma)
             extra_sound = ""  # 追加音はなし
             is_english = True # 英語モードフラグを立てる
-        elif not asterisk and current_vowel_stroke + particle_stroke in MINOR_DIPHTHONG_MAPPING:
+        elif current_vowel_stroke + particle_stroke in MINOR_DIPHTHONG_MAPPING:
             vowel_roma, suffix = MINOR_DIPHTHONG_MAPPING[current_vowel_stroke + particle_stroke]
             vowel_index = [item[1] for item in vowel_stroke_to_roma].index(vowel_roma)
             extra_sound = ""  # 追加音はなし
@@ -86,6 +130,9 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
             print(f"母音ストローク '{current_vowel_stroke}' が見つかりません")
             raise KeyError
 
+        # 子音をローマ字で入手
+        conso_roma = get_conso(conso_stroke)
+
         try:
             base_kana = ROMA_TO_KANA_MAP[conso_roma][vowel_index]
             if is_english:
@@ -98,8 +145,7 @@ def stroke_to_kana(conso_stroke: str, vowel_stroke: str, particle_stroke: str, a
             print(f"無効な組み合わせ: 子音'{conso_roma}' + 母音'{vowel_roma}'")
             raise KeyError
 
-        # [CV, C, C, V]
-        return [base_kana + suffix, extra_sound, conso_roma, vowel_roma]
+        return base_kana + suffix + extra_sound
 
 def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
     global EXCEPTION_STROKE_MAP
@@ -120,8 +166,10 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
         right_joshi = R_PARTICLE[r_index]
         if left_particle_stroke == "n":
             joshi = right_joshi + COMMA
-        elif right_particle_stroke in ["k", "nk"] and left_particle_stroke not in ["", "k", "ntk"]:
+        elif left_particle_stroke and right_particle_stroke in ["k", "nk"]:
             joshi = "の" + left_joshi
+            if joshi == "のの":
+                joshi = "な"
             if "n" in right_particle_stroke:
                 joshi += COMMA
         else:

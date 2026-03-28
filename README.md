@@ -184,15 +184,13 @@ tab a s d f g h j k l ; '
 |stroke|`U` |`YA`|`YI`|`YU` |`YIU`|`YAU`|`YIAU`|`IAU`|`IU  `|`Y   `|`YIA`|
 |---|---|---|---|----|---|---|----|---|----|----|----|
 |`F`|vu |va |vi |fyu |ve |vo |jei |je |vyu |----|----|
-|`W`|xwa|wha|wyi|yui |wye|who|chei|che|iu  |----|----|
+|`W`|xwa|wha|wyi|yui |wye|wo |chei|che|iu  |----|----|
 |`D`|---|thi|twu|dhu |dwu|dhi|ye  |---|thu |----|----|
 |`X`|---|sta|sti|sthi|ste|sto|shei|she|kusu|stai|stei|
 
-※ `SKIAUtk`（チェッ）や`STKNIAUtk`（ジェッ）は[外来音](#外来音english-sounds)と競合するため、それぞれ代わりに`SKYUtk`、`STKNYUtk`を使います
-
 `SKYU-It` → 「唯一」
 
-`SKYUtk-KU` → 「チェック」
+`SKIAUtk-KU` → 「チェック」
 
 ---
 ### 助詞(Particle)
