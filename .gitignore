@@ -1,1 +1,3 @@
 apply_setting.sh
+__pycache__/
+*.pyc

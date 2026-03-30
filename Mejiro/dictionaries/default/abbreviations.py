@@ -40,6 +40,7 @@ ABSTRACT_MAP = { # 一般略語の定義
   "TNAU-IU": "どういう",
   "TAU-IU": "という",
   "NA-IU": "なんていう",
+  "TNIAU-YA": "どうやって",
 }
 
 ABSTRACT_MAP_LEFT = { # 一般略語の左側ストローク定義
