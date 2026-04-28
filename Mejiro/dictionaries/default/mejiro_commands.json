@@ -1,6 +1,6 @@
 {
   "#" : "=repeat_last_translation",
-  "#k": "{PLOVER:SWITCH_SYSTEM:Phoenix Stenotype}{#F14}",
+  "#k": "{PLOVER:SWITCH_SYSTEM:Phonetix}{#F14}",
   "#t": "{#F13}",
 
   "-U":"=undo",
