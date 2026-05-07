@@ -13,7 +13,7 @@
 import re
 from Mejiro.dictionaries.default.settings import (conso_stroke_to_roma)
 from Mejiro.dictionaries.default.func import (stroke_to_kana, stroke_to_syllable, joshi, abstract_abbreviation_lookup)
-from Mejiro.dictionaries.default.abbreviations import USERS_MAP, VERB_KAMI_MAP
+from Mejiro.dictionaries.default.abbreviations import USERS_MAP
 from Mejiro.dictionaries.default.verb import stroke_to_verb
 from Mejiro.dictionaries.default.translate import kana_to_typing_output
 
@@ -30,7 +30,7 @@ from Mejiro.dictionaries.default.translate import kana_to_typing_output
 
 # グローバル変数の定義
 LONGEST_KEY = 1
-is_typing_mode = True
+is_typing_mode = False
 
 # タイピングゲーム時の入力法設定
 typing_mode = 0 # 0: ローマ字入力, 1: JISかな入力
@@ -43,24 +43,25 @@ def lookup(key):
     assert len(key) <= LONGEST_KEY
     stroke = key[0]
 
-    if stroke == "n#":
+    if stroke == "#n":
         if is_typing_mode:
             print("typing mode off")
         else:
             print("typing mode on")
         is_typing_mode = not is_typing_mode
 
-    regex = re.compile(r"(S?T?K?N?)(Y?I?A?U?)(n?t?k?)(\-?#?)(S?T?K?N?)(Y?I?A?U?)(n?t?k?)(\*?)")
+    regex = re.compile(r"(#?)(S?T?K?N?)(Y?I?A?U?)(n?t?k?)(\-?)(S?T?K?N?)(Y?I?A?U?)(n?t?k?)(\*?)")
     regex_groups = re.search(regex, stroke)
 
-    left_conso_stroke = regex_groups.group(1)
-    left_vowel_stroke = regex_groups.group(2)
-    left_particle_stroke = regex_groups.group(3)
-    hyphen = regex_groups.group(4)
-    right_conso_stroke = regex_groups.group(5)
-    right_vowel_stroke = regex_groups.group(6)
-    right_particle_stroke = regex_groups.group(7)
-    asterisk = regex_groups.group(8)
+    hash = regex_groups.group(1)
+    left_conso_stroke = regex_groups.group(2)
+    left_vowel_stroke = regex_groups.group(3)
+    left_particle_stroke = regex_groups.group(4)
+    hyphen = regex_groups.group(5)
+    right_conso_stroke = regex_groups.group(6)
+    right_vowel_stroke = regex_groups.group(7)
+    right_particle_stroke = regex_groups.group(8)
+    asterisk = regex_groups.group(9)
     left_kana_stroke = left_conso_stroke + left_vowel_stroke
     right_kana_stroke = right_conso_stroke + right_vowel_stroke
     left_stroke = left_conso_stroke + left_vowel_stroke + left_particle_stroke
@@ -80,32 +81,27 @@ def lookup(key):
     main_syllable = left_syllable + right_syllable
     # 主要助詞を変数に格納
     main_joshi = joshi(left_particle_stroke, right_particle_stroke)
+    abstract = abstract_abbreviation_lookup(left_kana_stroke, right_kana_stroke, asterisk)
+    verb = stroke_to_verb(left_kana, left_syllable, right_kana, stroke_list)
 
     message = ""
     # メインの変換処理
-    if main_stroke in USERS_MAP and asterisk: # ユーザー略語
-        result = USERS_MAP[main_stroke]
+    if stroke in USERS_MAP: # ユーザー略語
+        print(stroke)
+        result = USERS_MAP[stroke]
         message = "ユーザー辞書"
     elif kana_stroke == '-' and main_joshi and not asterisk: # 助詞
         result = main_joshi
         message = "助詞"
-    elif asterisk:
-        # 動詞変換処理
-        verb = stroke_to_verb(left_kana, left_syllable, right_kana, stroke_list)
-        # 一般略語変換処理
-        abstract = abstract_abbreviation_lookup(left_kana_stroke, right_kana_stroke)
-        if abstract:
-            result = abstract
-            result += (main_joshi.replace("}{#Space}{", "である").replace("}{#Return}{", "だ").replace("}{#Tab}{", "だった").replace("}{#F8}{", "でした").replace("}{#F7}{", "です"))
-            message = "一般略語"
-        # 動詞略語
-        elif verb:
-            result = verb
-            message = "動詞略語"
-        # 通常
-        else:
-            message = "通常出力"
-            result = main_syllable * (2 if hyphen == "#" else 1)
+    # 一般略語変換処理
+    elif abstract:
+        result = abstract
+        result += (main_joshi.replace("}{#Space}{", "である").replace("}{#Return}{", "だ").replace("}{#Tab}{", "だった").replace("}{#F8}{", "でした").replace("}{#F7}{", "です"))
+        message = "一般略語"
+    # 動詞変換処理
+    elif verb:
+        result = verb
+        message = "動詞略語"
     # 左+助詞
     elif left_kana and not right_kana_stroke and left_particle_stroke + '-' + right_particle_stroke != "ntk-n" and right_particle_stroke:
         message = "左+助詞"
@@ -116,7 +112,7 @@ def lookup(key):
         result = ''
     else :
         message = "通常出力"
-        result = main_syllable * (2 if hyphen == "#" else 1)
+        result = main_syllable * (2 if hash else 1)
 
     # タイピングゲーム時の変換処理
     if is_typing_mode:
