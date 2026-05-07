@@ -134,7 +134,7 @@ def translate_ta_te_form(string: str, auxiliary: int, conso: str) -> str:
     return string
 
 def stroke_to_verb(left_kana, left_syllable, right_kana, stroke_list) -> str:
-    left_conso_stroke, left_vowel_stroke, left_particle_stroke, right_conso_stroke, right_vowel_stroke, right_particle_stroke = stroke_list[0], stroke_list[1], stroke_list[2], stroke_list[4], stroke_list[5], stroke_list[6]
+    left_conso_stroke, left_vowel_stroke, left_particle_stroke, right_conso_stroke, right_vowel_stroke, right_particle_stroke, asterisk = stroke_list[0], stroke_list[1], stroke_list[2], stroke_list[4], stroke_list[5], stroke_list[6], stroke_list[7]
     main_kana = left_kana + right_kana
     kana_stroke = left_conso_stroke + left_vowel_stroke + '-' + right_conso_stroke + right_vowel_stroke
 
@@ -145,54 +145,55 @@ def stroke_to_verb(left_kana, left_syllable, right_kana, stroke_list) -> str:
     # 活用を取得
     auxiliary_list = stroke_to_conjugate(left_particle_stroke, right_particle_stroke)
 
-    # 登録された五段活用
-    if kana_stroke in VERB_GODAN_MAP:
-        verb_list = VERB_GODAN_MAP[kana_stroke]
-        output = verb_list[0] + translate_ta_te_form(CONJUGATE_GODAN_MAP[verb_list[1]][auxiliary_list[0]] + auxiliary_list[1], auxiliary_list[0], verb_list[1])
-    # 登録された上一段活用
-    elif kana_stroke in VERB_KAMI_MAP:
-        verb_list = VERB_KAMI_MAP[kana_stroke]
-        output = verb_list[0] + CONJUGATE_KAMI_MAP[verb_list[1]][auxiliary_list[0]] + auxiliary_list[1]
-    # 登録された下一段活用
-    elif kana_stroke in VERB_SIMO_MAP:
-        verb_list = VERB_SIMO_MAP[kana_stroke]
-        output = verb_list[0] + CONJUGATE_SIMO_MAP[verb_list[1]][auxiliary_list[0]] + auxiliary_list[1]
+    # ～です
+    if right_conso_stroke == 'TN' and right_vowel_stroke == '':
+        output = left_syllable + DESU_CONJUGATE_MAP[right_particle_stroke]
     # 行く
     elif kana_stroke == "I-K":
         output += IKU_LIST[auxiliary_list[0]] + auxiliary_list[1]
-    # ある
-    elif kana_stroke == "A-":
-        output += ARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
-        if output == "ず": output = "あらず"
     # カ変活用
     elif kana_stroke == "K-":
         output += KAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
-    # サ変活用
-    elif not right_kana:
-        output = main_kana + SAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
-        output = output.replace("しず", "せず")
-    # ～です
-    elif right_conso_stroke == 'TN' and right_vowel_stroke == '':
-        output = left_syllable + DESU_CONJUGATE_MAP[right_particle_stroke]
-    # ～いう
-    elif not right_conso_stroke and right_vowel_stroke == 'IU':
-        output = left_kana + "い" + CONJUGATE_GODAN_MAP['w'][auxiliary_list[0]] + auxiliary_list[1]
     # 五段活用
     elif right_vowel_stroke == "" and right_conso in ['k', 'g', 's', 't', 'n', 'b', 'm', 'r', 'w']:
         output = left_kana + translate_ta_te_form(CONJUGATE_GODAN_MAP[right_conso][auxiliary_list[0]] + auxiliary_list[1], auxiliary_list[0], right_conso)
-    # 上一段活用
-    elif right_vowel_stroke == "I" and right_conso in ['k', 'g', 'z', 't', 'n', 'b', 'm', 'r', 'w', '']:
-        if right_conso == '':
-            right_conso = 'w'
-        output = left_kana + CONJUGATE_KAMI_MAP[right_conso][auxiliary_list[0]] + auxiliary_list[1]
-    # 下一段活用
-    elif right_vowel_stroke == "IA" and right_conso in ['k', 'g', 's', 'z', 't', 'd', 'n', 'h', 'b', 'm', 'r', 'w', '']:
-        if right_conso == '':
-            right_conso = 'w'
-        output = left_kana + CONJUGATE_SIMO_MAP[right_conso][auxiliary_list[0]] + auxiliary_list[1]
-    # 「～る」動詞(五段活用)
-    else:
-        output = main_kana + CONJUGATE_GODAN_MAP['r'][auxiliary_list[0]] + auxiliary_list[1]
-        output = output.replace("ござり", "ござい")
-        output = output.replace("なさり", "なさい")
+    elif asterisk:
+        # 登録された五段活用
+        if kana_stroke in VERB_GODAN_MAP:
+            verb_list = VERB_GODAN_MAP[kana_stroke]
+            output = verb_list[0] + translate_ta_te_form(CONJUGATE_GODAN_MAP[verb_list[1]][auxiliary_list[0]] + auxiliary_list[1], auxiliary_list[0], verb_list[1])
+        # 登録された上一段活用
+        elif kana_stroke in VERB_KAMI_MAP:
+            verb_list = VERB_KAMI_MAP[kana_stroke]
+            output = verb_list[0] + CONJUGATE_KAMI_MAP[verb_list[1]][auxiliary_list[0]] + auxiliary_list[1]
+        # 登録された下一段活用
+        elif kana_stroke in VERB_SIMO_MAP:
+            verb_list = VERB_SIMO_MAP[kana_stroke]
+            output = verb_list[0] + CONJUGATE_SIMO_MAP[verb_list[1]][auxiliary_list[0]] + auxiliary_list[1]
+        # サ変活用
+        elif not right_kana:
+            output = main_kana + SAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
+            output = output.replace("しず", "せず")
+        # ある
+        elif kana_stroke == "A-":
+            output += ARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
+            if output == "ず": output = "あらず"
+        # ～いう
+        elif not right_conso_stroke and right_vowel_stroke == 'IU':
+            output = left_kana + "い" + CONJUGATE_GODAN_MAP['w'][auxiliary_list[0]] + auxiliary_list[1]
+        # 上一段活用
+        elif right_vowel_stroke == "I" and right_conso in ['k', 'g', 'z', 't', 'n', 'b', 'm', 'r', 'w', '']:
+            if right_conso == '':
+                right_conso = 'w'
+            output = left_kana + CONJUGATE_KAMI_MAP[right_conso][auxiliary_list[0]] + auxiliary_list[1]
+        # 下一段活用
+        elif right_vowel_stroke == "IA" and right_conso in ['k', 'g', 's', 'z', 't', 'd', 'n', 'h', 'b', 'm', 'r', 'w', '']:
+            if right_conso == '':
+                right_conso = 'w'
+            output = left_kana + CONJUGATE_SIMO_MAP[right_conso][auxiliary_list[0]] + auxiliary_list[1]
+        # 「～る」動詞(五段活用)
+        else:
+            output = main_kana + CONJUGATE_GODAN_MAP['r'][auxiliary_list[0]] + auxiliary_list[1]
+            output = output.replace("ござり", "ござい")
+            output = output.replace("なさり", "なさい")
     return output
