@@ -1,14 +1,14 @@
 {
-  "#" : "=repeat_last_translation",
-  "#k": "{PLOVER:SWITCH_SYSTEM:Phonetix}{#F14}",
-  "#t": "{#F13}",
+  "#-" : "=repeat_last_translation",
+  "#-k": "{PLOVER:SWITCH_SYSTEM:Phonetix}{#F14}",
+  "#-t": "{#F13}",
 
   "-U":"=undo",
   "-AU":"{#BackSpace}","-IU":"{#Delete}",
   "-S":"{#Escape}",
 
-  "#n":"{#Shift_L(Return)}",
-  "#nk":"{#Ctrl_L(Return)}",
+  "#-n":"{#Shift_L(Return)}",
+  "#-nk":"{#Ctrl_L(Return)}",
 
   "-A":"{^}{#Left}{^}", "-N":"{^}{#Down}{^}",
   "-K":"{^}{#Right}{^}", "-Y":"{^}{#Up}{^}",
