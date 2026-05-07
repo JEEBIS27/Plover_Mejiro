@@ -1,4 +1,4 @@
-from Mejiro.dictionaries.default.settings import DOT
+from Mejiro.dictionaries.default.settings import DOT, COMMA
 from Mejiro.dictionaries.default.func import get_conso
 from Mejiro.dictionaries.default.abbreviations import VERB_KAMI_MAP, VERB_SIMO_MAP, VERB_GODAN_MAP
 
@@ -96,13 +96,13 @@ AUXILIARY_VERB_EXCEPTION_MAP = { # 例外
 }
 DESU_CONJUGATE_MAP = { # ですの活用形
     '':"です",
-    'n':"でして",
+    'n':"ですね",
     't':"でした",
     'k':"でしょう",
     'nt':"です" + DOT,
-    'nk':"ですが",
+    'nk':"ですが" + COMMA,
     'tk':"ですか?",
-    'ntk':"ですね",
+    'ntk':"でして",
 }
 
 def stroke_to_conjugate(left_particle_stroke: str, right_particle_stroke: str) -> list:
@@ -154,6 +154,16 @@ def stroke_to_verb(left_kana, left_syllable, right_kana, stroke_list) -> str:
     # カ変活用
     elif kana_stroke == "K-":
         output += KAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
+    # 上一段活用
+    elif not left_kana and not left_particle_stroke and right_vowel_stroke == "I" and right_conso in ['k', 'g', 'z', 't', 'n', 'b', 'm', 'r', 'w', '']:
+        if right_conso == '':
+            right_conso = 'w'
+        output = CONJUGATE_KAMI_MAP[right_conso][auxiliary_list[0]] + auxiliary_list[1]
+    # 下一段活用
+    elif not left_kana and not left_particle_stroke and right_vowel_stroke == "IA" and right_conso in ['k', 'g', 's', 'z', 't', 'd', 'n', 'h', 'b', 'm', 'r', 'w', '']:
+        if right_conso == '':
+            right_conso = 'w'
+        output = CONJUGATE_SIMO_MAP[right_conso][auxiliary_list[0]] + auxiliary_list[1]
     # 五段活用
     elif right_vowel_stroke == "" and right_conso in ['k', 'g', 's', 't', 'n', 'b', 'm', 'r', 'w']:
         output = left_kana + translate_ta_te_form(CONJUGATE_GODAN_MAP[right_conso][auxiliary_list[0]] + auxiliary_list[1], auxiliary_list[0], right_conso)
@@ -175,7 +185,7 @@ def stroke_to_verb(left_kana, left_syllable, right_kana, stroke_list) -> str:
             output += ARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
             if output == "ず": output = "あらず"
         # ～いう
-        elif not right_conso_stroke and right_vowel_stroke == 'IU':
+        elif right_vowel_stroke == 'IU' and not right_conso_stroke:
             output = left_kana + "い" + CONJUGATE_GODAN_MAP['w'][auxiliary_list[0]] + auxiliary_list[1]
         # サ変活用
         elif not right_kana:
