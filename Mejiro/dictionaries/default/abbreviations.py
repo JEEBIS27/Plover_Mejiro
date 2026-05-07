@@ -109,6 +109,7 @@ ABSTRACT_MAP_RIGHT = { # 一般略語の右側ストローク定義
   "KA": "かんじ",
   "TKIAU": "ほう",
   "TKYIAU": "ふう",
+  "YI": "とき",
   "SKNAU": "もの",
   "KNAU": "ものごと",
   "SI": "しごと",
