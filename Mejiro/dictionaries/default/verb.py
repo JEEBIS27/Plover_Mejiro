@@ -69,14 +69,14 @@ AUXILIARY_VERB_RIGHT_MAP = { # ストローク: [活用形, 助動詞]
     'ntk': [5, "て"],
 }
 AUXILIARY_VERB_EXCEPTION_MAP = { # 例外
-    'nt-'    : [3, "たい"], # ～たい
-    'nt-n'   : [3, "たくない"], # ～たい+否定
-    'nt-t'   : [3, "たかった"], # ～たい+過去
-    'nt-nt'  : [3, "たくなかった"], # ～たい+否定+過去
-    'nt-k'   : [5, "てほしい"], # ～ほしい
-    'nt-nk'  : [5, "てほしくない"], # ～ほしい+否定
-    'nt-tk'  : [5, "てほしかった"], # ～ほしい+過去
-    'nt-ntk' : [5, "てほしくなかった"], # ～ほしい+否定+過去
+    'nt-'    : [3, "やすい"], # ～やすい
+    'nt-k'   : [3, "やすく"], # ～やすく
+    'nt-n'   : [3, "ずらい"], # ～ずらい
+    'nt-nk'  : [3, "ずらく"], # ～ずらく
+    'nt-t'   : [3, "たい"], # ～たい
+    'nt-tk'  : [3, "たく"], # ～たく
+    'nt-nt'  : [5, "てほしい"], # ～てほしい
+    'nt-ntk' : [5, "てください"], # ～てください
     'tk-'    : [8, "る"], # 可能
     'tk-n'   : [8, "ない"], # 可能+否定
     'tk-t'   : [8, "た"], # 可能+過去
@@ -91,7 +91,7 @@ AUXILIARY_VERB_EXCEPTION_MAP = { # 例外
     'ntk-k'  : [3, "ましょう"], # 提案
     'ntk-nt' : [0, "なければ"], # 否定+仮定
     'ntk-nk' : [0, "なく"], # 否定+連用
-    'ntk-tk' : [5, "てください"], # 丁寧命令
+    'ntk-tk' : [3, "ながら"], # 丁寧命令
     'ntk-ntk'  : [6, ""], # 意向
 }
 DESU_CONJUGATE_MAP = { # ですの活用形
@@ -170,10 +170,6 @@ def stroke_to_verb(left_kana, left_syllable, right_kana, stroke_list) -> str:
         elif kana_stroke in VERB_SIMO_MAP:
             verb_list = VERB_SIMO_MAP[kana_stroke]
             output = verb_list[0] + CONJUGATE_SIMO_MAP[verb_list[1]][auxiliary_list[0]] + auxiliary_list[1]
-        # サ変活用
-        elif not right_kana:
-            output = main_kana + SAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
-            output = output.replace("しず", "せず")
         # ある
         elif kana_stroke == "A-":
             output += ARU_LIST[auxiliary_list[0]] + auxiliary_list[1]
@@ -181,6 +177,10 @@ def stroke_to_verb(left_kana, left_syllable, right_kana, stroke_list) -> str:
         # ～いう
         elif not right_conso_stroke and right_vowel_stroke == 'IU':
             output = left_kana + "い" + CONJUGATE_GODAN_MAP['w'][auxiliary_list[0]] + auxiliary_list[1]
+        # サ変活用
+        elif not right_kana:
+            output = main_kana + SAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
+            output = output.replace("しず", "せず")
         # 上一段活用
         elif right_vowel_stroke == "I" and right_conso in ['k', 'g', 'z', 't', 'n', 'b', 'm', 'r', 'w', '']:
             if right_conso == '':
