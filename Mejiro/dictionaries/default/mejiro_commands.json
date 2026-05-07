@@ -1,14 +1,14 @@
 {
-  "#" : "=repeat_last_translation",
-  "#k": "{PLOVER:SWITCH_SYSTEM:Lapwing}{#F14}",
-  "#t": "{#F13}",
+  "#-" : "=repeat_last_translation",
+  "#-k": "{PLOVER:SWITCH_SYSTEM:Phonetix}{#F14}",
+  "#-t": "{#F13}",
 
   "-U":"=undo",
   "-AU":"{#BackSpace}","-IU":"{#Delete}",
   "-S":"{#Escape}",
 
-  "#n":"{#Shift_L(Return)}",
-  "#nk":"{#Ctrl_L(Return)}",
+  "#-n":"{#Shift_L(Return)}",
+  "#-nk":"{#Ctrl_L(Return)}",
 
   "-A":"{^}{#Left}{^}", "-N":"{^}{#Down}{^}",
   "-K":"{^}{#Right}{^}", "-Y":"{^}{#Up}{^}",
@@ -29,8 +29,8 @@
 
   "-YA":"{^\"^}", "-NI":"{^'^}",
   "-SYA":"{^\"\"^}{#Left}{^}", "-SNI":"{^''^}{#Left}{^}",
-  "-TK":"{^|^}", "-TKIA": "{^||^}", "-IA":"{^:^}", "-NY":"{^・^}",
-  "-TN":"{^＊^}", "-KY":"{^※^}", "-TI":"{^～^}", "-KA":"{^…^}",
+  "-TK":"{^|^}", "-TKIA": "{^||^}", "-IA":"{^:^}", "-NY":"{^・^}", "-SNY":"{^＊^}",
+  "-KY":"{^※^}", "-KA":"{^…^}", "-SKA":"{^～^}",
 
   "-TNI":"{^↓^}", "-KYA":"{^↑^}", "-IAU":"{^←^}", "-STK":"{^→^}"
 }

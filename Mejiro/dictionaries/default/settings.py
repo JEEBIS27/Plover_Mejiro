@@ -115,7 +115,7 @@ EXCEPTION_KANA_MAP = { # 例外的なかなのマッピング
 #  |U  |YA |YI |YU  |YIU|YAU|YIAU|IAU|IU  |Y   |YIA
 # -|---|---|---|----|---|---|----|---|----|----|----
 # F|vu |va |vi |fyu |ve |vo |jei |je |vyu |----|----
-# W|xwa|wha|wyi|yui |wye|wo |chei|che|iu  |----|----
+# W|xwa|wha|wyi|iu  |wye|wo |chei|che|yui |----|----
 # D|---|thi|twu|dhu |dwu|dhi|ye  |---|thu |----|----
 # X|---|sta|sti|sthi|ste|sto|shei|she|kusu|stai|stei
 
@@ -134,12 +134,12 @@ EXCEPTION_KANA_MAP = { # 例外的なかなのマッピング
     "SKU": "ゎ",
     "SKYA": "うぁ",
     "SKYI": "ゐ",
-    "SKYU": "ゆい",
+    "SKYU": "いう",
     "SKYIU": "ゑ",
     "SKYAU": "を",
     "SKYIAU": "ちぇい",
     "SKIAU": "ちぇ",
-    "SKIU": "いう",
+    "SKIU": "ゆい",
 
     # D
     "TNYA": "てぃ",
@@ -176,11 +176,11 @@ COMMA = "、" # or ","
 L_PARTICLE = ["", COMMA, "に", "の", "で", "と", "を", "へ"]
 
 # 右側の助詞文字列の定義
-R_PARTICLE = ["", COMMA, "は", "が", "も", "は" + COMMA, "が" + COMMA, "も" + COMMA]
+R_PARTICLE = ["", COMMA, "は", "が", "も", "は" + COMMA, "が" + COMMA, "や"]
 
 # 例外的な助詞ストロークのマッピング
 EXCEPTION_STROKE_MAP = {
     "-n": "}{#Return}{", "n-": "}{#Space}{", "n-n": "}{#Tab}{",
-    "-nt": DOT, "-nk": COMMA, "-ntk": "}{#F7}{",
-    "n-nt": "?", "n-nk": "!", "n-ntk": "}{#F8}{",
+    "-nt": DOT, "-nk": COMMA,
+    "n-nt": "?", "n-nk": "!",
 }
