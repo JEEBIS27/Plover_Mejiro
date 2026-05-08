@@ -7,7 +7,7 @@
   "-AU":"{#BackSpace}","-IU":"{#Delete}",
   "-S":"{#Escape}",
 
-  "#-n":"{#Shift_L(Return)}",
+  "#n-n":"{#Shift_L(Return)}",
   "#-nk":"{#Ctrl_L(Return)}",
 
   "-A":"{^}{#Left}{^}", "-N":"{^}{#Down}{^}",
