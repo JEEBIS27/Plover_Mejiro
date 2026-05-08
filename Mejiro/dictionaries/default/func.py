@@ -8,6 +8,9 @@ from Mejiro.dictionaries.default.abbreviations import ABSTRACT_MAP, ABSTRACT_MAP
 global LAST_VOWEL_STROKE
 LAST_VOWEL_STROKE = ''
 
+global prev_joshi
+prev_joshi = ""
+
 def get_conso(conso_stroke: str) -> str:
     global conso_stroke_to_roma
     # 子音ストロークからローマ字の子音（行）を取得
@@ -150,6 +153,8 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
     global EXCEPTION_STROKE_MAP
     global L_PARTICLE
     global R_PARTICLE
+    global prev_joshi
+
     # ストロークを直接置換するため、'ｰ'をつける。
     particle_stroke = left_particle_stroke + '-' + right_particle_stroke
     if particle_stroke in EXCEPTION_STROKE_MAP:
@@ -167,7 +172,7 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
         right_raw_joshi = R_PARTICLE[r_raw_index]
         if left_particle_stroke in ["n", ""] and right_particle_stroke == "ntk":
             joshi = right_raw_joshi + (COMMA if left_particle_stroke == "n" else "")
-        elif left_particle_stroke is "n" and right_particle_stroke:
+        elif left_particle_stroke == "n" and right_particle_stroke:
             joshi = right_joshi + COMMA
         elif left_particle_stroke and right_particle_stroke in ["k", "nk"]:
             if left_particle_stroke in ["nt", "ntk"]:
@@ -175,13 +180,17 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
             else:
                 joshi = "の" + left_joshi
             if joshi == "のの":
-                joshi = "な"
+                if prev_joshi == "な":
+                    joshi = "のが"
+                else:
+                    joshi = "な"
             if "n" in right_particle_stroke:
                 joshi += COMMA
         else:
             joshi = left_joshi + right_joshi
             if "n" in right_particle_stroke :
                 joshi += COMMA
+    prev_joshi = joshi
     return joshi
 
 def abstract_abbreviation_lookup(left_kana_stroke: str, right_kana_stroke: str, asterisk: str) -> str:
