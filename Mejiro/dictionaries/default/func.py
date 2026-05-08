@@ -135,7 +135,7 @@ def stroke_to_syllable(conso_stroke: str, vowel_stroke: str, particle_stroke: st
         try:
             base_kana = ROMA_TO_KANA_MAP[conso_roma][vowel_index]
             if is_english:
-                base_kana = base_kana.replace('ぁ', 'すた').replace('ぃ', 'すち').replace('ぅ', 'すてぃ').replace('ぇ', 'すて').replace('ぉ', 'すと').replace('ち', 'てぃ').replace('ぢ', 'でぃ').replace('づ', 'どぅ')
+                base_kana = base_kana.replace('ち', 'てぃ').replace('ぢ', 'でぃ').replace('づ', 'どぅ')
                 if base_kana + suffix == "るしょん":
                     base_kana, suffix = "りゅ", "ーしょん"
                 elif base_kana + suffix == "ふしょん":
@@ -167,6 +167,8 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
         right_raw_joshi = R_PARTICLE[r_raw_index]
         if left_particle_stroke in ["n", ""] and right_particle_stroke == "ntk":
             joshi = right_raw_joshi + (COMMA if left_particle_stroke == "n" else "")
+        elif left_particle_stroke is "n" and right_particle_stroke:
+            joshi = right_joshi + COMMA
         elif left_particle_stroke and right_particle_stroke in ["k", "nk"]:
             if left_particle_stroke in ["nt", "ntk"]:
                 joshi = left_joshi + "の"
