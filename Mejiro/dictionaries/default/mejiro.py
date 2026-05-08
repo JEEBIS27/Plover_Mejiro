@@ -155,7 +155,7 @@ def lookup(key):
     # 一般略語変換処理
     elif abstract:
         result = abstract
-        result += (main_joshi.replace("}{#Space}{", "である").replace("}{#Return}{", "だ").replace("}{#Tab}{", "だった").replace("}{#F8}{", "でした").replace("}{#F7}{", "です"))
+        result += (main_joshi.replace("}{#Space}{", "である").replace("}{#Return}{", "だ").replace("}{#Tab}{", "だった"))
         message = "一般略語"
     # 動詞変換処理
     elif verb:
