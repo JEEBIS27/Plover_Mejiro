@@ -165,16 +165,15 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
         left_joshi = L_PARTICLE[l_index]
         right_joshi = R_PARTICLE[r_index]
         right_raw_joshi = R_PARTICLE[r_raw_index]
-        if left_particle_stroke == "n":
-            joshi = right_raw_joshi + COMMA
-        elif right_particle_stroke == "ntk":
-            joshi = right_raw_joshi
+        if left_particle_stroke in ["n", ""] and right_particle_stroke == "ntk":
+            joshi = right_raw_joshi + (COMMA if left_particle_stroke == "n" else "")
         elif left_particle_stroke and right_particle_stroke in ["k", "nk"]:
-            joshi = "の" + left_joshi
+            if left_particle_stroke in ["nt", "ntk"]:
+                joshi = left_joshi + "の"
+            else:
+                joshi = "の" + left_joshi
             if joshi == "のの":
                 joshi = "な"
-            elif joshi == "のへ":
-                joshi = "への"
             if "n" in right_particle_stroke:
                 joshi += COMMA
         else:
