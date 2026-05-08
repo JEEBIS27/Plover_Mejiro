@@ -189,4 +189,5 @@ def abstract_abbreviation_lookup(left_kana_stroke: str, right_kana_stroke: str, 
     elif asterisk:
         if left_kana_stroke in ABSTRACT_MAP_LEFT and right_kana_stroke in ABSTRACT_MAP_RIGHT:
             output = ABSTRACT_MAP_LEFT[left_kana_stroke] + ABSTRACT_MAP_RIGHT[right_kana_stroke]
+            output = output.replace("のふう", "んなふう")
     return output
