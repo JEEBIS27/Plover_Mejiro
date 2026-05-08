@@ -56,7 +56,7 @@ def lookup(key):
         else:
             print("typing mode on")
         is_typing_mode = not is_typing_mode
-        return ""
+        return "{^^}"
 
     regex = re.compile(r"(#?)(S?T?K?N?)(Y?I?A?U?)(n?t?k?)(\-?)(S?T?K?N?)(Y?I?A?U?)(n?t?k?)(\*?)")
     regex_groups = re.search(regex, stroke)
