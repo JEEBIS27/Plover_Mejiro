@@ -155,7 +155,7 @@ def lookup(key):
     # 一般略語変換処理
     elif abstract:
         result = abstract
-        result += (main_joshi.replace("}{#Space}{", "である").replace("}{#Return}{", "だ").replace("}{#Tab}{", "だった"))
+        result += (main_joshi.replace("へ", "か").replace("}{#Space}{", "である").replace("}{#Return}{", "だ").replace("}{#Tab}{", "だった"))
         message = "一般略語"
     # 動詞変換処理
     elif verb:
@@ -164,7 +164,9 @@ def lookup(key):
     # 左+助詞
     elif left_kana and not right_kana_stroke and left_particle_stroke + '-' + right_particle_stroke != "ntk-n" and right_particle_stroke:
         message = "左+助詞"
-        result = left_kana + main_joshi
+        result = left_kana + (main_joshi.replace("へ", "か").replace("}{#Space}{", "である").replace("}{#Return}{", "だ").replace("}{#Tab}{", "だった"))
+        if result == "なな":
+            result = "なのが"
     # 通常
     elif not left_stroke and right_kana and not right_particle_stroke:
         message = "未定義の右手略語"
