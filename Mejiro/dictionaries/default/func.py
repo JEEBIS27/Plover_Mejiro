@@ -1,4 +1,3 @@
-import re
 from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, ENGLISH_DIPHTHONG_MAPPING, MINOR_DIPHTHONG_MAPPING, EXCEPTION_KANA_MAP,
                                                   conso_stroke_to_roma, vowel_stroke_to_roma, ROMA_TO_KANA_MAP,
                                                   PARTICLE_KEY_LIST, SECOND_SOUND_LIST,
@@ -8,6 +7,9 @@ from Mejiro.dictionaries.default.abbreviations import ABSTRACT_MAP, ABSTRACT_MAP
 
 global LAST_VOWEL_STROKE
 LAST_VOWEL_STROKE = ''
+
+global prev_joshi
+prev_joshi = ""
 
 def get_conso(conso_stroke: str) -> str:
     global conso_stroke_to_roma
@@ -136,7 +138,7 @@ def stroke_to_syllable(conso_stroke: str, vowel_stroke: str, particle_stroke: st
         try:
             base_kana = ROMA_TO_KANA_MAP[conso_roma][vowel_index]
             if is_english:
-                base_kana = base_kana.replace('ぁ', 'すた').replace('ぃ', 'すち').replace('ぅ', 'すてぃ').replace('ぇ', 'すて').replace('ぉ', 'すと').replace('ち', 'てぃ').replace('ぢ', 'でぃ').replace('づ', 'どぅ')
+                base_kana = base_kana.replace('ち', 'てぃ').replace('ぢ', 'でぃ').replace('づ', 'どぅ')
                 if base_kana + suffix == "るしょん":
                     base_kana, suffix = "りゅ", "ーしょん"
                 elif base_kana + suffix == "ふしょん":
@@ -151,6 +153,8 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
     global EXCEPTION_STROKE_MAP
     global L_PARTICLE
     global R_PARTICLE
+    global prev_joshi
+
     # ストロークを直接置換するため、'ｰ'をつける。
     particle_stroke = left_particle_stroke + '-' + right_particle_stroke
     if particle_stroke in EXCEPTION_STROKE_MAP:
@@ -161,28 +165,40 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
         # PARTICLE_KEY_LISTからインデックスを取得
         l_index = PARTICLE_KEY_LIST.index(left_particle_stroke)
         r_index = PARTICLE_KEY_LIST.index(right_particle_tk)
+        r_raw_index = PARTICLE_KEY_LIST.index(right_particle_stroke)
         # L_PARTICLE/R_PARTICLEをインデックスで参照
         left_joshi = L_PARTICLE[l_index]
         right_joshi = R_PARTICLE[r_index]
-        if left_particle_stroke == "n":
+        right_raw_joshi = R_PARTICLE[r_raw_index]
+        if left_particle_stroke in ["n", ""] and right_particle_stroke == "ntk":
+            joshi = right_raw_joshi + (COMMA if left_particle_stroke == "n" else "")
+        elif left_particle_stroke == "n" and right_particle_stroke:
             joshi = right_joshi + COMMA
         elif left_particle_stroke and right_particle_stroke in ["k", "nk"]:
-            joshi = "の" + left_joshi
+            if left_particle_stroke in ["nt", "ntk"]:
+                joshi = left_joshi + "の"
+            else:
+                joshi = "の" + left_joshi
             if joshi == "のの":
-                joshi = "な"
+                if prev_joshi == "な":
+                    joshi = "のが"
+                else:
+                    joshi = "な"
             if "n" in right_particle_stroke:
                 joshi += COMMA
         else:
             joshi = left_joshi + right_joshi
             if "n" in right_particle_stroke :
                 joshi += COMMA
+    prev_joshi = joshi
     return joshi
 
-def abstract_abbreviation_lookup(left_kana_stroke: str, right_kana_stroke: str) -> str:
-    if left_kana_stroke + '-' + right_kana_stroke in ABSTRACT_MAP:
-        output = ABSTRACT_MAP[left_kana_stroke + '-' + right_kana_stroke]
-    elif left_kana_stroke in ABSTRACT_MAP_LEFT and right_kana_stroke in ABSTRACT_MAP_RIGHT:
-        output = ABSTRACT_MAP_LEFT[left_kana_stroke] + ABSTRACT_MAP_RIGHT[right_kana_stroke]
-    else:
-        output = ""
+def abstract_abbreviation_lookup(left_kana_stroke: str, right_kana_stroke: str, asterisk: str) -> str:
+    output = ""
+    if left_kana_stroke + '-' + right_kana_stroke + asterisk in ABSTRACT_MAP:
+        output = ABSTRACT_MAP[left_kana_stroke + '-' + right_kana_stroke + asterisk]
+    elif asterisk:
+        if left_kana_stroke in ABSTRACT_MAP_LEFT and right_kana_stroke in ABSTRACT_MAP_RIGHT:
+            output = ABSTRACT_MAP_LEFT[left_kana_stroke] + ABSTRACT_MAP_RIGHT[right_kana_stroke]
+            output = output.replace("のふう", "んなふう")
     return output
