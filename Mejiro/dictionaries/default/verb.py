@@ -91,7 +91,7 @@ AUXILIARY_VERB_EXCEPTION_MAP = { # 例外
     'ntk-k'  : [3, "ましょう"], # 提案
     'ntk-nt' : [0, "なければ"], # 否定+仮定
     'ntk-nk' : [0, "なく"], # 否定+連用
-    'ntk-tk' : [3, "ながら"], # 丁寧命令
+    'ntk-tk' : [3, "ながら"], # ～ながら
     'ntk-ntk'  : [6, ""], # 意向
 }
 DESU_CONJUGATE_MAP = { # ですの活用形
@@ -102,7 +102,7 @@ DESU_CONJUGATE_MAP = { # ですの活用形
     'nt':"です" + DOT,
     'nk':"ですが" + COMMA,
     'tk':"ですか?",
-    'ntk':"でして",
+    'ntk':"でして" + COMMA,
 }
 
 def stroke_to_conjugate(left_particle_stroke: str, right_particle_stroke: str) -> list:

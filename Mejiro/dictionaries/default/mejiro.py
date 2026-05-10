@@ -31,10 +31,10 @@ from Mejiro.dictionaries.default.translate import kana_to_typing_output
 # グローバル変数の定義
 LONGEST_KEY = 1
 is_typing_mode = False
-REGISTER_KEYS = ("n", "t", "k", "nt", "nk", "tk", "ntk")
-register_values = {key: "" for key in REGISTER_KEYS}
-active_recording_registers = set()
-recording_register_order = []
+macro_KEYS = ("n", "t", "k", "nt", "nk", "tk", "ntk")
+macro_values = {key: "" for key in macro_KEYS}
+active_recording_macros = set()
+recording_macro_order = []
 
 # タイピングゲーム時の入力法設定
 typing_mode = 0 # 0: ローマ字入力, 1: JISかな入力
@@ -44,9 +44,9 @@ def lookup(key):
     global LONGEST_KEY
     global typing_mode
     global is_typing_mode
-    global register_values
-    global active_recording_registers
-    global recording_register_order
+    global macro_values
+    global active_recording_macros
+    global recording_macro_order
     assert len(key) <= LONGEST_KEY
     stroke = key[0]
 
@@ -86,11 +86,11 @@ def lookup(key):
         and not right_vowel_stroke
         and not right_particle_stroke
     )
-    is_register_target = is_pure_left_particle and left_particle_stroke in REGISTER_KEYS
-    is_register_record_start = hash and is_register_target and not hyphen and asterisk
-    is_register_record_stop_specific = hash and is_register_target and hyphen and asterisk
-    is_register_record_stop_generic = hash and not left_particle_stroke and hyphen and asterisk and not right_stroke
-    is_register_replay = hash and is_register_target and not hyphen and not asterisk
+    is_macro_target = is_pure_left_particle and left_particle_stroke in macro_KEYS
+    is_macro_record_start = hash and is_macro_target and not hyphen and asterisk
+    is_macro_record_stop_specific = hash and is_macro_target and hyphen and asterisk
+    is_macro_record_stop_generic = hash and not left_particle_stroke and hyphen and asterisk and not right_stroke
+    is_macro_replay = hash and is_macro_target and not hyphen and not asterisk
 
     # 左右のかなを変数に格納
     left_kana = stroke_to_kana(left_conso_stroke, left_vowel_stroke)
@@ -107,44 +107,44 @@ def lookup(key):
 
     message = ""
     # メインの変換処理
-    if is_register_record_start:
+    if is_macro_record_start:
         target = left_particle_stroke
-        if target in active_recording_registers:
-            active_recording_registers.remove(target)
-            if target in recording_register_order:
-                recording_register_order.remove(target)
-            message = f"レジストリ記録停止:{target}"
+        if target in active_recording_macros:
+            active_recording_macros.remove(target)
+            if target in recording_macro_order:
+                recording_macro_order.remove(target)
+            message = f"マクロ記録停止:{target}"
         else:
-            register_values[target] = ""
-            active_recording_registers.add(target)
-            recording_register_order.append(target)
-            message = f"レジストリ記録開始:{target}"
+            macro_values[target] = ""
+            active_recording_macros.add(target)
+            recording_macro_order.append(target)
+            message = f"マクロ記録開始:{target}"
         result = ""
-    elif is_register_record_stop_specific:
+    elif is_macro_record_stop_specific:
         target = left_particle_stroke
-        if target in active_recording_registers:
-            active_recording_registers.remove(target)
-            if target in recording_register_order:
-                recording_register_order.remove(target)
-            message = f"レジストリ記録停止:{target}"
+        if target in active_recording_macros:
+            active_recording_macros.remove(target)
+            if target in recording_macro_order:
+                recording_macro_order.remove(target)
+            message = f"マクロ記録停止:{target}"
         else:
-            register_values[target] = ""
-            active_recording_registers.add(target)
-            recording_register_order.append(target)
-            message = f"レジストリ記録開始:{target}(#-*)"
+            macro_values[target] = ""
+            active_recording_macros.add(target)
+            recording_macro_order.append(target)
+            message = f"マクロ記録開始:{target}(#-*)"
         result = ""
-    elif is_register_record_stop_generic:
-        if recording_register_order:
-            target = recording_register_order.pop()
-            active_recording_registers.discard(target)
-            message = f"レジストリ記録停止:#-*->{target}"
+    elif is_macro_record_stop_generic:
+        if recording_macro_order:
+            target = recording_macro_order.pop()
+            active_recording_macros.discard(target)
+            message = f"マクロ記録停止:#-*->{target}"
         else:
-            message = "レジストリ記録停止:#-* (未記録)"
+            message = "マクロ記録停止:#-* (未記録)"
         result = ""
-    elif is_register_replay:
+    elif is_macro_replay:
         target = left_particle_stroke
-        result = register_values[target]
-        message = f"レジストリ再生:{target}" if result else f"レジストリ空:{target}"
+        result = macro_values[target]
+        message = f"マクロ再生:{target}" if result else f"マクロ空:{target}"
     elif stroke in USERS_MAP: # ユーザー略語
         print(stroke)
         result = USERS_MAP[stroke]
@@ -183,8 +183,8 @@ def lookup(key):
         message = "出力取止"
         result = ""
 
-    for register_key in active_recording_registers:
-        register_values[register_key] += result
+    for macro_key in active_recording_macros:
+        macro_values[macro_key] += result
     # デバッグ画面に入力と結果を表示
     print("|\t" + stroke + "\t|\t" + result + "\t|\t" + message + "\t|\t" + ("on" if is_typing_mode else "off") + "\t|")
 
