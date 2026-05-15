@@ -172,6 +172,7 @@ def stroke_to_verb(left_kana, left_syllable, right_kana, stroke_list) -> str:
         if kana_stroke in VERB_GODAN_MAP:
             verb_list = VERB_GODAN_MAP[kana_stroke]
             output = verb_list[0] + translate_ta_te_form(CONJUGATE_GODAN_MAP[verb_list[1]][auxiliary_list[0]] + auxiliary_list[1], auxiliary_list[0], verb_list[1])
+            output = output.replace("くださり", "ください")
         # 登録された上一段活用
         elif kana_stroke in VERB_KAMI_MAP:
             verb_list = VERB_KAMI_MAP[kana_stroke]
@@ -189,8 +190,10 @@ def stroke_to_verb(left_kana, left_syllable, right_kana, stroke_list) -> str:
             output = left_kana + "い" + CONJUGATE_GODAN_MAP['w'][auxiliary_list[0]] + auxiliary_list[1]
         # サ変活用
         elif not right_kana:
-            output = main_kana + SAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
-            output = output.replace("しず", "せず")
+            if left_particle_stroke + right_particle_stroke == "ntkn":
+                output = main_kana + "せず"
+            else:
+                output = main_kana + SAHEN_LIST[auxiliary_list[0]] + auxiliary_list[1]
         # 上一段活用
         elif right_vowel_stroke == "I" and right_conso in ['k', 'g', 'z', 't', 'n', 'b', 'm', 'r', 'w', '']:
             if right_conso == '':
