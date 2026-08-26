@@ -5,7 +5,6 @@
 
   "-U":"=undo",
   "-AU":"{#BackSpace}","-IU":"{#Delete}",
-  "-S":"{#Escape}",
 
   "#n-n":"{#Shift_L(Return)}",
   "#-nk":"{#Ctrl_L(Return)}",
