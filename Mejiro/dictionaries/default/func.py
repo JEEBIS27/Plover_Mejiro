@@ -1,4 +1,4 @@
-from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, ENGLISH_DIPHTHONG_MAPPING, MINOR_DIPHTHONG_MAPPING, EXCEPTION_KANA_MAP,
+from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, MINOR_DIPHTHONG_MAPPING, EXCEPTION_KANA_MAP,
                                                   conso_stroke_to_roma, vowel_stroke_to_roma, ROMA_TO_KANA_MAP,
                                                   PARTICLE_KEY_LIST, SECOND_SOUND_LIST,
                                                   L_PARTICLE, R_PARTICLE,
@@ -70,7 +70,6 @@ def stroke_to_syllable(conso_stroke: str, vowel_stroke: str, particle_stroke: st
 
     global LAST_VOWEL_STROKE
     global DIPHTHONG_MAPPING
-    global ENGLISH_DIPHTHONG_MAPPING
     global MINOR_DIPHTHONG_MAPPING
     global ROMA_TO_KANA_MAP
     global PARTICLE_KEY_LIST
@@ -91,7 +90,7 @@ def stroke_to_syllable(conso_stroke: str, vowel_stroke: str, particle_stroke: st
         return ""
     elif conso_stroke + vowel_stroke in ['', "STN"]:
         return SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
-    elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP and current_vowel_stroke + particle_stroke not in ENGLISH_DIPHTHONG_MAPPING: # 例外的なかなのマッピングをチェック
+    elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP : # 例外的なかなのマッピングをチェック
         base_kana = EXCEPTION_KANA_MAP[conso_stroke + vowel_stroke]
         extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
         return base_kana + extra_sound
@@ -100,16 +99,7 @@ def stroke_to_syllable(conso_stroke: str, vowel_stroke: str, particle_stroke: st
         vowel_roma = None
         suffix = "" # 長音文字
 
-        # 英語フラグをリセット
-        is_english = False
-
-        # 英語母音マッピングをチェック
-        if current_vowel_stroke + particle_stroke in ENGLISH_DIPHTHONG_MAPPING:
-            vowel_roma, suffix = ENGLISH_DIPHTHONG_MAPPING[current_vowel_stroke + particle_stroke]
-            vowel_index = [item[1] for item in vowel_stroke_to_roma].index(vowel_roma)
-            extra_sound = ""  # 追加音はなし
-            is_english = True # 英語モードフラグを立てる
-        elif current_vowel_stroke + particle_stroke in MINOR_DIPHTHONG_MAPPING:
+        if current_vowel_stroke + particle_stroke in MINOR_DIPHTHONG_MAPPING:
             vowel_roma, suffix = MINOR_DIPHTHONG_MAPPING[current_vowel_stroke + particle_stroke]
             vowel_index = [item[1] for item in vowel_stroke_to_roma].index(vowel_roma)
             extra_sound = ""  # 追加音はなし
@@ -137,12 +127,6 @@ def stroke_to_syllable(conso_stroke: str, vowel_stroke: str, particle_stroke: st
 
         try:
             base_kana = ROMA_TO_KANA_MAP[conso_roma][vowel_index]
-            if is_english:
-                base_kana = base_kana.replace('ち', 'てぃ').replace('ぢ', 'でぃ').replace('づ', 'どぅ')
-                if base_kana + suffix == "るしょん":
-                    base_kana, suffix = "りゅ", "ーしょん"
-                elif base_kana + suffix == "ふしょん":
-                    base_kana, suffix = "ふゅ", "ーじょん"
         except IndexError:
             print(f"無効な組み合わせ: 子音'{conso_roma}' + 母音'{vowel_roma}'")
             raise KeyError
