@@ -90,7 +90,7 @@ def stroke_to_syllable(conso_stroke: str, vowel_stroke: str, particle_stroke: st
         return ""
     elif conso_stroke + vowel_stroke in ['', "STN"]:
         return SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
-    elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP : # 例外的なかなのマッピングをチェック
+    elif conso_stroke + vowel_stroke in EXCEPTION_KANA_MAP and not (current_vowel_stroke + particle_stroke in MINOR_DIPHTHONG_MAPPING): # 例外的なかなのマッピングをチェック
         base_kana = EXCEPTION_KANA_MAP[conso_stroke + vowel_stroke]
         extra_sound = SECOND_SOUND_LIST[PARTICLE_KEY_LIST.index(particle_stroke)]
         return base_kana + extra_sound
