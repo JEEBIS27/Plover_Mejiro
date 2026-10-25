@@ -1,0 +1,12 @@
+[package]
+name = "mejiro-native"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "GPL-3.0-or-later"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+mejiro-engine = { path = ".." }

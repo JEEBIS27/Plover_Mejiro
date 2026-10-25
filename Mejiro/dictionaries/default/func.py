@@ -4,12 +4,10 @@ from Mejiro.dictionaries.default.settings import (DIPHTHONG_MAPPING, MINOR_DIPHT
                                                   L_PARTICLE, R_PARTICLE,
                                                   COMMA, EXCEPTION_STROKE_MAP)
 from Mejiro.dictionaries.default.abbreviations import ABSTRACT_MAP, ABSTRACT_MAP_LEFT, ABSTRACT_MAP_RIGHT
+from Mejiro.dictionaries.default.grammar import UNKNOWN, choose_na_particle, choose_he_particle
 
 global LAST_VOWEL_STROKE
 LAST_VOWEL_STROKE = ''
-
-global prev_joshi
-prev_joshi = ""
 
 def get_conso(conso_stroke: str) -> str:
     global conso_stroke_to_roma
@@ -133,11 +131,10 @@ def stroke_to_syllable(conso_stroke: str, vowel_stroke: str, particle_stroke: st
 
         return base_kana + suffix + extra_sound
 
-def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
+def joshi(left_particle_stroke: str, right_particle_stroke: str, context=UNKNOWN) -> str:
     global EXCEPTION_STROKE_MAP
     global L_PARTICLE
     global R_PARTICLE
-    global prev_joshi
 
     # ストロークを直接置換するため、'ｰ'をつける。
     particle_stroke = left_particle_stroke + '-' + right_particle_stroke
@@ -152,6 +149,8 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
         r_raw_index = PARTICLE_KEY_LIST.index(right_particle_stroke)
         # L_PARTICLE/R_PARTICLEをインデックスで参照
         left_joshi = L_PARTICLE[l_index]
+        if left_particle_stroke == "ntk":
+            left_joshi = choose_he_particle(context, right_particle_stroke)
         right_joshi = R_PARTICLE[r_index]
         right_raw_joshi = R_PARTICLE[r_raw_index]
         if left_particle_stroke in ["n", ""] and right_particle_stroke == "ntk":
@@ -164,17 +163,13 @@ def joshi(left_particle_stroke: str, right_particle_stroke: str) -> str:
             else:
                 joshi = "の" + left_joshi
             if joshi == "のの":
-                if prev_joshi == "な":
-                    joshi = "のが"
-                else:
-                    joshi = "な"
+                joshi = choose_na_particle(context)
             if "n" in right_particle_stroke:
                 joshi += COMMA
         else:
             joshi = left_joshi + right_joshi
             if "n" in right_particle_stroke :
                 joshi += COMMA
-    prev_joshi = joshi
     return joshi
 
 def abstract_abbreviation_lookup(left_kana_stroke: str, right_kana_stroke: str, asterisk: str) -> str:
