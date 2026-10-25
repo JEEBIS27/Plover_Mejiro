@@ -1,3 +1,6 @@
 apply_setting.sh
 __pycache__/
 *.backup
+/build/
+/dist/
+/*.egg-info/

@@ -1,0 +1,16 @@
+[package]
+name = "mejiro-engine"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "GPL-3.0-or-later"
+description = "Platform-independent Mejiro stenography engine"
+
+[workspace]
+members = ["native"]
+resolver = "3"
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"

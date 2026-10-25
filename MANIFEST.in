@@ -1,2 +1,6 @@
 include README.md
-include Mejiro/dictionaries/default/*
+include docs/rust-engine.md
+include Mejiro/dictionaries/default/*.json
+include Mejiro/dictionaries/default/mejiro.py
+include Mejiro/dictionaries/default/recording.py
+recursive-include vendor/mejiro-engine *.rs *.toml Cargo.lock LICENSE *.h
