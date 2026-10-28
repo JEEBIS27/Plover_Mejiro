@@ -5,15 +5,28 @@ Plover版は Mejiro_Engine の Rust コアで変換します。Pythonの役割�
 
 ## インストール
 
-ソースからのインストールには Rust 1.88以上とCargo、対応するCリンカーが必要です。
-ビルド済みのプラットフォーム用wheelをインストールする場合、実行環境にRustは不要です。
+Windows 64bitではDLL同梱のwheelを配布します。利用者側のRust/Cargo、Visual Studio Build Toolsは不要です。
 
-1. PloverのPlugins Managerからこのリポジトリをインストールして再起動します。
+1. [READMEの導入法](../README.md#導入法installation)に従い、配布された `*-py3-none-win_amd64.whl` をPloverの `plover_console.exe -s plover_plugins install --upgrade` でインストールして再起動します。
 2. Configure → Pluginsで `mejiro_engine` 拡張を有効にします。
 3. SystemでMejiroを選択します。既存の `mejiro.py` 辞書はそのまま使えます。
 4. 過去の `mejiro_commands.json` をコピーして独自管理している場合は、標準コマンドをRust側で扱うためそのコピーを無効にします。配布する同名JSONは空です。
 
 拡張が無効なら、日本語変換を黙ってPythonへ戻さず、拡張を有効にするようエラーで案内します。
+
+## wheelのビルド・配布
+
+`.github/workflows/wheels.yml` はWindows x64上でRustエンジンをビルドし、DLL同梱wheelを生成します。Pythonのバージョンに依存しないctypes接続なので、wheelのタグは `py3-none-win_amd64` です。
+
+- 手動配布: GitHubのActions → Windows wheel → Run workflowで配布元のブランチを選びます。成功した実行のArtifactsから `mejiro-windows-x64-wheel` をダウンロードし、ZIPを展開して中の `.whl` を渡します。
+- リリース配布: `setup.cfg` のバージョンと一致するタグ（例: `v2.8.1`）のGitHub Releaseを公開すると、自動ビルド・検証後にwheelがAssetsへ追加されます。このワークフローを含むコミットにタグを付けてください。過去に公開済みのReleaseには自動で追加されません。
+- Pull RequestでもWindows上のビルドとwheelの検証を実行します。
+
+検証はwheel内のDLLを確認したうえで、一時ディレクトリへwheelをソースビルドなしでインストールし、同梱DLLのロード・ABI確認・`KI-` → `き` の変換を実行します。Plover GUIや実機での入力確認は別途必要です。
+
+## ソースからのインストール（開発者向け）
+
+Rust 1.88以上とCargo、対応するCリンカーが必要です。WindowsではMSVCおよびWindows SDKを含むVisual Studio Build Toolsが必要です。Plugin Managerの「GIT」もこのソースビルドに該当します。
 
 ## エンジンの編集・同期
 

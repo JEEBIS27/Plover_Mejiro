@@ -1,5 +1,5 @@
 このプラグインはRustの共通メジロエンジンで変換します。導入後、PloverのConfigure → Pluginsで `mejiro_engine` を有効にしてください。
-ソースからのインストールにはRust/Cargoが必要です。[ビルド・同期・接続方式](docs/rust-engine.md)
+Windows 64bitではDLL同梱のビルド済みwheelを使います。利用者側のRust/C++開発環境は不要です。[導入法](#導入法installation)・[ビルド・同期・接続方式](docs/rust-engine.md)
 
 # メジロ式速記(Mejiro)v2
 
@@ -669,17 +669,28 @@ typing_mode = 0  # 0: ローマ字入力, 1: JISかな入力
 
 ### メジロ式をインストールする(Installing Mejiro)
 
-このプラグインはPloverのプラグインマネージャーからインストールできます。
+Windows 64bit用のビルド済みwheelにはRustエンジンのDLLが含まれています。RustやVisual Studio Build Toolsの導入は不要です。
 
-1. Ploverメニューの``Tools``から``Plugins Manager``をクリックします。
-2. 一番右下の``GIT``ボタンをクリックし、``Install from Git repo``を開きます。
-3. ``https://github.com/JEEBIS27/Plover_Mejiro``を入力して``OK``ボタンをクリックします。
-4. ``Successfully installed Mejiro-2.X.X``のように表示されたらインストール完了です。
+1. [Releases](https://github.com/JEEBIS27/Plover_Mejiro/releases)のAssetsから、末尾が `-py3-none-win_amd64.whl` のファイルをダウンロードします。
+2. Ploverを終了し、Ploverのインストール先フォルダーでPowerShellを開きます。ショートカットの「ファイルの場所を開く」から探せます。
+3. 次のコマンドでインストールします。wheelのパスは実際にダウンロードしたファイルの絶対パスに置き換えてください。
+
+```powershell
+.\plover_console.exe -s plover_plugins install --upgrade "C:\Users\ユーザー名\Downloads\mejiro-2.8.1-py3-none-win_amd64.whl"
+```
+
+4. `Successfully installed` と表示されたら、Ploverを起動します。更新時も新しいwheelで同じ手順を行います。
+
+wheelがまだReleasesにない場合は、配布者が下記の[ビルド・配布手順](docs/rust-engine.md#wheelのビルド配布)で作成したものを受け取ってください。Windows 32bitやARM64のPloverには、このwheelは使えません。
+
+Plugin Managerの「GIT」はソースからビルドするため、一般利用者向けには使いません。macOS/Linuxでソースから導入する場合の開発環境は[こちら](docs/rust-engine.md)を参照してください。
+
+Ploverのコマンドによる導入方法は[公式Wiki](https://plover.wiki/index.php/Invoke_Plover_from_the_Command_Line)も参照できます。
 
 ---
 ### メジロ式を起動する(Activating Mejiro)
 
-このプラグインをインストールしたあと、一度Ploverを再起動し、Ploverメニューの歯車マーク``Configure``から``System``タブを開き、``Mejiro``システムを選択して起動します。
+このプラグインをインストールしたあと、Ploverを再起動し、Ploverメニューの歯車マーク``Configure``から``Plugins``タブを開いて `mejiro_engine` を有効にします。続いて``System``タブから``Mejiro``システムを選択して起動します。
 
 ## もっと詳しく知りたい方は(More To Know the Theory)
 
