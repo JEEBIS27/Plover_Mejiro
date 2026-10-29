@@ -26,12 +26,11 @@ def set_ime(engine, argument):
         raise ValueError("MEJIRO_IME expects on or off")
     enabled = argument == "on"
     if sys.platform.startswith("linux"):
-        # XKB のUS/JP配列の両方にある専用キー。Fキーやトグルは使わない。
-        engine._send_key_combination("Hiragana" if enabled else "Muhenkan")
+        # QMK の KC_LNG1 / KC_LNG2 と同じキーを送る。
+        engine._send_key_combination("Hangul" if enabled else "Hangul_Hanja")
     elif sys.platform == "win32":
-        # Plover の標準キー名表には VK_IME_ON/OFF がないため、既存の
-        # Windows送信機で仮想キーを直接押下・解放する。
-        key = 0x16 if enabled else 0x1A  # VK_IME_ON / VK_IME_OFF
+        # KC_LNG1 / KC_LNG2 に対応する仮想キーを直接押下・解放する。
+        key = 0x15 if enabled else 0x19  # VK_HANGUL / VK_HANJA
         engine._keyboard_emulation._key_event(key, True)
         engine._keyboard_emulation._key_event(key, False)
     elif sys.platform == "darwin":

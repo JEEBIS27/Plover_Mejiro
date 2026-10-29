@@ -99,7 +99,7 @@ class ImeTests(unittest.TestCase):
                     formatter.format([], [Translation([], commands["#-k"])], [])
                     self.assertEqual(error.call_count, int(fails))
                 expected = [("switch", "Phonetix")] if available and current != "Phonetix" else []
-                self.assertEqual(events, expected + [("key", "Muhenkan")])
+                self.assertEqual(events, expected + [("key", "Hangul_Hanja")])
 
     def test_alternate_target_can_be_named(self):
         engine = SimpleNamespace(config={"system_name": "Mejiro"})
@@ -109,15 +109,15 @@ class ImeTests(unittest.TestCase):
         self.assertEqual(engine.config, {"system_name": "English"})
 
     def test_linux_uses_dedicated_keys(self):
-        for mode, key in (("on", "Hiragana"), ("off", "Muhenkan")):
+        for mode, key in (("on", "Hangul"), ("off", "Hangul_Hanja")):
             engine = Mock()
             with patch("Mejiro.ime.sys.platform", "linux"):
                 set_ime(engine, mode)
             engine._send_key_combination.assert_called_once_with(key)
             engine._keyboard_emulation.assert_not_called()
 
-    def test_windows_uses_ime_virtual_keys(self):
-        for mode, key in (("on", 0x16), ("off", 0x1A)):
+    def test_windows_uses_language_virtual_keys(self):
+        for mode, key in (("on", 0x15), ("off", 0x19)):
             engine = Mock()
             with patch("Mejiro.ime.sys.platform", "win32"):
                 set_ime(engine, mode)

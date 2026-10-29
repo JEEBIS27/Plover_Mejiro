@@ -77,7 +77,7 @@ class Engine:
 _engine = None
 # Host preferences and optional overrides; these contain no language rules.
 typing_mode = 0
-is_typing_mode = False
+is_typing_mode = True
 USERS_MAP = {}
 
 
