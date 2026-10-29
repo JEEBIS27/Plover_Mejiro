@@ -301,10 +301,70 @@ class ParticleTests(unittest.TestCase):
 
     def test_native_pending_sokuon_undo(self):
         native.is_typing_mode = True
-        self.assertEqual(self.stroke("KAtk-"), "ka")
+        self.stroke("KAtk-")
+        self.assertEqual(self.output.text, "ka")
+        self.assertEqual(self.translator.get_state().translations[-1]._mejiro_body, "か")
+        self.assertTrue(self.translator.get_state().translations[-1]._mejiro_state.pending_sokuon)
         self.dictionary.get(("KI-",))
-        self.assertEqual(self.stroke("KA-"), "kakka")
-        self.assertEqual(self.stroke("-U", "TA-"), "katta")
+        self.stroke("KA-")
+        self.assertEqual(self.output.text, "kakka")
+        self.assertEqual(self.translator.get_state().translations[-1]._mejiro_body, "っか")
+        erased = []
+        self.adapter.output.output = self.adapter.output.output._replace(send_backspaces=erased.append)
+        self.stroke("-U", "TA-")
+        self.assertEqual(erased, [2])
+        self.assertEqual(self.translator.get_state().translations[-1]._mejiro_body, "った")
+
+    def test_romaji_undo_counts_kana_not_sent_keys(self):
+        native.is_typing_mode = True
+        sent, erased = [], []
+        self.adapter.output.output = self.adapter.output.output._replace(
+            send_string=sent.append, send_backspaces=erased.append)
+        native.USERS_MAP["KA"] = "では"
+        try:
+            self.stroke("KA")
+            self.assertEqual(self.translator.get_state().translations[-1]._mejiro_body, "では")
+            self.stroke("-U")
+        finally:
+            del native.USERS_MAP["KA"]
+        self.assertEqual(sent, ["deha"])
+        self.assertEqual(erased, [2])
+
+    def test_romaji_multistroke_revision_and_undo_use_kana_suffix(self):
+        native.is_typing_mode = True
+        extra = StenoDictionary()
+        extra[("KA", "KI")] = self.dictionary.get(("TA",))
+        self.make_engine(extra)
+        sent, erased = [], []
+        self.adapter.output.output = self.adapter.output.output._replace(
+            send_string=sent.append, send_backspaces=erased.append)
+        native.USERS_MAP.update({"KA": "では", "TA": "である"})
+        try:
+            self.stroke("KA", "KI")
+            self.assertEqual(sent, ["deha", "aru"])
+            self.assertEqual(erased, [1])
+            self.stroke("-U")
+            self.assertEqual(sent, ["deha", "aru", "ha"])
+            self.assertEqual(erased, [1, 2])
+        finally:
+            del native.USERS_MAP["KA"]
+            del native.USERS_MAP["TA"]
+
+    def test_typing_literal_user_dictionary_is_not_transliterated(self):
+        native.is_typing_mode = True
+        extra = StenoDictionary()
+        extra[("KA",)] = "{^では^}"
+        self.make_engine(extra)
+        self.assertEqual(self.stroke("KA"), "では")
+
+    def test_typing_toggle_in_one_batch_uses_each_translation_mode(self):
+        native.is_typing_mode = True
+        sent = []
+        self.adapter.output.output = self.adapter.output.output._replace(send_string=sent.append)
+        translations = [Translation([Stroke(raw)], self.dictionary.get((raw,)))
+                        for raw in ("KA-", "#-n", "KA-")]
+        self.adapter.format([], translations, [])
+        self.assertEqual(sent, ["ka", "か"])
 
     def test_native_vowel_revision_through_plover(self):
         for raw, expected in (("STKNYk-", "ゔぁ"), ("STKNIUntk-", "てゅー"),
@@ -319,10 +379,10 @@ class ParticleTests(unittest.TestCase):
             self.assertEqual(func.joshi("k", "k"), "な")
             self.assertEqual(func.joshi("k", "nk"), "な" + COMMA)
 
-    def test_macro_records_typing_output(self):
+    def test_macro_records_logical_kana_in_typing_mode(self):
         self.module.is_typing_mode = True
         self.stroke("#n*", "n-*", "k-nk", "#-*")
-        self.assertEqual(recording.macro_values["n"], kana_to_typing_output("しているのが" + COMMA, 0))
+        self.assertEqual(recording.macro_values["n"], "しているのが" + COMMA)
 
     def test_multiple_translations_in_one_format_call(self):
         with contextlib.redirect_stdout(io.StringIO()):
@@ -458,7 +518,7 @@ class ParticleTests(unittest.TestCase):
                 self.module.typing_mode = mode
                 self.stroke("#n*", "n-*", "ntk-n", "#-*")
                 self.assertEqual(self.output.text, kana_to_typing_output("しているか、", mode))
-                self.assertEqual(recording.macro_values["n"], self.output.text)
+                self.assertEqual(recording.macro_values["n"], "しているか、")
         self.module.is_typing_mode = False
         self.make_engine()
         self.assertEqual(self.stroke("n-*", "ntk-", "#-", "#-"), "しているかかか")

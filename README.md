@@ -650,10 +650,12 @@ VERB_SIMO_MAP = { # ストローク: [語幹, 行]
 PloverではPhonetixが登録されている場合だけ切り替え、未導入ならIME OFFだけを行います。
 切り替え先は辞書の `MEJIRO_ALTERNATE:Phonetix` の引数で指定できます。切り替えに失敗した場合もIME OFFへ進みます。
 F13/F14は送信せず、Ploverの `MEJIRO_IME` プラグインでOSの専用キーに変換します。
-LinuxはHiragana／Muhenkan、WindowsはVK_IME_ON／VK_IME_OFF、macOSはJISかな／英数キーを使います。
+QMKの `KC_LNG1`／`KC_LNG2` と揃え、LinuxはHangul／Hangul_Hanja、WindowsはVK_HANGUL（`0x15`）／VK_HANJA（`0x19`）、macOSはJISかな／英数キーを使います。
 Linuxでは使用するIMEがこれらをON／OFFとして扱う設定が必要です。
 更新後はMejiroパッケージを再インストールしてPloverを再起動してください。
 
+初期状態はローマ字入力のタイピングモードです。IMEをONにして使うことで、Linux・macOSでも未確定文字として変換できます。
+Ploverの履歴はかなで保持し、送信時だけローマ字へ変換します。たとえば「では」は `deha` と送信しますが、undoではかな2文字分を削除します。末尾の促音は保留し、次の出力履歴の先頭に含めます。IMEで漢字への変換・確定や外部の編集を行った後の文字数は取得できないため、このundoは未確定のかな入力を前提とします。
 タイピングモードでは、ローマ字入力あるいはJISかな入力で出力できます。
 出力形式の設定は、Mejiro/engine.pyの``typing_mode``変数で行います。
 ```
