@@ -830,15 +830,6 @@ fn one_hand(h: Hand<'_>, star: bool, mut next: State, rules: &RuleStore) -> Resu
                     "TN" => Text::of(value(DESU, p))?,
                     _ => join(&[SAHEN_LIST[i], suffix])?,
                 };
-            } else if let Some(entry) = registered.filter(|e| !e.hidden) {
-                output.text = registered_verb(entry.value.as_str(), entry.row.as_str(), i, suffix)?;
-            } else if let Some(entry) = builtin {
-                output.text = registered_verb(entry[0], entry[1], i, suffix)?;
-            } else if h.vowel.is_empty()
-                && !h.consonant.is_empty()
-                && get(CONJUGATE_GODAN_MAP, consonant).is_some()
-            {
-                output.text = conjugate(CONJUGATE_GODAN_MAP, consonant, i, suffix, true)?;
             } else if star
                 && matches!(h.vowel, "I" | "IA")
                 && get(
@@ -862,6 +853,15 @@ fn one_hand(h: Hand<'_>, star: bool, mut next: State, rules: &RuleStore) -> Resu
                     suffix,
                     false,
                 )?;
+            } else if let Some(entry) = registered.filter(|e| !e.hidden) {
+                output.text = registered_verb(entry.value.as_str(), entry.row.as_str(), i, suffix)?;
+            } else if let Some(entry) = builtin {
+                output.text = registered_verb(entry[0], entry[1], i, suffix)?;
+            } else if h.vowel.is_empty()
+                && !h.consonant.is_empty()
+                && get(CONJUGATE_GODAN_MAP, consonant).is_some()
+            {
+                output.text = conjugate(CONJUGATE_GODAN_MAP, consonant, i, suffix, true)?;
             } else if star {
                 // Unassigned abbreviation: no invented verb or phonetic output.
                 return Err(Error::InvalidStroke);

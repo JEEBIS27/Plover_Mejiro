@@ -101,12 +101,12 @@ class ParticleTests(unittest.TestCase):
 
     def test_one_hand_i_and_ia_are_phonetic_without_symbol(self):
         for switch, strokes in [
-            ("#STKNYIAUntk-", ["KI-", "KIA-", "KIn-", "KIAt-", "#KI-", "#KIA-"]),
-            ("-STKNYIAUntk*", ["-KI", "-KIA", "-KIn", "-KIAt", "-KI*", "-KIA*"]),
+            ("#STKNYIAUntk-", ["KI-", "KIA-", "KIn-", "KIAt-", "#KI-", "#KIA-", "#TIA-", "#TIAn-"]),
+            ("-STKNYIAUntk*", ["-KI", "-KIA", "-KIn", "-KIAt", "-KI*", "-KIA*", "-TIA*", "-TIAn*"]),
         ]:
             with self.subTest(switch=switch):
                 self.make_engine()
-                self.assertEqual(self.stroke(switch, *strokes), "きけきんけつときけす")
+                self.assertEqual(self.stroke(switch, *strokes), "きけきんけつときけるてるてない")
 
     def test_left_symbol_key_is_the_one_hand_abbreviation_key(self):
         self.assertEqual(self.stroke("#STKNYIAUntk-", "#-", "#n-", "#KAUntk-"), "するしないことは")
