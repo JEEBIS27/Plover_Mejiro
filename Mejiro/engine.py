@@ -92,6 +92,9 @@ def lookup(key):
     if len(key) != 1:
         raise KeyError(key)
     raw = key[0]
+    if raw in ("#U", "#U-", "-U*"):
+        # These are Undo only in the corresponding one-hand mode.
+        return "=mejiro_undo:" + raw
     preview = engine().preview(raw)
     if preview.request == 1:
         return "=mejiro_undo"

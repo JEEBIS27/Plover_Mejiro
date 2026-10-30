@@ -748,6 +748,21 @@ fn one_hand(h: Hand<'_>, star: bool, mut next: State, rules: &RuleStore) -> Resu
     let mut output = Output::new();
     let cv = small_key(&[h.consonant, h.vowel])?;
     let p = h.particle;
+    if star && p.is_empty() && h.consonant.is_empty() && matches!(h.vowel, "U" | "AU") {
+        let request = if h.vowel == "U" {
+            Request::Undo
+        } else {
+            output.push_key(Key::Backspace)?;
+            next.context = Context::Unknown;
+            Request::Output
+        };
+        return Ok(Translation {
+            output,
+            next,
+            request,
+            dynamic_particle: false,
+        });
+    }
     if cv.as_str().is_empty() && !star {
         match p {
             "n" => output.push_key(Key::Space)?,

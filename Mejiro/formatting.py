@@ -140,6 +140,9 @@ class NativeFormatter:
             next_state.pending_sokuon = typed.state.pending_sokuon
         if not committed and body:
             recording.record_output(body)
+        translation._mejiro_control_only = result.request in (3, 4, 5) or raw.replace("-", "") in (
+            "#STKNYIAUntk", "STKNYIAUntk*", "#STKNYIAUntkSTKNYIAUntk*",
+        )
         translation._mejiro_committed = True
         translation._mejiro_mode = selected_mode
         if result.request != 3:
@@ -209,22 +212,34 @@ def repeat_last_output(translator, stroke, argument):
 
 
 def mejiro_undo(translator, stroke, argument):
-    assert not argument
+    raw = argument or "-U"
     history = translator.get_state().translations
     state = NativeFormatter.previous_state(history)
-    preview = native.engine().preview("-U", state)
+    preview = native.engine().preview(raw, state)
     if preview.request != 1:
         # In right-hand mode this is the ordinary U vowel, not Undo.
-        translator.translate_translation(Translation([stroke], "{:mejiro_engine:-U}"))
+        translator.translate_translation(Translation([stroke], "{:mejiro_engine:" + raw + "}"))
         return
-    for translation in reversed(history):
+    def keep_input_mode():
+        for previous in reversed(translator.get_state().translations):
+            remaining = getattr(previous, "_mejiro_state", None)
+            if remaining is not None:
+                remaining.vowel = (remaining.vowel & 0x0f) | (preview.state.vowel & 0xf0)
+                return
+        # An invisible state anchor survives even when no text history remains.
+        # Plover's flush(extra_translations) emits keys but does not save state.
+        anchor = Translation([stroke], "{^}")
+        anchor._mejiro_state = native.State()
+        anchor._mejiro_state.vowel = preview.state.vowel & 0xf0
+        anchor._mejiro_state.mode = state.mode
+        anchor._mejiro_mode = state.mode
+        anchor._mejiro_control_only = True
+        translator.translate_translation(anchor)
+
+    for translation in reversed(tuple(history)):
         translator.untranslate_translation(translation)
-        if translation.has_undo():
-            # -U from left-hand mode is an opposite-hand input.
-            for previous in reversed(translator.get_state().translations):
-                remaining = getattr(previous, "_mejiro_state", None)
-                if remaining is not None:
-                    remaining.vowel &= 0x0f
-                    break
+        if translation.has_undo() and not getattr(translation, "_mejiro_control_only", False):
+            keep_input_mode()
             return
+    keep_input_mode()
     translator.flush([Translation([stroke], "{#BackSpace}{#BackSpace}{^}")])
