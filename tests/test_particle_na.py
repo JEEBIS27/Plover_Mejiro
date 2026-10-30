@@ -93,6 +93,25 @@ class ParticleTests(unittest.TestCase):
                 self.translator.translate(Stroke(raw))
         return self.output.text
 
+    def test_one_hand_switching_and_opposite_hand_fallback(self):
+        self.assertEqual(self.stroke("#STKNYIAUntk-", "#KAU-"), "こと")
+        self.assertEqual(self.stroke("-STKNYIAUntk*", "-TAU*", "-U"), "ことところう")
+        self.assertEqual(self.stroke("KA-TA", "-U"), "ことところう")
+        self.assertEqual(self.stroke("KA-"), "ことところうか")
+
+    def test_left_symbol_key_is_the_one_hand_abbreviation_key(self):
+        self.assertEqual(self.stroke("#STKNYIAUntk-", "#-", "#n-", "#KAUntk-"), "するしないことは")
+
+    def test_one_hand_romaji_keeps_pending_sokuon_across_switch(self):
+        native.is_typing_mode = True
+        self.assertEqual(self.stroke("#STKNYIAUntk-", "KAtk-"), "ka")
+        self.assertEqual(self.stroke("-STKNYIAUntk*", "-KA"), "kakka")
+        erased = []
+        self.adapter.output.output = self.adapter.output.output._replace(send_backspaces=erased.append)
+        self.stroke("#STKNYIAUntk-STKNYIAUntk*", "-U", "TA-")
+        self.assertEqual(erased, [2])
+        self.assertEqual(self.translator.get_state().translations[-1]._mejiro_body, "った")
+
     def test_stn_without_vowel_keeps_only_extra_sound(self):
         for raw, expected in (("STN-", ""), ("STNtk-", "っ"),
                               ("STNntk-", "ー"), ("KAntk-STNtk", "かーっ")):
@@ -112,7 +131,7 @@ class ParticleTests(unittest.TestCase):
             "k-*": "される", "nk-*": "してしまう", "nt-*": "しやすい",
             "nt-n*": "しにくい", "nt-t*": "したい", "nt-nt*": "してほしい",
             "n-n*": "していない", "n-t*": "していた", "n-k*": "しています",
-            "TKAtk-TA*": "はたらける",
+            "TAtk-STA*": "はたらける",
         }
         for raw, text in examples.items():
             with self.subTest(raw=raw):

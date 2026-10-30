@@ -185,13 +185,22 @@ class EngineExtension:
 def repeat_last_output(translator, stroke, argument):
     """Repeat resolved Plover output, including ordinary user dictionaries."""
     assert not argument
-    for previous in reversed(translator.get_state().translations):
+    history = translator.get_state().translations
+    state = NativeFormatter.previous_state(history)
+    preview = native.engine().preview("#", state)
+    if preview.request != 2:
+        # The left symbol key is the abbreviation key in left-hand mode.
+        translator.translate_translation(Translation([stroke], "{:mejiro_engine:#}"))
+        return
+    for previous in reversed(history):
         if not previous.has_undo():
             continue
         repeated = Translation([stroke], previous.english)
         state = getattr(previous, "_mejiro_state", None)
         if state is not None:
             repeated._mejiro_state = state.clone()
+            # The left # key returns one-hand input to ordinary input.
+            repeated._mejiro_state.vowel &= 0x0f
             repeated._mejiro_body = previous._mejiro_body
             repeated._mejiro_mode = previous._mejiro_mode
             recording.record_output(repeated._mejiro_body)
@@ -201,8 +210,21 @@ def repeat_last_output(translator, stroke, argument):
 
 def mejiro_undo(translator, stroke, argument):
     assert not argument
-    for translation in reversed(translator.get_state().translations):
+    history = translator.get_state().translations
+    state = NativeFormatter.previous_state(history)
+    preview = native.engine().preview("-U", state)
+    if preview.request != 1:
+        # In right-hand mode this is the ordinary U vowel, not Undo.
+        translator.translate_translation(Translation([stroke], "{:mejiro_engine:-U}"))
+        return
+    for translation in reversed(history):
         translator.untranslate_translation(translation)
         if translation.has_undo():
+            # -U from left-hand mode is an opposite-hand input.
+            for previous in reversed(translator.get_state().translations):
+                remaining = getattr(previous, "_mejiro_state", None)
+                if remaining is not None:
+                    remaining.vowel &= 0x0f
+                    break
             return
     translator.flush([Translation([stroke], "{#BackSpace}{#BackSpace}{^}")])

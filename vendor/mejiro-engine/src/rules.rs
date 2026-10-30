@@ -174,24 +174,45 @@ fn verb_context(left: &str, right: &str, desu: bool) -> Context {
         Context::Incomplete
     }
 }
-fn abstract_word(s: &Stroke<'_>, key: &str) -> Result<Option<(Text, Context)>> {
+fn abstract_word(s: &Stroke<'_>, key: &str, rules: &RuleStore) -> Result<Option<(Text, Context)>> {
     let full = small_key(&[key, if s.star { "*" } else { "" }])?;
     let lk = small_key(&[s.left.consonant, s.left.vowel])?;
     let rk = small_key(&[s.right.consonant, s.right.vowel])?;
-    let (word, head, context) = if let Some(word) = get(ABSTRACT_MAP, full.as_str()) {
-        (Text::of(word)?, *word, None)
+    let direct = rules.find(RuleKind::General, full.as_str());
+    let builtin = if direct.is_none() {
+        get(ABSTRACT_MAP, full.as_str()).copied()
+    } else {
+        None
+    };
+    let (word, head, context) = if let Some(entry) = direct.filter(|e| !e.hidden) {
+        (
+            Text::of(entry.value.as_str())?,
+            entry.value.as_str(),
+            Some(entry.context),
+        )
+    } else if let Some(word) = builtin {
+        (Text::of(word)?, word, None)
     } else if s.star {
-        if let (Some(l), Some(r)) = (
-            get(ABSTRACT_MAP_LEFT, lk.as_str()),
-            get(ABSTRACT_MAP_RIGHT, rk.as_str()),
-        ) {
+        let left = rules.find(RuleKind::GeneralLeft, lk.as_str());
+        let right = rules.find(RuleKind::GeneralRight, rk.as_str());
+        let left_word = if let Some(e) = left {
+            (!e.hidden).then_some(e.value.as_str())
+        } else {
+            get(ABSTRACT_MAP_LEFT, lk.as_str()).copied()
+        };
+        let right_word = if let Some(e) = right {
+            (!e.hidden).then_some(e.value.as_str())
+        } else {
+            get(ABSTRACT_MAP_RIGHT, rk.as_str()).copied()
+        };
+        if let (Some(l), Some(r)) = (left_word, right_word) {
             let text = join(&[l, r])?;
             let text = replace(text.as_str(), "のふう", "んなふう")?;
             (
                 text,
-                *r,
+                r,
                 if r.is_empty() {
-                    Some(if ATTRIBUTIVE_NA_WORDS.contains(l) {
+                    Some(if ATTRIBUTIVE_NA_WORDS.contains(&l) {
                         Context::AttributiveNa
                     } else {
                         Context::Incomplete
@@ -210,21 +231,23 @@ fn abstract_word(s: &Stroke<'_>, key: &str) -> Result<Option<(Text, Context)>> {
     if word.as_str().is_empty() {
         return Ok(None);
     }
-    let context = context.unwrap_or_else(|| {
-        if PLACE_WORDS.contains(&head) {
-            Context::Place
-        } else if INDEFINITE_WORDS.contains(&head) {
-            Context::IndefiniteNoun
-        } else if ATTRIBUTIVE_NA_WORDS.contains(&head) {
-            Context::AttributiveNa
-        } else if QUESTION_PARTICLES.contains(&head) {
-            Context::QuestionParticle
-        } else if head == "ただ" {
-            Context::Incomplete
-        } else {
-            Context::Noun
-        }
-    });
+    let context = context
+        .filter(|c| *c != Context::Unknown)
+        .unwrap_or_else(|| {
+            if PLACE_WORDS.contains(&head) {
+                Context::Place
+            } else if INDEFINITE_WORDS.contains(&head) {
+                Context::IndefiniteNoun
+            } else if ATTRIBUTIVE_NA_WORDS.contains(&head) {
+                Context::AttributiveNa
+            } else if QUESTION_PARTICLES.contains(&head) {
+                Context::QuestionParticle
+            } else if head == "ただ" {
+                Context::Incomplete
+            } else {
+                Context::Noun
+            }
+        });
     Ok(Some((word, context)))
 }
 fn conjugate(
@@ -254,12 +277,63 @@ fn conjugate(
     }
     Ok(text)
 }
-fn verb(s: &Stroke<'_>, key: &str, left: &str, left_syllable: &str, right: &str) -> Result<Text> {
+fn registered_verb(stem: &str, inflection: &str, i: usize, suffix: &str) -> Result<Text> {
+    let special = match (stem, inflection) {
+        ("い", "k") => return join(&[IKU_LIST[i], suffix]),
+        ("あ", "r") => return join(&[ARU_LIST[i], suffix]),
+        (_, "sh") => Some(SAHEN_LIST),
+        (_, "kh") => Some(KAHEN_LIST),
+        _ => None,
+    };
+    if let Some(row) = special {
+        return join(&[stem, row[i], suffix]);
+    }
+    let (row, consonant, voiced) = if let Some(c) = inflection.strip_suffix('i') {
+        (CONJUGATE_KAMI_MAP, c, false)
+    } else if let Some(c) = inflection.strip_suffix('e') {
+        (CONJUGATE_SIMO_MAP, c, false)
+    } else {
+        (CONJUGATE_GODAN_MAP, inflection, true)
+    };
+    let tail = conjugate(row, consonant, i, suffix, voiced)?;
+    let text = join(&[stem, tail.as_str()])?;
+    if voiced {
+        let mut text = text;
+        for (from, to) in [
+            ("くださり", "ください"),
+            ("ござり", "ござい"),
+            ("なさり", "なさい"),
+            ("いらっしゃり", "いらっしゃい"),
+            ("おっしゃり", "おっしゃい"),
+        ] {
+            text = replace(text.as_str(), from, to)?;
+        }
+        Ok(text)
+    } else {
+        Ok(text)
+    }
+}
+fn verb(
+    s: &Stroke<'_>,
+    key: &str,
+    left: &str,
+    left_syllable: &str,
+    right: &str,
+    rules: &RuleStore,
+) -> Result<Text> {
     let l = s.left.particle;
     let r = s.right.particle;
     let (i, suffix) = AUXILIARIES[particle_index(l) * 8 + particle_index(r)];
     let rc = value(CONSONANTS, s.right.consonant);
     let rc = if rc.is_empty() { "w" } else { rc };
+    if s.star
+        && let Some(entry) = rules.find(RuleKind::Verb, key)
+    {
+        if entry.hidden {
+            return Ok(Text::new());
+        }
+        return registered_verb(entry.value.as_str(), entry.row.as_str(), i, suffix);
+    }
     if s.right.consonant == "TN" && s.right.vowel.is_empty() {
         return join(&[left_syllable, value(DESU, r)]);
     }
@@ -290,20 +364,8 @@ fn verb(s: &Stroke<'_>, key: &str, left: &str, left_syllable: &str, right: &str)
     if !s.star {
         return Ok(Text::new());
     }
-    for (registered, row, voiced) in [
-        (VERB_GODAN_MAP, CONJUGATE_GODAN_MAP, true),
-        (VERB_KAMI_MAP, CONJUGATE_KAMI_MAP, false),
-        (VERB_SIMO_MAP, CONJUGATE_SIMO_MAP, false),
-    ] {
-        if let Some(entry) = get(registered, key) {
-            let tail = conjugate(row, entry[1], i, suffix, voiced)?;
-            let text = join(&[entry[0], tail.as_str()])?;
-            return if voiced {
-                replace(text.as_str(), "くださり", "ください")
-            } else {
-                Ok(text)
-            };
-        }
+    if let Some((_, entry)) = VERB_MAP.iter().find(|(stroke, _)| *stroke == key) {
+        return registered_verb(entry[0], entry[1], i, suffix);
     }
     if s.right.vowel == "IU" && s.right.consonant.is_empty() {
         let tail = conjugate(CONJUGATE_GODAN_MAP, "w", i, suffix, false)?;
@@ -429,13 +491,69 @@ fn command(raw: &str) -> Option<(&'static str, Key, Key)> {
     })
 }
 
+pub(crate) fn reserved_stroke(raw: &str) -> bool {
+    Stroke::parse(raw)
+        .ok()
+        .and_then(|s| control(&s, raw))
+        .is_some()
+        || command(raw).is_some()
+}
+
 /// Translate a committed-state snapshot without changing it. Set
 /// `include_commands=false` to compare the procedural Plover dictionary beneath
 /// its higher-priority command dictionary.
 pub fn translate(raw: &str, state: State, include_commands: bool) -> Result<Translation> {
+    translate_with_rules(raw, state, include_commands, &RuleStore::new())
+}
+
+/// Preview using the same runtime dictionary overlay as a Session.
+pub fn translate_with_rules(
+    raw: &str,
+    state: State,
+    include_commands: bool,
+    rules: &RuleStore,
+) -> Result<Translation> {
     let s = Stroke::parse(raw)?;
     let mut next = state;
     let mut output = Output::new();
+    let full = |h: Hand<'_>| h.consonant == "STKN" && h.vowel == "YIAU" && h.particle == "ntk";
+    let empty = |h: Hand<'_>| h.consonant.is_empty() && h.vowel.is_empty() && h.particle.is_empty();
+    let selected = if full(s.left) && full(s.right) && s.hash && s.star {
+        Some(InputMode::Both)
+    } else if full(s.left) && empty(s.right) && s.hash && !s.star {
+        Some(InputMode::Left)
+    } else if full(s.right) && empty(s.left) && s.star && !s.hash {
+        Some(InputMode::Right)
+    } else {
+        None
+    };
+    if let Some(mode) = selected {
+        next.input_mode = mode;
+        return Ok(Translation {
+            output,
+            next,
+            request: Request::Output,
+            dynamic_particle: false,
+        });
+    }
+    let active = match state.input_mode {
+        InputMode::Left if empty(s.right) && !s.star => Some(s.left),
+        InputMode::Right if empty(s.left) && !s.hash => Some(s.right),
+        _ => None,
+    };
+    if let Some(hand) = active {
+        return one_hand(
+            hand,
+            if state.input_mode == InputMode::Left {
+                s.hash
+            } else {
+                s.star
+            },
+            next,
+            rules,
+        );
+    }
+    next.input_mode = InputMode::Both;
     if let Some(request) = control(&s, raw) {
         return Ok(Translation {
             output,
@@ -474,7 +592,7 @@ pub fn translate(raw: &str, state: State, include_commands: bool) -> Result<Tran
     let lsv = if l.vowel.is_empty() { rv } else { l.vowel };
     let rsv = if r.vowel.is_empty() { lsv } else { r.vowel };
     next = next.with_vowel(rsv)?;
-    output = convert(&s, raw, state.context, [lv, rv, lsv, rsv])?;
+    output = convert(&s, raw, state.context, [lv, rv, lsv, rsv], rules)?;
     if raw == "#STKNYIAUntk-STKNYIAUntk*" {
         output = Output::new();
         if next.mode != Mode::Kana {
@@ -517,12 +635,23 @@ pub fn translate(raw: &str, state: State, include_commands: bool) -> Result<Tran
 /// Priority is explicit: user word → particle → general abbreviation → verb
 /// → left kana with particle → ordinary syllables. Each successful branch
 /// returns immediately; fallback kana/syllable work is performed only as needed.
-fn convert(s: &Stroke<'_>, raw: &str, context: Context, vowels: [&str; 4]) -> Result<Output> {
+fn convert(
+    s: &Stroke<'_>,
+    raw: &str,
+    context: Context,
+    vowels: [&str; 4],
+    rules: &RuleStore,
+) -> Result<Output> {
     let [lv, rv, lsv, rsv] = vowels;
     let l = s.left;
     let r = s.right;
     let mut output = Output::new();
-    if let Some(user) = get(USERS_MAP, raw) {
+    if let Some(entry) = rules.find(RuleKind::User, raw) {
+        if !entry.hidden {
+            output.push_text(entry.value.as_str())?;
+            return Ok(output);
+        }
+    } else if let Some(user) = get(USERS_MAP, raw) {
         output.push_text(user)?;
         return Ok(output);
     }
@@ -537,7 +666,7 @@ fn convert(s: &Stroke<'_>, raw: &str, context: Context, vowels: [&str; 4]) -> Re
         }
     }
     let key = s.kana_key()?;
-    if let Some((word, base)) = abstract_word(s, key.as_str())? {
+    if let Some((word, base)) = abstract_word(s, key.as_str(), rules)? {
         let p = particle(l.particle, r.particle, base)?;
         output.context = attached_context(l.particle, r.particle, &p, base);
         output.push_text(word.as_str())?;
@@ -558,6 +687,7 @@ fn convert(s: &Stroke<'_>, raw: &str, context: Context, vowels: [&str; 4]) -> Re
         lk.as_str(),
         left_syllable.as_str(),
         rk.as_str(),
+        rules,
     )?;
     if !word.as_str().is_empty() {
         output.text = word;
@@ -611,4 +741,239 @@ fn append_attached(out: &mut Output, p: &Output) -> Result<()> {
         out.append(p)?;
     }
     Ok(())
+}
+
+/// One-hand rules share the ordinary phonetic and conjugation tables.
+fn one_hand(h: Hand<'_>, star: bool, mut next: State, rules: &RuleStore) -> Result<Translation> {
+    let mut output = Output::new();
+    let cv = small_key(&[h.consonant, h.vowel])?;
+    let p = h.particle;
+    if cv.as_str().is_empty() && !star {
+        match p {
+            "n" => output.push_key(Key::Space)?,
+            "ntk" => output.push_key(Key::Return)?,
+            _ => output.push_text(match p {
+                "t" => "、",
+                "k" => "。",
+                "tk" => "・",
+                "nt" => "？",
+                "nk" => "を",
+                _ => "",
+            })?,
+        }
+        output.context = Context::Incomplete;
+    } else {
+        if !h.vowel.is_empty() {
+            next = next.with_vowel(h.vowel)?;
+        }
+        // Explicit irregular verbs take precedence over general abbreviations.
+        let irregular = star && matches!(cv.as_str(), "" | "KU" | "TN");
+        let general = if star && !irregular {
+            if cv.as_str() == "ST" {
+                Some(("から", Context::Incomplete))
+            } else {
+                // Right-hand vocabulary first, then left-hand vocabulary.
+                let find = |kind, table: &'static [(&str, &'static str)]| {
+                    if let Some(entry) = rules.find(kind, cv.as_str()) {
+                        (!entry.hidden && !entry.value.as_str().is_empty())
+                            .then_some((entry.value.as_str(), entry.context))
+                    } else {
+                        get(table, cv.as_str())
+                            .copied()
+                            .filter(|s| !s.is_empty())
+                            .map(|s| (s, Context::Noun))
+                    }
+                };
+                find(RuleKind::GeneralRight, ABSTRACT_MAP_RIGHT)
+                    .or_else(|| find(RuleKind::GeneralLeft, ABSTRACT_MAP_LEFT))
+            }
+        } else {
+            None
+        };
+        if let Some((word, context)) = general {
+            output.push_text(word)?;
+            output.push_text(match p {
+                "n" => "、",
+                "t" => "に",
+                "k" => "の",
+                "tk" => "で",
+                "nt" => "と",
+                "nk" => "を",
+                "ntk" => "は",
+                _ => "",
+            })?;
+            output.context = if p.is_empty() {
+                context
+            } else {
+                Context::Incomplete
+            };
+        } else {
+            let (i, suffix) = AUXILIARIES[particle_index(p)];
+            let key = small_key(&[cv.as_str(), "-"])?;
+            let registered = if star {
+                rules.find(RuleKind::Verb, key.as_str())
+            } else {
+                None
+            };
+            let builtin = if star && registered.is_none() {
+                VERB_MAP
+                    .iter()
+                    .find(|(k, _)| *k == key.as_str())
+                    .map(|(_, v)| *v)
+            } else {
+                None
+            };
+            let consonant = value(CONSONANTS, h.consonant);
+            if irregular {
+                output.text = match cv.as_str() {
+                    "KU" => join(&[KAHEN_LIST[i], suffix])?,
+                    "TN" => Text::of(value(DESU, p))?,
+                    _ => join(&[SAHEN_LIST[i], suffix])?,
+                };
+            } else if let Some(entry) = registered.filter(|e| !e.hidden) {
+                output.text = registered_verb(entry.value.as_str(), entry.row.as_str(), i, suffix)?;
+            } else if let Some(entry) = builtin {
+                output.text = registered_verb(entry[0], entry[1], i, suffix)?;
+            } else if h.vowel.is_empty()
+                && !h.consonant.is_empty()
+                && get(CONJUGATE_GODAN_MAP, consonant).is_some()
+            {
+                output.text = conjugate(CONJUGATE_GODAN_MAP, consonant, i, suffix, true)?;
+            } else if matches!(h.vowel, "I" | "IA")
+                && get(
+                    if h.vowel == "I" {
+                        CONJUGATE_KAMI_MAP
+                    } else {
+                        CONJUGATE_SIMO_MAP
+                    },
+                    if consonant.is_empty() { "w" } else { consonant },
+                )
+                .is_some()
+            {
+                output.text = conjugate(
+                    if h.vowel == "I" {
+                        CONJUGATE_KAMI_MAP
+                    } else {
+                        CONJUGATE_SIMO_MAP
+                    },
+                    if consonant.is_empty() { "w" } else { consonant },
+                    i,
+                    suffix,
+                    false,
+                )?;
+            } else if star {
+                // Unassigned abbreviation: no invented verb or phonetic output.
+                return Err(Error::InvalidStroke);
+            } else {
+                output.text = base_kana(h.consonant, h.vowel, Some(p), next.last_vowel())?;
+                output.context = Context::Unknown;
+                return finish_one_hand(output, next, h);
+            }
+            output.context = verb_context("", p, cv.as_str() == "TN" && star);
+        }
+    }
+    finish_one_hand(output, next, h)
+}
+
+fn finish_one_hand(mut output: Output, mut next: State, h: Hand<'_>) -> Result<Translation> {
+    let terminal = h.consonant == "STN" && h.vowel.is_empty() && h.particle == "tk";
+    render(&mut output, &mut next)?;
+    if terminal && next.pending_sokuon {
+        output.push_text(if next.mode == Mode::Romaji {
+            "ltsu"
+        } else {
+            "Z"
+        })?;
+        next.pending_sokuon = false;
+    }
+    if !output.is_empty() {
+        next.context = output.context;
+    }
+    Ok(Translation {
+        output,
+        next,
+        request: Request::Output,
+        dynamic_particle: false,
+    })
+}
+
+#[cfg(test)]
+mod verb_tests {
+    use super::*;
+
+    fn stroke_order(key: &str) -> Text {
+        let s = Stroke::parse(key).unwrap();
+        let lv = if s.left.vowel.is_empty() {
+            "A"
+        } else {
+            s.left.vowel
+        };
+        let rv = if s.right.vowel.is_empty() {
+            lv
+        } else {
+            s.right.vowel
+        };
+        let l = base_kana(s.left.consonant, s.left.vowel, None, lv).unwrap();
+        let r = base_kana(s.right.consonant, s.right.vowel, None, rv).unwrap();
+        join(&[l.as_str(), "-", r.as_str()]).unwrap()
+    }
+
+    #[test]
+    fn registered_irregular_verbs() {
+        for (stem, row, index, suffix, expected) in [
+            ("い", "k", 6, "た", "いった"),
+            ("あ", "r", 0, "ない", "ない"),
+            ("ござ", "r", 4, "ます", "ございます"),
+            ("なさ", "r", 4, "ます", "なさいます"),
+            ("くださ", "r", 4, "ます", "くださいます"),
+            ("いらっしゃ", "r", 4, "ます", "いらっしゃいます"),
+            ("おっしゃ", "r", 4, "ます", "おっしゃいます"),
+            ("きに", "sh", 5, "", "きにする"),
+            ("きに", "sh", 0, "ない", "きにしない"),
+            ("きに", "sh", 6, "た", "きにした"),
+            ("きに", "sh", 4, "ます", "きにします"),
+            ("もって", "kh", 5, "", "もってくる"),
+            ("もって", "kh", 0, "ない", "もってこない"),
+            ("もって", "kh", 6, "た", "もってきた"),
+            ("もって", "kh", 4, "ます", "もってきます"),
+        ] {
+            assert_eq!(
+                registered_verb(stem, row, index, suffix).unwrap().as_str(),
+                expected
+            );
+        }
+        assert_eq!(
+            registered_verb("し", "nh", 5, ""),
+            Err(Error::InvalidStroke)
+        );
+    }
+
+    #[test]
+    fn verbs_are_unique_in_stroke_kana_order_with_valid_rows() {
+        for (index, &(key, entry)) in VERB_MAP.iter().enumerate() {
+            assert_eq!(entry.len(), 2);
+            assert!(!VERB_MAP[..index].iter().any(|(other, _)| *other == key));
+            if matches!(entry[1], "sh" | "kh") {
+                continue;
+            }
+            let (table, consonant) = if let Some(c) = entry[1].strip_suffix('i') {
+                (CONJUGATE_KAMI_MAP, c)
+            } else if let Some(c) = entry[1].strip_suffix('e') {
+                (CONJUGATE_SIMO_MAP, c)
+            } else {
+                (CONJUGATE_GODAN_MAP, entry[1])
+            };
+            assert!(get(table, consonant).is_some(), "invalid row: {key}");
+        }
+        for pair in VERB_MAP.windows(2) {
+            let a = stroke_order(pair[0].0);
+            let b = stroke_order(pair[1].0);
+            assert!(
+                (a.as_str(), pair[0].0) < (b.as_str(), pair[1].0),
+                "unsorted: {} / {}",
+                pair[0].0,
+                pair[1].0
+            );
+        }
+    }
 }

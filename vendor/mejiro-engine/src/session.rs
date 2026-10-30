@@ -27,6 +27,7 @@ const EMPTY_ENTRY: Entry = Entry {
     before: State {
         context: Context::Unknown,
         mode: Mode::Kana,
+        input_mode: InputMode::Both,
         vowel: 0,
         pending_sokuon: false,
     },
@@ -52,6 +53,7 @@ pub struct Session<const H: usize = 20> {
     order: [u8; 7],
     order_len: usize,
     typing_mode: Mode,
+    rules: RuleStore,
 }
 impl<const H: usize> Default for Session<H> {
     fn default() -> Self {
@@ -73,10 +75,46 @@ impl<const H: usize> Session<H> {
             order: [0; 7],
             order_len: 0,
             typing_mode: Mode::Romaji,
+            rules: RuleStore::new(),
         }
     }
     pub fn state(&self) -> State {
         self.state
+    }
+    pub fn rules(&self) -> &RuleStore {
+        &self.rules
+    }
+    /// Edit an entry and clear stale context/history after a successful change.
+    pub fn set_rule(
+        &mut self,
+        kind: RuleKind,
+        key: &str,
+        value: &str,
+        row: &str,
+        context: Context,
+    ) -> Result<()> {
+        self.rules.set(kind, key, value, row, context)?;
+        self.reset();
+        Ok(())
+    }
+    pub fn hide_rule(&mut self, kind: RuleKind, key: &str) -> Result<()> {
+        self.rules.hide(kind, key)?;
+        self.reset();
+        Ok(())
+    }
+    pub fn clear_rule(&mut self, kind: RuleKind, key: &str) -> Result<bool> {
+        let removed = self.rules.clear(kind, key)?;
+        if removed {
+            self.reset();
+        }
+        Ok(removed)
+    }
+    pub fn clear_rules(&mut self) {
+        self.rules.clear_all();
+        self.reset();
+    }
+    pub fn preview(&self, raw: &str, include_commands: bool) -> Result<Translation> {
+        translate_with_rules(raw, self.state, include_commands, &self.rules)
     }
     pub fn history_len(&self) -> usize {
         self.len
@@ -252,8 +290,14 @@ impl<const H: usize> Session<H> {
     /// Process a real input. Dictionary searches must call `translate`, not this.
     /// Before undo the host must acknowledge the number of units it can erase.
     pub fn process(&mut self, raw: &str) -> Result<Event> {
+        let translation = self.preview(raw, true)?;
+        let input_mode = translation.next.input_mode;
+        let event = self.process_translation(translation)?;
+        self.state.input_mode = input_mode;
+        Ok(event)
+    }
+    fn process_translation(&mut self, t: Translation) -> Result<Event> {
         self.replayed_external = ExternalLog::new();
-        let t = translate(raw, self.state, true)?;
         let control = Event {
             kind: EventKind::Control,
             output: Output::new(),
@@ -261,6 +305,12 @@ impl<const H: usize> Session<H> {
             ticket: None,
         };
         match t.request {
+            Request::Output
+                if t.output.is_empty() && t.next.input_mode != self.state.input_mode =>
+            {
+                self.state = t.next;
+                Ok(control)
+            }
             Request::Output => self.emit(t.output, t.next),
             Request::Undo => {
                 if self.len == 0 {
@@ -277,8 +327,10 @@ impl<const H: usize> Session<H> {
                 let entry = self.history[(self.start + self.len - 1) % H];
                 let erase_units = entry.receipt.ok_or(Error::Unacknowledged)?;
                 let mode = self.state.mode;
+                let input_mode = t.next.input_mode;
                 self.state = entry.before;
                 self.state.mode = mode;
+                self.state.input_mode = input_mode;
                 self.len -= 1;
                 Ok(Event {
                     kind: EventKind::Undo,
