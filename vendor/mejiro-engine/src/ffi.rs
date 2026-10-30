@@ -98,10 +98,16 @@ impl TryFrom<CState> for State {
                 2 => Mode::Jis,
                 _ => return Err(Error::InvalidState),
             },
-            vowel: raw.vowel,
+            input_mode: match raw.vowel >> 4 {
+                0 => InputMode::Both,
+                1 => InputMode::Left,
+                2 => InputMode::Right,
+                _ => return Err(Error::InvalidState),
+            },
+            vowel: raw.vowel & 15,
             pending_sokuon: false,
         };
-        if raw.vowel as usize >= VOWEL_STROKES.len() || raw.pending_sokuon > 1 {
+        if (raw.vowel & 15) as usize >= VOWEL_STROKES.len() || raw.pending_sokuon > 1 {
             return Err(Error::InvalidState);
         }
         state.pending_sokuon = raw.pending_sokuon != 0;
@@ -111,7 +117,7 @@ impl TryFrom<CState> for State {
 impl From<State> for CState {
     fn from(state: State) -> Self {
         Self {
-            vowel: state.vowel,
+            vowel: state.vowel | ((state.input_mode as u8) << 4),
             context: state.context as u8,
             mode: state.mode as u8,
             pending_sokuon: state.pending_sokuon as u8,
@@ -361,4 +367,192 @@ pub unsafe extern "C" fn mejiro_core_session_set_typing_mode(session: *mut u8, m
     } else {
         -1
     }
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct CRule {
+    pub kind: u8,
+    pub context: u8,
+    pub hidden: u8,
+    pub key_len: u8,
+    pub value_len: u8,
+    pub row_len: u8,
+    pub reserved: [u8; 2],
+    pub key: [u8; RULE_KEY_CAPACITY],
+    pub value: [u8; RULE_VALUE_CAPACITY],
+    pub row: [u8; RULE_ROW_CAPACITY],
+}
+
+fn rule_status(result: Result<()>) -> i32 {
+    match result {
+        Ok(()) => 0,
+        Err(Error::Capacity) => -2,
+        Err(_) => -1,
+    }
+}
+
+fn c_context(value: u8) -> Result<Context> {
+    match value {
+        0 => Ok(Context::Unknown),
+        1 => Ok(Context::Nominalizable),
+        2 => Ok(Context::Incomplete),
+        3 => Ok(Context::AttributiveNa),
+        4 => Ok(Context::QuestionPredicate),
+        5 => Ok(Context::Noun),
+        6 => Ok(Context::Place),
+        7 => Ok(Context::IndefiniteNoun),
+        8 => Ok(Context::QuestionParticle),
+        _ => Err(Error::InvalidState),
+    }
+}
+
+/// # Safety
+/// Session and rule must reference initialized, nonoverlapping storage.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mejiro_core_session_rule_set(session: *mut u8, rule: *const CRule) -> i32 {
+    if session.is_null() || rule.is_null() {
+        return -1;
+    }
+    let rule = unsafe { &*rule };
+    if rule.hidden != 0 || rule.reserved != [0; 2] {
+        return -1;
+    }
+    if rule.key_len as usize > RULE_KEY_CAPACITY
+        || rule.value_len as usize > RULE_VALUE_CAPACITY
+        || rule.row_len as usize > RULE_ROW_CAPACITY
+    {
+        return -2;
+    }
+    let kind = match RuleKind::try_from(rule.kind) {
+        Ok(v) => v,
+        Err(_) => return -1,
+    };
+    let context = match c_context(rule.context) {
+        Ok(v) => v,
+        Err(_) => return -1,
+    };
+    let key = match core::str::from_utf8(&rule.key[..rule.key_len as usize]) {
+        Ok(v) => v,
+        Err(_) => return -1,
+    };
+    let value = match core::str::from_utf8(&rule.value[..rule.value_len as usize]) {
+        Ok(v) => v,
+        Err(_) => return -1,
+    };
+    let row = match core::str::from_utf8(&rule.row[..rule.row_len as usize]) {
+        Ok(v) => v,
+        Err(_) => return -1,
+    };
+    rule_status(
+        unsafe { &mut *session.cast::<FirmwareSession>() }.set_rule(kind, key, value, row, context),
+    )
+}
+
+unsafe fn rule_key<'a>(kind: u8, key: *const u8, len: usize) -> Result<(RuleKind, &'a str)> {
+    if key.is_null() || len > RULE_KEY_CAPACITY {
+        return Err(Error::InvalidState);
+    }
+    let kind = RuleKind::try_from(kind)?;
+    let bytes = unsafe { core::slice::from_raw_parts(key, len) };
+    Ok((
+        kind,
+        core::str::from_utf8(bytes).map_err(|_| Error::InvalidStroke)?,
+    ))
+}
+
+/// # Safety
+/// Session is initialized and exclusive; key references `key_len` readable bytes.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mejiro_core_session_rule_hide(
+    session: *mut u8,
+    kind: u8,
+    key: *const u8,
+    key_len: usize,
+) -> i32 {
+    if session.is_null() {
+        return -1;
+    }
+    let (kind, key) = match unsafe { rule_key(kind, key, key_len) } {
+        Ok(v) => v,
+        Err(_) => return -1,
+    };
+    rule_status(unsafe { &mut *session.cast::<FirmwareSession>() }.hide_rule(kind, key))
+}
+
+/// # Safety
+/// Session is initialized and exclusive; key references `key_len` readable bytes.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mejiro_core_session_rule_clear(
+    session: *mut u8,
+    kind: u8,
+    key: *const u8,
+    key_len: usize,
+) -> i32 {
+    if session.is_null() {
+        return -1;
+    }
+    let (kind, key) = match unsafe { rule_key(kind, key, key_len) } {
+        Ok(v) => v,
+        Err(_) => return -1,
+    };
+    match unsafe { &mut *session.cast::<FirmwareSession>() }.clear_rule(kind, key) {
+        Ok(_) => 0,
+        Err(_) => -1,
+    }
+}
+
+/// # Safety
+/// Session is initialized and readable.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mejiro_core_session_rule_count(session: *const u8) -> i32 {
+    if session.is_null() {
+        return -1;
+    }
+    unsafe { &*session.cast::<FirmwareSession>() }.rules().len() as i32
+}
+
+/// # Safety
+/// Session is initialized and readable; output is writable and nonoverlapping.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mejiro_core_session_rule_get(
+    session: *const u8,
+    index: usize,
+    output: *mut CRule,
+) -> i32 {
+    if session.is_null() || output.is_null() {
+        return -1;
+    }
+    let session = unsafe { &*session.cast::<FirmwareSession>() };
+    let Some(entry) = session.rules().entries().get(index) else {
+        return -3;
+    };
+    let mut result = CRule {
+        kind: entry.kind as u8,
+        context: entry.context as u8,
+        hidden: entry.hidden as u8,
+        key_len: entry.key.as_str().len() as u8,
+        value_len: entry.value.as_str().len() as u8,
+        row_len: entry.row.as_str().len() as u8,
+        reserved: [0; 2],
+        key: [0; RULE_KEY_CAPACITY],
+        value: [0; RULE_VALUE_CAPACITY],
+        row: [0; RULE_ROW_CAPACITY],
+    };
+    result.key[..result.key_len as usize].copy_from_slice(entry.key.as_str().as_bytes());
+    result.value[..result.value_len as usize].copy_from_slice(entry.value.as_str().as_bytes());
+    result.row[..result.row_len as usize].copy_from_slice(entry.row.as_str().as_bytes());
+    unsafe { output.write(result) };
+    0
+}
+
+/// # Safety
+/// Session is initialized and exclusive.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mejiro_core_session_rule_clear_all(session: *mut u8) -> i32 {
+    if session.is_null() {
+        return -1;
+    }
+    unsafe { &mut *session.cast::<FirmwareSession>() }.clear_rules();
+    0
 }
