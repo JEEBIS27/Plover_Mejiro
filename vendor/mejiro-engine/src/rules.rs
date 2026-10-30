@@ -839,7 +839,8 @@ fn one_hand(h: Hand<'_>, star: bool, mut next: State, rules: &RuleStore) -> Resu
                 && get(CONJUGATE_GODAN_MAP, consonant).is_some()
             {
                 output.text = conjugate(CONJUGATE_GODAN_MAP, consonant, i, suffix, true)?;
-            } else if matches!(h.vowel, "I" | "IA")
+            } else if star
+                && matches!(h.vowel, "I" | "IA")
                 && get(
                     if h.vowel == "I" {
                         CONJUGATE_KAMI_MAP
