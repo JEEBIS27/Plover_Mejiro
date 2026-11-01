@@ -3,6 +3,7 @@
 No kana, conjugation, particle or transliteration rules live in this module.
 """
 import ctypes as c
+import json
 from dataclasses import dataclass
 import os
 from pathlib import Path
@@ -50,6 +51,21 @@ class Engine:
         self.override_fn.argtypes = [c.c_char_p, c.c_size_t, c.POINTER(State),
                                      c.c_void_p, c.c_size_t, c.POINTER(State)]
         self.override_fn.restype = c.c_int32
+        try:
+            self.reverse_fn = self.library.mejiro_reverse_lookup
+        except AttributeError as error:
+            raise RuntimeError("Mejiro Rust engine lacks reverse lookup; rebuild/reinstall the plugin.") from error
+        self.reverse_fn.argtypes = [c.c_char_p, c.c_size_t, c.c_void_p, c.c_size_t,
+                                    c.c_void_p, c.c_size_t, c.c_void_p, c.c_size_t]
+        self.reverse_fn.restype = c.c_int32
+
+    def reverse_lookup(self, text):
+        raw = text.encode("utf-8")
+        output = c.create_string_buffer(16384)
+        size = self.reverse_fn(raw, len(raw), None, 0, None, 0, output, len(output))
+        if size < 0:
+            raise RuntimeError(f"Mejiro native reverse lookup failed: {size}")
+        return json.loads(output.raw[:size])
 
     def override(self, text, state):
         raw = text.encode("utf-8")
@@ -92,6 +108,9 @@ def lookup(key):
     if len(key) != 1:
         raise KeyError(key)
     raw = key[0]
+    if raw in ("#U", "#U-", "-U*"):
+        # These are Undo only in the corresponding one-hand mode.
+        return "=mejiro_undo:" + raw
     preview = engine().preview(raw)
     if preview.request == 1:
         return "=mejiro_undo"

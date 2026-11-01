@@ -9,4 +9,4 @@ license = "GPL-3.0-or-later"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-mejiro-engine = { path = ".." }
+mejiro-engine = { path = "..", features = ["reverse"] }

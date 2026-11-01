@@ -99,6 +99,47 @@ class ParticleTests(unittest.TestCase):
         self.assertEqual(self.stroke("KA-TA", "-U"), "ことところう")
         self.assertEqual(self.stroke("KA-"), "ことところうか")
 
+    def test_one_hand_i_and_ia_are_phonetic_without_symbol(self):
+        for switch, strokes in [
+            ("#STKNYIAUntk-", ["KI-", "KIA-", "KIn-", "KIAt-", "#KI-", "#KIA-", "#TIA-", "#TIAn-"]),
+            ("-STKNYIAUntk*", ["-KI", "-KIA", "-KIn", "-KIAt", "-KI*", "-KIA*", "-TIA*", "-TIAn*"]),
+        ]:
+            with self.subTest(switch=switch):
+                self.make_engine()
+                self.assertEqual(self.stroke(switch, *strokes), "きけきんけつときけるてるてない")
+
+    def test_one_hand_undo_and_backspace_keep_selected_hand(self):
+        for switch, kana, undo, backspace in [
+            ("#STKNYIAUntk-", "KI-", "#U-", "#AU-"),
+            ("-STKNYIAUntk*", "-KI", "-U*", "-AU*"),
+        ]:
+            with self.subTest(switch=switch):
+                self.make_engine()
+                self.assertEqual(self.stroke(switch, kana, undo), "")
+                self.stroke(undo)  # Empty history must retain the selected hand too.
+                self.assertEqual(self.translator.get_state().translations[-1]._mejiro_state.vowel >> 4,
+                                 1 if switch.startswith("#") else 2)
+                self.assertEqual(self.stroke(kana), "き")
+                self.stroke(backspace)
+                self.assertIn("BackSpace", self.output.combos)
+                self.assertEqual(self.translator.get_state().translations[-1]._mejiro_state.vowel >> 4,
+                                 1 if switch.startswith("#") else 2)
+
+    def test_one_hand_undo_restores_pending_sokuon_in_romaji(self):
+        native.is_typing_mode = True
+        for switch, first, second, undo, following in [
+            ("#STKNYIAUntk-", "KAtk-", "KA-", "#U-", "TA-"),
+            ("-STKNYIAUntk*", "-KAtk", "-KA", "-U*", "-TA"),
+        ]:
+            with self.subTest(switch=switch):
+                self.make_engine()
+                self.assertEqual(self.stroke(switch, first, second), "kakka")
+                erased = []
+                self.adapter.output.output = self.adapter.output.output._replace(send_backspaces=erased.append)
+                self.stroke(undo, following)
+                self.assertEqual(erased, [2])
+                self.assertEqual(self.translator.get_state().translations[-1]._mejiro_body, "った")
+
     def test_left_symbol_key_is_the_one_hand_abbreviation_key(self):
         self.assertEqual(self.stroke("#STKNYIAUntk-", "#-", "#n-", "#KAUntk-"), "するしないことは")
 
@@ -131,7 +172,7 @@ class ParticleTests(unittest.TestCase):
             "k-*": "される", "nk-*": "してしまう", "nt-*": "しやすい",
             "nt-n*": "しにくい", "nt-t*": "したい", "nt-nt*": "してほしい",
             "n-n*": "していない", "n-t*": "していた", "n-k*": "しています",
-            "TAtk-STA*": "はたらける",
+            "TKAtk-KU*": "はたらける",
         }
         for raw, text in examples.items():
             with self.subTest(raw=raw):

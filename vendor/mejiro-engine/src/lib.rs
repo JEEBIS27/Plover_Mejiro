@@ -3,6 +3,12 @@
 //! bounded history, repeat, recording, and all linguistic/typing state.
 #![no_std]
 
+#[cfg(feature = "reverse")]
+extern crate std;
+
+#[cfg(feature = "reverse")]
+pub mod reverse;
+
 pub mod ffi;
 mod tables;
 pub const MACRO_KEYS: &[&str] = &["n", "t", "k", "nt", "nk", "tk", "ntk"];

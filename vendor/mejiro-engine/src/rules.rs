@@ -278,8 +278,12 @@ fn conjugate(
     Ok(text)
 }
 fn registered_verb(stem: &str, inflection: &str, i: usize, suffix: &str) -> Result<Text> {
+    if inflection == "k" {
+        if let Some(prefix) = stem.strip_suffix('い') {
+            return join(&[prefix, IKU_LIST[i], suffix]);
+        }
+    }
     let special = match (stem, inflection) {
-        ("い", "k") => return join(&[IKU_LIST[i], suffix]),
         ("あ", "r") => return join(&[ARU_LIST[i], suffix]),
         (_, "sh") => Some(SAHEN_LIST),
         (_, "kh") => Some(KAHEN_LIST),
@@ -748,6 +752,21 @@ fn one_hand(h: Hand<'_>, star: bool, mut next: State, rules: &RuleStore) -> Resu
     let mut output = Output::new();
     let cv = small_key(&[h.consonant, h.vowel])?;
     let p = h.particle;
+    if star && p.is_empty() && h.consonant.is_empty() && matches!(h.vowel, "U" | "AU") {
+        let request = if h.vowel == "U" {
+            Request::Undo
+        } else {
+            output.push_key(Key::Backspace)?;
+            next.context = Context::Unknown;
+            Request::Output
+        };
+        return Ok(Translation {
+            output,
+            next,
+            request,
+            dynamic_particle: false,
+        });
+    }
     if cv.as_str().is_empty() && !star {
         match p {
             "n" => output.push_key(Key::Space)?,
@@ -830,16 +849,8 @@ fn one_hand(h: Hand<'_>, star: bool, mut next: State, rules: &RuleStore) -> Resu
                     "TN" => Text::of(value(DESU, p))?,
                     _ => join(&[SAHEN_LIST[i], suffix])?,
                 };
-            } else if let Some(entry) = registered.filter(|e| !e.hidden) {
-                output.text = registered_verb(entry.value.as_str(), entry.row.as_str(), i, suffix)?;
-            } else if let Some(entry) = builtin {
-                output.text = registered_verb(entry[0], entry[1], i, suffix)?;
-            } else if h.vowel.is_empty()
-                && !h.consonant.is_empty()
-                && get(CONJUGATE_GODAN_MAP, consonant).is_some()
-            {
-                output.text = conjugate(CONJUGATE_GODAN_MAP, consonant, i, suffix, true)?;
-            } else if matches!(h.vowel, "I" | "IA")
+            } else if star
+                && matches!(h.vowel, "I" | "IA")
                 && get(
                     if h.vowel == "I" {
                         CONJUGATE_KAMI_MAP
@@ -861,6 +872,15 @@ fn one_hand(h: Hand<'_>, star: bool, mut next: State, rules: &RuleStore) -> Resu
                     suffix,
                     false,
                 )?;
+            } else if let Some(entry) = registered.filter(|e| !e.hidden) {
+                output.text = registered_verb(entry.value.as_str(), entry.row.as_str(), i, suffix)?;
+            } else if let Some(entry) = builtin {
+                output.text = registered_verb(entry[0], entry[1], i, suffix)?;
+            } else if h.vowel.is_empty()
+                && !h.consonant.is_empty()
+                && get(CONJUGATE_GODAN_MAP, consonant).is_some()
+            {
+                output.text = conjugate(CONJUGATE_GODAN_MAP, consonant, i, suffix, true)?;
             } else if star {
                 // Unassigned abbreviation: no invented verb or phonetic output.
                 return Err(Error::InvalidStroke);
@@ -922,6 +942,8 @@ mod verb_tests {
     fn registered_irregular_verbs() {
         for (stem, row, index, suffix, expected) in [
             ("い", "k", 6, "た", "いった"),
+            ("もってい", "k", 6, "た", "もっていった"),
+            ("てい", "k", 6, "て", "ていって"),
             ("あ", "r", 0, "ない", "ない"),
             ("ござ", "r", 4, "ます", "ございます"),
             ("なさ", "r", 4, "ます", "なさいます"),

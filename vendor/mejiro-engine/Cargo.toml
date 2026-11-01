@@ -6,6 +6,9 @@ rust-version = "1.88"
 license = "GPL-3.0-or-later"
 description = "Platform-independent Mejiro stenography engine"
 
+[features]
+reverse = []
+
 [workspace]
 members = ["native"]
 resolver = "3"
