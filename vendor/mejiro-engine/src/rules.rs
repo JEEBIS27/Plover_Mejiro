@@ -278,8 +278,12 @@ fn conjugate(
     Ok(text)
 }
 fn registered_verb(stem: &str, inflection: &str, i: usize, suffix: &str) -> Result<Text> {
+    if inflection == "k" {
+        if let Some(prefix) = stem.strip_suffix('い') {
+            return join(&[prefix, IKU_LIST[i], suffix]);
+        }
+    }
     let special = match (stem, inflection) {
-        ("い", "k") => return join(&[IKU_LIST[i], suffix]),
         ("あ", "r") => return join(&[ARU_LIST[i], suffix]),
         (_, "sh") => Some(SAHEN_LIST),
         (_, "kh") => Some(KAHEN_LIST),
@@ -938,6 +942,8 @@ mod verb_tests {
     fn registered_irregular_verbs() {
         for (stem, row, index, suffix, expected) in [
             ("い", "k", 6, "た", "いった"),
+            ("もってい", "k", 6, "た", "もっていった"),
+            ("てい", "k", 6, "て", "ていって"),
             ("あ", "r", 0, "ない", "ない"),
             ("ござ", "r", 4, "ます", "ございます"),
             ("なさ", "r", 4, "ます", "なさいます"),

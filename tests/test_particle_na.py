@@ -172,7 +172,7 @@ class ParticleTests(unittest.TestCase):
             "k-*": "される", "nk-*": "してしまう", "nt-*": "しやすい",
             "nt-n*": "しにくい", "nt-t*": "したい", "nt-nt*": "してほしい",
             "n-n*": "していない", "n-t*": "していた", "n-k*": "しています",
-            "TAtk-STA*": "はたらける",
+            "TKAtk-KU*": "はたらける",
         }
         for raw, text in examples.items():
             with self.subTest(raw=raw):

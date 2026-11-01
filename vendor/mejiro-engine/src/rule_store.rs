@@ -2,7 +2,7 @@ use crate::{Context, Error, Result, Stroke, Text};
 
 /// Fixed-size, allocation-free overlay for editable dictionary entries.
 /// A hidden entry masks a built-in entry; removing the overlay restores it.
-pub const RULE_CAPACITY: usize = 24;
+pub const RULE_CAPACITY: usize = 96;
 pub const RULE_KEY_CAPACITY: usize = 32;
 pub const RULE_VALUE_CAPACITY: usize = 96;
 pub const RULE_ROW_CAPACITY: usize = 8;

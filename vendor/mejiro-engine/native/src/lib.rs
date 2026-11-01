@@ -1,6 +1,7 @@
 //! Desktop-only C ABI. Firmware links the no_std core directly (RMK) or adds
 //! target-specific staticlib/panic glue (QMK), without this std crate.
 mod plover;
+mod reverse;
 use mejiro_engine::{State, translate};
 
 use mejiro_engine::ffi::CState as NativeState;
