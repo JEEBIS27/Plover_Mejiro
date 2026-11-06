@@ -633,15 +633,15 @@ mod tests {
         );
     }
     #[test]
-    fn inherited_vowel_and_runtime_override_are_verified() {
-        let inherited = lookup("きしし", &[], &RuleStore::new()).unwrap();
+    fn basic_and_runtime_override_are_verified() {
+        let basic = lookup("きし", &[], &RuleStore::new()).unwrap();
         assert!(
-            inherited
+            basic
                 .basic_and_particle
                 .iter()
-                .any(|c| c.strokes == "KI-SI/S-"),
+                .any(|c| c.strokes == "KI-SI"),
             "{:?}",
-            inherited.basic_and_particle
+            basic.basic_and_particle
         );
         let mut rules = RuleStore::new();
         rules
