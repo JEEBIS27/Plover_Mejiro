@@ -54,7 +54,10 @@ fn base_kana(consonant: &str, vowel: &str, particle: Option<&str>, fallback: &st
 }
 fn choose_he(context: Context, right: &str) -> &'static str {
     let ka = if matches!(right, "k" | "nk") {
-        matches!(context, Context::Nominalizable | Context::IndefiniteNoun)
+        matches!(
+            context,
+            Context::Nominalizable | Context::AttributiveNa | Context::IndefiniteNoun
+        )
     } else {
         matches!(
             context,
@@ -96,14 +99,9 @@ pub fn particle(left: &str, right: &str, context: Context) -> Result<Output> {
                     out.push_text(r)?;
                     out.push_text("、")?;
                 } else if !left.is_empty() && matches!(right, "k" | "nk") {
-                    if matches!(left, "nt" | "ntk") {
-                        out.push_text(l)?;
-                        out.push_text("の")?;
-                    } else {
+                    if left == "k" {
                         out.push_text("の")?;
                         out.push_text(l)?;
-                    }
-                    if out.text.as_str() == "のの" {
                         out.text = Text::of(
                             if matches!(context, Context::Nominalizable | Context::AttributiveNa) {
                                 "のが"
@@ -111,6 +109,14 @@ pub fn particle(left: &str, right: &str, context: Context) -> Result<Output> {
                                 "な"
                             },
                         )?;
+                    } else if left == "t"
+                        || matches!(context, Context::Nominalizable | Context::AttributiveNa)
+                    {
+                        out.push_text("の")?;
+                        out.push_text(l)?;
+                    } else {
+                        out.push_text(l)?;
+                        out.push_text("の")?;
                     }
                     if right.contains('n') {
                         out.push_text("、")?;
@@ -206,12 +212,38 @@ fn abstract_word(s: &Stroke<'_>, key: &str, rules: &RuleStore) -> Result<Option<
             get(ABSTRACT_MAP_RIGHT, rk.as_str()).copied()
         };
         if let (Some(l), Some(r)) = (left_word, right_word) {
-            let text = join(&[l, r])?;
-            let text = replace(text.as_str(), "のふう", "んなふう")?;
+            // The right abbreviation "の" is a noun. Demonstratives take
+            // their attributive "な" form before it, not a second particle の.
+            let l = if r == "の" {
+                match l {
+                    "あの" => "あんな",
+                    "この" => "こんな",
+                    "その" => "そんな",
+                    "どの" => "どんな",
+                    "なんの" => "なんな",
+                    _ => l,
+                }
+            } else {
+                l
+            };
+            let text = if r == "ふう" {
+                let attributive = match l {
+                    "あの" => "あんな",
+                    "この" => "こんな",
+                    "その" => "そんな",
+                    "どの" => "どんな",
+                    _ => l,
+                };
+                join(&[attributive, r])?
+            } else {
+                join(&[l, r])?
+            };
             (
                 text,
                 r,
-                if r.is_empty() {
+                if r == "の" {
+                    Some(Context::Noun)
+                } else if r.is_empty() {
                     Some(if ATTRIBUTIVE_NA_WORDS.contains(&l) {
                         Context::AttributiveNa
                     } else {
@@ -249,6 +281,41 @@ fn abstract_word(s: &Stroke<'_>, key: &str, rules: &RuleStore) -> Result<Option<
             }
         });
     Ok(Some((word, context)))
+}
+
+fn desu_prefix(s: &Stroke<'_>, context: Context, rules: &RuleStore) -> Result<Option<Text>> {
+    if s.right.consonant != "TN" || !s.right.vowel.is_empty() {
+        return Ok(None);
+    }
+    let l = s.left;
+    let cv = small_key(&[l.consonant, l.vowel])?;
+    if cv.as_str().is_empty() && !l.particle.is_empty() {
+        let word = if l.particle == "ntk" {
+            choose_he(context, "")
+        } else {
+            L_PARTICLE[particle_index(l.particle)]
+        };
+        return Ok(Some(Text::of(word)?));
+    }
+    if !l.particle.is_empty() {
+        return Ok(None);
+    }
+    let (kind, key) = if s.star {
+        (RuleKind::GeneralRight, cv)
+    } else {
+        (RuleKind::General, small_key(&[cv.as_str(), "-"])?)
+    };
+    let builtin = if s.star {
+        ABSTRACT_MAP_RIGHT
+    } else {
+        ABSTRACT_MAP
+    };
+    let word = if let Some(entry) = rules.find(kind, key.as_str()) {
+        (!entry.hidden).then_some(entry.value.as_str())
+    } else {
+        get(builtin, key.as_str()).copied()
+    };
+    word.map(Text::of).transpose()
 }
 fn conjugate(
     row: &[(&str, &[&str])],
@@ -675,6 +742,11 @@ fn convert(
         output.context = attached_context(l.particle, r.particle, &p, base);
         output.push_text(word.as_str())?;
         append_attached(&mut output, &p)?;
+        return Ok(output);
+    }
+    if let Some(prefix) = desu_prefix(s, context, rules)? {
+        output.text = join(&[prefix.as_str(), value(DESU, r.particle)])?;
+        output.context = verb_context(l.particle, r.particle, true);
         return Ok(output);
     }
     let lk = base_kana(l.consonant, l.vowel, None, lv)?;
