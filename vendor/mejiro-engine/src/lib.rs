@@ -404,7 +404,8 @@ impl<'a> Stroke<'a> {
             && self.right.consonant.is_empty()
             && self.right.vowel.is_empty()
             && !self.star
-            && ((self.left.particle == "k" && matches!(self.right.particle, "k" | "nk"))
+            && ((matches!(self.left.particle, "k" | "tk" | "nt")
+                && matches!(self.right.particle, "k" | "nk"))
                 || self.left.particle == "ntk")
     }
 }
