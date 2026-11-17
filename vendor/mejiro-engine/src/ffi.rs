@@ -3,8 +3,10 @@
 use super::*;
 
 /// Import already-emitted host events into all active recorders, without IO.
-/// Safety: session is exclusively owned; events references count initialized
-/// HidEvent values. A zero count permits a null events pointer.
+/// # Safety
+///
+/// `session` must be exclusively owned, and `events` must reference `count`
+/// initialized `HidEvent` values. A zero count permits a null events pointer.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn mejiro_core_session_record_external(
     session: *mut u8,
@@ -30,7 +32,10 @@ pub unsafe extern "C" fn mejiro_core_session_record_external(
 }
 /// Return the most recent replay's anchored events. A null output with capacity
 /// zero queries the count. No copy occurs on insufficient capacity.
-/// Safety: session is initialized; output has capacity writable elements.
+/// # Safety
+///
+/// `session` must be initialized, and `output` must have `capacity` writable
+/// elements.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn mejiro_core_session_replayed_external(
     session: *const u8,
@@ -56,7 +61,9 @@ pub unsafe extern "C" fn mejiro_core_session_replayed_external(
     events.len() as i32
 }
 /// Abort and erase only macros which are currently recording after host failure.
-/// Safety: session is initialized and exclusively owned.
+/// # Safety
+///
+/// `session` must be initialized and exclusively owned.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn mejiro_core_session_abort_recordings(session: *mut u8) -> i32 {
     if session.is_null() {
