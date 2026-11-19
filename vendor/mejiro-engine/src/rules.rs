@@ -1332,6 +1332,31 @@ mod verb_tests {
     }
 
     #[test]
+    fn two_hand_verbs_have_unique_conjugations() {
+        extern crate std;
+        let mut seen = std::collections::BTreeMap::new();
+        for &(key, entry) in VERB_MAP {
+            let (left, right) = key.split_once('-').unwrap();
+            if left.is_empty() || right.is_empty() {
+                continue;
+            }
+            let lemma = registered_verb(entry[0], entry[1], 5, "").unwrap();
+            let forms: std::vec::Vec<_> = (0..10)
+                .map(|i| {
+                    let form = registered_verb(entry[0], entry[1], i, "").unwrap();
+                    std::string::String::from(form.as_str())
+                })
+                .collect();
+            if let Some(previous) = seen.insert(forms, key) {
+                panic!(
+                    "duplicate two-hand verb conjugations {}: {previous} / {key}",
+                    lemma.as_str()
+                );
+            }
+        }
+    }
+
+    #[test]
     fn verbs_are_unique_in_stroke_kana_order_with_valid_rows() {
         for (index, &(key, entry)) in VERB_MAP.iter().enumerate() {
             assert_eq!(entry.len(), 2);

@@ -343,8 +343,8 @@ class ParticleTests(unittest.TestCase):
             self.dictionary.get((raw,))
         self.assertFalse(native.is_typing_mode)
         self.assertFalse(recording.active_recording_macros)
-        self.assertEqual(self.stroke("STKN-"), "きふぃ")
-        self.assertEqual(self.stroke("KU-", "-U", "STKN-"), "きふぃふぃ")
+        self.assertEqual(self.stroke("KN-K"), "きぎく")
+        self.assertEqual(self.stroke("KU-", "-U", "KN-K"), "きぎくぎく")
 
     def test_native_user_map_typing_uses_rust(self):
         native.USERS_MAP["n-*"] = "あめりか"
@@ -469,7 +469,7 @@ class ParticleTests(unittest.TestCase):
             "nt-t*": "したいか", "ntk-k*": "しましょうか", "ntk-ntk*": "しようか",
             "-TN": "ですか", "-TNt": "でしたか", "-TNk": "でしょうか",
             "K-T": "ことか", "SKN-N": "ものか", "K-KAU": "ここへ",
-            "T-ST": "ところへ", "N-N": "なにか", "NA-N": "なんか",
+            "T-ST": "ところへ", "N-N": "なにか",
             "TN-STIA": "どれか", "KA-": "かへ",
         }
         for raw, expected in examples.items():
@@ -496,12 +496,13 @@ class ParticleTests(unittest.TestCase):
                         self.assertEqual(self.stroke("ntk-"), before + suffix)
 
     def test_he_ka_all_right_suffixes(self):
-        # Nominal modifiers distinguish ことへの / 何かの / しているかのよう.
+        # Nominal modifiers distinguish ことへの / 何かの / しているのか.
         he = ("へ", "へ、", "へは", "への", "へも", "へは、", "への、", "へも、")
         ka = ("か", "か、", "かは", "への", "かも", "かは、", "への、", "かも、")
         indefinite = ("か", "か、", "かは", "かの", "かも", "かは、", "かの、", "かも、")
+        predicate = ("か", "か、", "かは", "のか", "かも", "かは、", "のか、", "かも、")
         for raw, suffixes in (("KA-", he), ("K-KAU", he), ("K-T", ka),
-                              ("n-*", indefinite), ("N-N", indefinite)):
+                              ("n-*", predicate), ("N-N", indefinite)):
             for right, suffix in zip(PARTICLE_KEY_LIST, suffixes):
                 with self.subTest(stroke=raw, right=right):
                     self.make_engine()
@@ -509,7 +510,8 @@ class ParticleTests(unittest.TestCase):
                     self.assertEqual(self.stroke("ntk-" + right), before + suffix)
 
     def test_abstract_attached_and_separate_particles_agree(self):
-        for stem in ("K-T", "SKN-N", "K-KAU", "T-ST", "N-N", "NA-N", "TN-STIA",
+        for stem in ("K-T", "SKN-N", "K-KAU", "T-ST", "N-N", "TN-STIA",
+                     "SK-KAU", "SK-NAU", "K-NAU", "KY-NAU",
                      "-SKNAU*", "-TAU*", "K-STN*", "Y-STN*", "S-NA"):
             for left, rights in (("ntk", PARTICLE_KEY_LIST), ("k", ("k", "nk"))):
                 for right in rights:
@@ -548,7 +550,7 @@ class ParticleTests(unittest.TestCase):
         self.make_engine()
         self.assertEqual(self.stroke("K-T", "nt-", "ntk-"), "こととか")
         self.make_engine()
-        self.assertEqual(self.stroke("n-*", "ntk-k", "STN-YI*"), "しているかのよう")
+        self.assertEqual(self.stroke("n-*", "ntk-k"), "しているのか")
 
     def test_he_ka_boundaries(self):
         for raw in ("-nt", "-nk", "n-", "-n", "n-n", "-A"):
