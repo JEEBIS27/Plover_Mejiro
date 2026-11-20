@@ -2,8 +2,9 @@
 //! Candidate strokes are always checked with the forward translator, including
 //! runtime dictionary overlays and state carried across strokes.
 use crate::tables::{
-    ABSTRACT_MAP, ABSTRACT_MAP_LEFT, ABSTRACT_MAP_RIGHT, CONSONANTS, EXCEPTION_KANA,
-    MINOR_DIPHTHONGS, PARTICLE_KEY_LIST, VERB_MAP,
+    ABSTRACT_MAP, ABSTRACT_MAP_LEFT, ABSTRACT_MAP_RIGHT, CONSONANTS, DEMONSTRATIVES,
+    EXCEPTION_KANA, MINOR_DIPHTHONGS, PARTICLE_KEY_LIST, VERB_MAP, demonstrative_direct,
+    demonstrative_left,
 };
 use crate::{Request, RuleKind, RuleStore, State, Stroke, translate_with_rules};
 use std::collections::BTreeSet;
@@ -196,9 +197,19 @@ fn seeds(target: &str, rules: &RuleStore) -> Vec<(String, Kind)> {
     }
     // Built-in and edited dictionary keys can replace otherwise unrelated
     // kana, so include their inflected/particle variants explicitly.
+    let demonstrative_direct_keys: Vec<_> = DEMONSTRATIVES
+        .iter()
+        .flat_map(|(root, family)| {
+            family
+                .direct
+                .iter()
+                .map(move |(vowel, right, _)| std::format!("{root}{vowel}-{right}"))
+        })
+        .collect();
     for key in ABSTRACT_MAP
         .iter()
         .map(|(k, _)| *k)
+        .chain(demonstrative_direct_keys.iter().map(String::as_str))
         .chain(VERB_MAP.iter().map(|(k, _)| *k))
         .chain(
             rules
@@ -222,9 +233,19 @@ fn seeds(target: &str, rules: &RuleStore) -> Vec<(String, Kind)> {
             }
         }
     }
+    let demonstrative_left_keys: Vec<_> = DEMONSTRATIVES
+        .iter()
+        .flat_map(|(root, family)| {
+            family
+                .left
+                .iter()
+                .map(move |(vowel, _)| std::format!("{root}{vowel}"))
+        })
+        .collect();
     let left_keys: BTreeSet<&str> = ABSTRACT_MAP_LEFT
         .iter()
         .map(|(key, _)| *key)
+        .chain(demonstrative_left_keys.iter().map(String::as_str))
         .chain(
             rules
                 .entries()
@@ -322,16 +343,22 @@ fn classify(raw: &str, rules: &RuleStore) -> Kind {
     }
     let key = std::format!("{}{}-{}{}", l.consonant, l.vowel, r.consonant, r.vowel);
     let full = std::format!("{key}{}", if s.star { "*" } else { "" });
+    let rk = std::format!("{}{}", r.consonant, r.vowel);
     let direct = rules
         .find(RuleKind::General, &full)
         .map(|e| !e.hidden)
-        .unwrap_or_else(|| ABSTRACT_MAP.iter().any(|(k, _)| *k == full));
+        .unwrap_or_else(|| {
+            ABSTRACT_MAP.iter().any(|(k, _)| *k == full)
+                || !s.star && demonstrative_direct(l.consonant, l.vowel, &rk).is_some()
+        });
     let lk = std::format!("{}{}", l.consonant, l.vowel);
-    let rk = std::format!("{}{}", r.consonant, r.vowel);
     let left_general = rules
         .find(RuleKind::GeneralLeft, &lk)
         .map(|e| !e.hidden)
-        .unwrap_or_else(|| ABSTRACT_MAP_LEFT.iter().any(|(k, _)| *k == lk));
+        .unwrap_or_else(|| {
+            ABSTRACT_MAP_LEFT.iter().any(|(k, _)| *k == lk)
+                || demonstrative_left(l.consonant, l.vowel).is_some()
+        });
     let right_general = rules
         .find(RuleKind::GeneralRight, &rk)
         .map(|e| !e.hidden)
@@ -714,5 +741,24 @@ mod tests {
             "{:?}",
             result.all
         );
+    }
+
+    #[test]
+    fn demonstratives_are_searchable_as_general_abbreviations() {
+        let rules = RuleStore::new();
+        for (reading, stroke) in [
+            ("あんなの", "SKY-NAU"),
+            ("あんなこと", "SKY-KAU*"),
+            ("ようなこと", "YI-KAU*"),
+        ] {
+            let result = lookup(reading, &[], &rules).unwrap();
+            assert!(
+                result.all.iter().any(|c| c.strokes == stroke
+                    && c.segments.len() == 1
+                    && c.segments[0].kind == Kind::General),
+                "{stroke}: {:?}",
+                result.all
+            );
+        }
     }
 }

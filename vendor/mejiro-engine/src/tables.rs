@@ -118,55 +118,99 @@ pub const R_PARTICLE: &[&str] = &["", "、", "は", "が", "も", "は、", "が
 pub const PARTICLE_EXCEPTIONS: &[(&str, &str)] =
     &[("-nk", "、"), ("-nt", "。"), ("n-nk", "!"), ("n-nt", "?")];
 pub const USERS_MAP: &[(&str, &str)] = &[];
+
+pub(crate) struct Demonstrative {
+    pub direct: &'static [(&'static str, &'static str, &'static str)],
+    pub left: &'static [(&'static str, &'static str)],
+    no: &'static str,
+    na: &'static str,
+}
+
+// Each row supplies the stems for the same direct and composite forms.
+macro_rules! demonstrative {
+    ($key:literal, $stem:literal, $adverb:literal, $place:literal) => {{
+        const NO: &str = concat!($stem, "の");
+        const NA: &str = concat!($stem, "んな");
+        const IU: &str = concat!($adverb, "いう");
+        (
+            $key,
+            Demonstrative {
+                direct: &[
+                    ("", "IU", IU),
+                    ("", "KAU", $place),
+                    ("", "NA", NA),
+                    ("", "NAU", NO),
+                    ("", "STA", concat!($stem, "ちら")),
+                    ("", "STIA", concat!($stem, "れ")),
+                    ("", "TI", concat!($stem, "っち")),
+                    ("", "U", $adverb),
+                    ("Y", "NAU", concat!($stem, "んなの")),
+                ],
+                left: &[
+                    ("", NO),
+                    ("IAU", concat!($adverb, "した")),
+                    ("IU", IU),
+                    ("Y", NA),
+                    ("YIAU", concat!($adverb, "いうふうな")),
+                    ("YIU", concat!($adverb, "いうような")),
+                ],
+                no: NO,
+                na: NA,
+            },
+        )
+    }};
+}
+
+pub(crate) const DEMONSTRATIVES: &[(&str, Demonstrative)] = &[
+    demonstrative!("K", "こ", "こう", "ここ"),
+    demonstrative!("S", "そ", "そう", "そこ"),
+    demonstrative!("SK", "あ", "ああ", "あそこ"),
+    demonstrative!("TN", "ど", "どう", "どこ"),
+];
+
+pub(crate) fn demonstrative_direct(
+    consonant: &str,
+    vowel: &str,
+    right: &str,
+) -> Option<&'static str> {
+    crate::get(DEMONSTRATIVES, consonant)?
+        .direct
+        .iter()
+        .find_map(|&(v, r, word)| (v == vowel && r == right).then_some(word))
+}
+
+pub(crate) fn demonstrative_left(consonant: &str, vowel: &str) -> Option<&'static str> {
+    crate::get(crate::get(DEMONSTRATIVES, consonant)?.left, vowel).copied()
+}
+
+pub(crate) fn demonstrative_before_nominal(word: &str) -> Option<&'static str> {
+    DEMONSTRATIVES
+        .iter()
+        .find_map(|(_, form)| (form.no == word).then_some(form.na))
+}
+
 pub const ABSTRACT_MAP: &[(&str, &str)] = &[
-    ("K-IU", "こういう"),
-    ("K-KAU", "ここ"),
     ("K-N", "かん"),
-    ("K-NA", "こんな"),
-    ("K-NAU", "この"),
     ("K-SN", "かんじ"),
     ("K-ST", "ころ"),
-    ("K-STA", "こちら"),
-    ("K-STIA", "これ"),
     ("K-T", "こと"),
-    ("K-TI", "こっち"),
     ("K-TKN", "ことば"),
-    ("K-U", "こう"),
     ("KN-", "かんがえ"),
     ("KN-T", "ごと"),
-    ("KY-NAU", "こんなの"),
     ("N-", "なに"),
     ("N-IU", "なんていう"),
     ("N-N", "なに"),
     ("N-NAU", "なんの"),
     ("NY-NAU", "なんなの"),
     ("S-", "すら"),
-    ("S-IU", "そういう"),
-    ("S-KAU", "そこ"),
-    ("S-NA", "そんな"),
-    ("S-NAU", "その"),
-    ("S-STA", "そちら"),
-    ("S-STIA", "それ"),
-    ("S-TI", "そっち"),
-    ("S-U", "そう"),
     ("SK-", "わけ"),
-    ("SK-IU", "ああいう"),
-    ("SK-KAU", "あそこ"),
-    ("SK-NA", "あんな"),
-    ("SK-NAU", "あの"),
-    ("SK-STA", "あちら"),
-    ("SK-STIA", "あれ"),
-    ("SK-TI", "あっち"),
-    ("SK-U", "ああ"),
     ("SKN-", "まで"),
     ("SKN-N", "もの"),
     ("SKNAU-N", "もん"),
-    ("SKY-NAU", "あんなの"),
     ("SN-", "かんじ"),
     ("ST-", "から"),
     ("STK-", "よう"),
     ("STKN-", "すべて"),
-    ("SY-NAU", "そんなの"),
     ("T-", "ため"),
     ("T-IU", "という"),
     ("T-K", "とき"),
@@ -181,54 +225,23 @@ pub const ABSTRACT_MAP: &[(&str, &str)] = &[
     ("TK-T", "ひと"),
     ("TKN-", "ことば"),
     ("TN-", "だから"),
-    ("TN-IU", "どういう"),
     ("TN-K", "だけ"),
-    ("TN-KAU", "どこ"),
-    ("TN-NA", "どんな"),
-    ("TN-NAU", "どの"),
     ("TN-ST", "だから"),
-    ("TN-STA", "どちら"),
-    ("TN-STIA", "どれ"),
-    ("TN-TI", "どっち"),
-    ("TN-U", "どう"),
-    ("TNY-NAU", "どんなの"),
 ];
 pub const ABSTRACT_MAP_LEFT: &[(&str, &str)] = &[
     ("", "あの"),
-    ("IAU", "あんなふうな"),
+    ("IAU", "ああした"),
     ("IU", "ああいう"),
-    ("K", "この"),
-    ("KIAU", "こんなふうな"),
-    ("KIU", "こういう"),
-    ("KY", "こんな"),
-    ("KYIAU", "こういうふうな"),
-    ("KYIU", "こういうような"),
     ("N", "なんの"),
     ("NIU", "なんていう"),
-    ("S", "その"),
-    ("SIAU", "そんなふうな"),
-    ("SIU", "そういう"),
-    ("SK", "あの"),
-    ("SKIAU", "あんなふうな"),
-    ("SKIU", "ああいう"),
-    ("SKYIAU", "ああいうふうな"),
-    ("SKYIU", "ああいうような"),
     ("SKYU", "いう"),
     ("STN", ""),
-    ("SY", "そんな"),
-    ("SYIAU", "そういうふうな"),
-    ("SYIU", "そういうような"),
     ("T", "との"),
     ("TIU", "という"),
     ("TK", "ほうの"),
     ("TKY", "ふうな"),
-    ("TN", "どの"),
-    ("TNIAU", "どんなふうな"),
-    ("TNIU", "どういう"),
-    ("TNY", "どんな"),
-    ("TNYIAU", "どういうふうな"),
-    ("TNYIU", "どういうような"),
-    ("Y", "ような"),
+    ("Y", "な"),
+    ("YI", "ような"),
     ("YIAU", "いうふうな"),
     ("YIU", "いうような"),
 ];
@@ -3689,8 +3702,15 @@ pub const PLACE_WORDS: &[&str] = &[
     "どっち",
 ];
 pub const INDEFINITE_WORDS: &[&str] = &["どれ", "なに", "なん"];
-pub const ATTRIBUTIVE_NA_WORDS: &[&str] =
-    &["あんな", "こんな", "そんな", "どんな", "ふうな", "ような"];
+pub const ATTRIBUTIVE_NA_WORDS: &[&str] = &[
+    "あんな",
+    "こんな",
+    "そんな",
+    "どんな",
+    "な",
+    "ふうな",
+    "ような",
+];
 pub const QUESTION_PARTICLES: &[&str] = &["から", "だから", "だけ", "と", "の", "も"];
 pub const NOMINALIZABLE_EXCEPTIONS: &[&str] = &[
     "nt-", "nt-n", "nt-nt", "nt-t", "tk-", "tk-k", "tk-n", "tk-nk", "tk-nt", "tk-t", "tk-tk",
@@ -3718,6 +3738,7 @@ mod invariants {
             ABSTRACT_MAP,
             ABSTRACT_MAP_LEFT,
             ABSTRACT_MAP_RIGHT,
+            DEMONSTRATIVES,
             CONJUGATE_GODAN_MAP,
             CONJUGATE_KAMI_MAP,
             CONJUGATE_SIMO_MAP,

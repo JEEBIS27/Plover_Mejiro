@@ -187,7 +187,13 @@ fn abstract_word(s: &Stroke<'_>, key: &str, rules: &RuleStore) -> Result<Option<
     let rk = small_key(&[s.right.consonant, s.right.vowel])?;
     let direct = rules.find(RuleKind::General, full.as_str());
     let builtin = if direct.is_none() {
-        get(ABSTRACT_MAP, full.as_str()).copied()
+        get(ABSTRACT_MAP, full.as_str()).copied().or_else(|| {
+            if s.star {
+                None
+            } else {
+                demonstrative_direct(s.left.consonant, s.left.vowel, rk.as_str())
+            }
+        })
     } else {
         None
     };
@@ -205,7 +211,9 @@ fn abstract_word(s: &Stroke<'_>, key: &str, rules: &RuleStore) -> Result<Option<
         let left_word = if let Some(e) = left {
             (!e.hidden).then_some(e.value.as_str())
         } else {
-            get(ABSTRACT_MAP_LEFT, lk.as_str()).copied()
+            get(ABSTRACT_MAP_LEFT, lk.as_str())
+                .copied()
+                .or_else(|| demonstrative_left(s.left.consonant, s.left.vowel))
         };
         let right_word = if let Some(e) = right {
             (!e.hidden).then_some(e.value.as_str())
@@ -213,35 +221,14 @@ fn abstract_word(s: &Stroke<'_>, key: &str, rules: &RuleStore) -> Result<Option<
             get(ABSTRACT_MAP_RIGHT, rk.as_str()).copied()
         };
         if let (Some(l), Some(r)) = (left_word, right_word) {
-            // The right abbreviation "の" is a noun. Demonstratives take
-            // their attributive "な" form before it, not a second particle の.
-            let l = if r == "の" {
-                match l {
-                    "あの" => "あんな",
-                    "この" => "こんな",
-                    "その" => "そんな",
-                    "どの" => "どんな",
-                    "なんの" => "なんな",
-                    "ほうの" => "ほう",
-                    _ => l,
-                }
-            } else {
-                l
-            };
-            let text = if r == "ふう" {
-                let attributive = match l {
-                    "あの" => "あんな",
-                    "この" => "こんな",
-                    "その" => "そんな",
-                    "どの" => "どんな",
-                    _ => l,
-                };
-                join(&[attributive, r])?
-            } else {
-                join(&[l, r])?
+            let l = match (l, r) {
+                ("なんの", "の") => "なんな",
+                ("ほうの", "の") => "ほう",
+                (_, "の" | "ふう") => demonstrative_before_nominal(l).unwrap_or(l),
+                _ => l,
             };
             (
-                text,
+                join(&[l, r])?,
                 r,
                 if r == "の" {
                     Some(Context::Noun)
@@ -1115,19 +1102,28 @@ fn one_hand(
                 Some(("から", Context::Incomplete))
             } else {
                 // Right-hand vocabulary first, then left-hand vocabulary.
-                let find = |kind, table: &'static [(&str, &'static str)]| {
+                let find = |kind, builtin: Option<&'static str>| {
                     if let Some(entry) = rules.find(kind, cv.as_str()) {
                         (!entry.hidden && !entry.value.as_str().is_empty())
                             .then_some((entry.value.as_str(), entry.context))
                     } else {
-                        get(table, cv.as_str())
-                            .copied()
+                        builtin
                             .filter(|s| !s.is_empty())
                             .map(|s| (s, Context::Noun))
                     }
                 };
-                find(RuleKind::GeneralRight, ABSTRACT_MAP_RIGHT)
-                    .or_else(|| find(RuleKind::GeneralLeft, ABSTRACT_MAP_LEFT))
+                find(
+                    RuleKind::GeneralRight,
+                    get(ABSTRACT_MAP_RIGHT, cv.as_str()).copied(),
+                )
+                .or_else(|| {
+                    find(
+                        RuleKind::GeneralLeft,
+                        get(ABSTRACT_MAP_LEFT, cv.as_str())
+                            .copied()
+                            .or_else(|| demonstrative_left(h.consonant, h.vowel)),
+                    )
+                })
             }
         } else {
             None
